@@ -282,21 +282,23 @@ a { text-decoration: none; color: inherit; }
 /* ─── GROUP BLOCK ────────────────────────────────────────────── */
 .group-block {
   margin: 0 16px 16px;
-  background: var(--card);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .group-label-row {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  border-bottom: none;
   display: flex;
   align-items: center;
   gap: 9px;
-  background: #222222;
-  border-radius: 16px 16px 0 0;
+  background: transparent;
+  border-radius: 0;
   height: 40px;
 }
 
@@ -325,24 +327,26 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── MATCH ROW — Figma spec ─────────────────────────────────── */
 
-/* Each match-row is a flex column: info-block stacked */
+/* Each match-row is its own card */
 .match-row {
   position: relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px 0;
-  gap: 15px;
-  background: var(--card);
+  padding: 10px 0 0 0;
+  gap: 5px;
+  background: #1E1E1E;
+  border-radius: 16px;
+  overflow: hidden;
   transition: background 0.12s;
   cursor: default;
 }
 
-.match-row + .match-row { border-top: 1px solid var(--border); }
-.match-row:hover { background: #232323; }
-.match-row:last-child { border-radius: 0 0 16px 16px; }
-.match-row:last-child:hover { border-radius: 0 0 16px 16px; }
+.match-row + .match-row { border-top: none; }
+.match-row:hover { background: #252525; }
+.match-row:last-child { border-radius: 16px; }
+.match-row:last-child:hover { border-radius: 16px; }
 
 /* Status badge — absolute top-right corner */
 .match-badge {
@@ -372,10 +376,9 @@ a { text-decoration: none; color: inherit; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 16px;
-  gap: 4px;
+  padding: 0;
+  gap: 5px;
   width: 100%;
-  max-width: 420px;
 }
 
 /* Time row */
@@ -402,6 +405,7 @@ a { text-decoration: none; color: inherit; }
   align-items: center;
   width: 100%;
   height: 30px;
+  padding: 0;
 }
 
 /* Team block inside score row */
@@ -491,9 +495,17 @@ a { text-decoration: none; color: inherit; }
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 5px;
-  height: 12px;
+  gap: 8px;
+  height: 32px;
   width: 100%;
+  background: #1E1E1E;
+  padding: 8px 0;
+  margin-top: 0;
+  border-top: 1px solid transparent;
+  background-image: linear-gradient(#1E1E1E, #1E1E1E),
+    linear-gradient(90deg, transparent 0%, #3a3a3a 30%, #3a3a3a 70%, transparent 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
 }
 
 .venue-icon-svg {
@@ -515,27 +527,8 @@ a { text-decoration: none; color: inherit; }
   text-align: center;
 }
 
-/* FEATURED highlight */
-.match-row.featured::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 8px; bottom: 8px;
-  width: 2.5px;
-  border-radius: 2px;
-  background: var(--primary);
-  opacity: 0.7;
-}
+/* FEATURED highlight removed */
 
-/* FEATURED highlight – subtle left border */
-.match-row.featured::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 6px; bottom: 6px;
-  width: 2.5px;
-  border-radius: 2px;
-  background: var(--primary);
-  opacity: 0.7;
-}
 
 /* ─── AI RESULT BOX ─────────────────────────────────────────── */
 .ai-box {
@@ -617,8 +610,8 @@ a { text-decoration: none; color: inherit; }
 @media (max-width: 480px) {
   .t-name { max-width: 72px; font-size: 12px; }
   .score-n { font-size: 16px; }
-  .match-row { padding: 10px 12px; }
-  .group-block { margin: 0 12px 16px; }
+  .match-row { padding: 10 10px 12px; }
+  .group-block { margin: 0 12px 16px; gap: 8px; }
   .section-head { padding: 18px 12px 8px; }
   .pill-btn.dark span.btn-em { display: none; }
 }
@@ -633,20 +626,23 @@ a { text-decoration: none; color: inherit; }
 /* ─── DEMO BOX ──────────────────────────────────────────────── */
 .demo-box {
   margin: 16px 16px 0;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .demo-label-row {
-  padding: 10px 16px 9px;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 0 4px;
+  border-bottom: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255,255,255,0.02);
-  border-radius: 16px 16px 0 0;
+  background: transparent;
+  border-radius: 0;
 }
 
 .demo-label {
@@ -899,7 +895,8 @@ function fmtDate(dateStr, timeStr) {
   const mi = d.getMinutes().toString().padStart(2,'0');
   return {
     time: hh + ':' + mi,
-    date: DAYS[d.getDay()] + ' · ' + dd + '/' + mm + ' · ' + hh + ':' + mi,
+    dateShort: DAYS[d.getDay()] + ' · ' + dd + '/' + mm,            // upcoming: no time
+    date: DAYS[d.getDay()] + ' · ' + dd + '/' + mm + ' · ' + hh + ':' + mi, // live/finished
   };
 }
 
@@ -952,7 +949,7 @@ function renderMatchRow(m) {
   <div class="match-info">
 
     <div class="match-time-row">
-      <span class="match-dt">${dt.date}</span>
+      <span class="match-dt">${!hasScore ? dt.dateShort : dt.date}</span>
     </div>
 
     <div class="match-score-row">
@@ -998,14 +995,7 @@ function renderAll() {
   const keys = Object.keys(groups).sort();
   let html = '';
 
-  if (keys.length > 0) {
-    html += `
-    <div class="section-head">
-      <span class="te section-icon">📋</span>
-      <span class="section-title">Vòng bảng</span>
-      <span class="section-sub">11/6 – 27/6/2026</span>
-    </div>`;
-  }
+  // section-head hidden per Figma spec
 
   keys.forEach(g => {
     const meta = GROUP_META[g] || { label:'BẢNG '+g, teams:'', em:'⚽' };
@@ -1347,10 +1337,10 @@ function renderDemoBox() {
     const badge = demoStatusPill(m);
 
     return `
-<div class="match-row${isFeat?' featured':''}" style="${m.id!=='demo1'?'border-top:1px solid var(--border)':''}">
+<div class="match-row${isFeat?' featured':''}">
   ${badge}
   <div class="match-info">
-    <div class="match-time-row"><span class="match-dt">${dt.date}</span></div>
+    <div class="match-time-row"><span class="match-dt">${!hasScore ? dt.dateShort : dt.date}</span></div>
     <div class="match-score-row">
       <div class="ms-team">
         <span class="ms-name">${m.home.name}</span>
