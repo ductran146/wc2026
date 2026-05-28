@@ -65,6 +65,7 @@ a { text-decoration: none; color: inherit; }
   top: 0;
   z-index: 100;
   overflow: hidden;
+  /* height includes logo row + tab row */
 }
 
 /* gradient mesh background – dark green left → deep blue right */
@@ -211,23 +212,53 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── TEAM FILTER TABS ──────────────────────────────────────── */
 .filter-bar {
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  /* Part of the topbar gradient background */
+  background: transparent;
+  border-bottom: none;
   position: sticky;
   top: 72px;
   z-index: 99;
+  /* overlap topbar bg */
+  margin-top: -1px;
+}
+
+.filter-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg,
+    #1a3a2a 0%,
+    #1e3d35 12%,
+    #1a3060 38%,
+    #0f1a70 62%,
+    #0a0f8a 80%,
+    #0505a0 100%
+  );
+  z-index: 0;
+}
+
+/* fade to page bg at bottom edge */
+.filter-bar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  z-index: 1;
 }
 
 .filter-scroll {
+  position: relative;
+  z-index: 2;
   max-width: 960px;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
-  gap: 4px;
+  gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
   height: 44px;
-  align-items: center;
+  align-items: stretch;
 }
 .filter-scroll::-webkit-scrollbar { display: none; }
 
@@ -275,35 +306,54 @@ a { text-decoration: none; color: inherit; }
 .filter-chip {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 10px 12px;
-  border-radius: 20px;
-  font-size: 12.5px;
+  justify-content: center;
+  gap: 6px;
+  padding: 0;
+  border-radius: 0;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--text2);
+  color: rgba(255,255,255,0.5);
   white-space: nowrap;
-  transition: all 0.15s;
+  transition: color 0.15s;
   flex-shrink: 0;
-  border: 1px solid transparent;
+  border: none;
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+  height: 44px;
 }
 
-.filter-chip:hover { color: var(--text1); background: #252525; }
+/* underline indicator */
+.filter-chip::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2.5px;
+  background: #fff;
+  border-radius: 2px 2px 0 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.filter-chip:hover { color: rgba(255,255,255,0.8); }
+.filter-chip:hover::after { opacity: 0.3; }
 
 .filter-chip.active {
-  background: var(--primary-dim);
-  color: var(--primary);
-  border-color: rgba(0,152,95,0.3);
+  color: #ffffff;
   font-weight: 600;
+  background: transparent;
+  border: none;
 }
+.filter-chip.active::after { opacity: 1; }
 
 .chip-flag { font-size: 15px; }
 
 /* Flag-only chips */
 .filter-chip.flag-only {
-  padding: 5px 8px;
+  padding: 0 10px;
 }
 .filter-chip.flag-only .chip-flag {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 
@@ -355,7 +405,7 @@ a { text-decoration: none; color: inherit; }
 .group-pill {
   font-size: 14px;
   font-weight: 700;
-  line-height: 17px;
+  line-height: 18px;
   color: #ffffff;
   background: none;
   padding: 0;
@@ -658,6 +708,7 @@ a { text-decoration: none; color: inherit; }
   .logo-icon { width: 34px; height: 34px; }
   .logo-icon img { width: 34px; height: 34px; }
   .filter-bar { top: 60px; }
+  .filter-bar::before { background: linear-gradient(105deg, #1a3a2a 0%, #1e3d35 12%, #1a3060 38%, #0f1a70 62%, #0a0f8a 80%, #0505a0 100%); }
   .round-filter-bar { top: 104px; }
 }
 @media (max-width: 480px) {
