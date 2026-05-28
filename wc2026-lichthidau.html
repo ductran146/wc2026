@@ -56,16 +56,35 @@ a { text-decoration: none; color: inherit; }
   margin: 0 auto;
   padding-bottom: 80px;
   padding-top: 8px;
+  background: var(--bg);
+  position: relative;
+  z-index: 1;
 }
 
 /* ─── HEADER ────────────────────────────────────────────────── */
 /* ─── HERO HEADER (FotMob style) ────────────────────────────── */
-.topbar {
+/* ─── SITE HEADER (logo + tabs, 1 sticky block) ─── */
+.site-header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 101;
   overflow: hidden;
-  /* height includes logo row + tab row */
+}
+
+/* Fade gradient into page background at the bottom */
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.topbar {
+  /* no sticky — child of site-header */
+  position: relative;
 }
 
 /* gradient mesh background – dark green left → deep blue right */
@@ -80,17 +99,19 @@ a { text-decoration: none; color: inherit; }
     #0a0f8a 80%,
     #0505a0 100%
   );
+  z-index: 0;
 }
 
 /* blurred colour blobs – red/orange top-right, green top-left */
 .topbar-blob1 {
   position: absolute;
   top: -40px; left: 30px;
-  width: 160px; height: 160px;
+  width: 200px; height: 200px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(80,160,80,0.55) 0%, transparent 70%);
   filter: blur(28px);
   pointer-events: none;
+  will-change: transform;
 }
 
 .topbar-blob2 {
@@ -212,39 +233,20 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── TEAM FILTER TABS ──────────────────────────────────────── */
 .filter-bar {
-  /* Part of the topbar gradient background */
+  position: relative;
+  z-index: 1;
   background: transparent;
   border-bottom: none;
-  position: sticky;
-  top: 72px;
-  z-index: 99;
-  /* overlap topbar bg */
-  margin-top: -1px;
 }
 
-.filter-bar::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg,
-    #1a3a2a 0%,
-    #1e3d35 12%,
-    #1a3060 38%,
-    #0f1a70 62%,
-    #0a0f8a 80%,
-    #0505a0 100%
-  );
-  z-index: 0;
-}
-
-/* fade to page bg at bottom edge */
+/* thin separator line at bottom of tab row */
 .filter-bar::after {
   content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 1px;
   background: rgba(255,255,255,0.08);
-  z-index: 1;
+  pointer-events: none;
 }
 
 .filter-scroll {
@@ -254,7 +256,7 @@ a { text-decoration: none; color: inherit; }
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
-  gap: 8px;
+  gap: 20px;
   overflow-x: auto;
   scrollbar-width: none;
   height: 44px;
@@ -308,7 +310,7 @@ a { text-decoration: none; color: inherit; }
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 0;
+  padding: 0px;
   border-radius: 0;
   font-size: 13px;
   font-weight: 500;
@@ -350,7 +352,7 @@ a { text-decoration: none; color: inherit; }
 
 /* Flag-only chips */
 .filter-chip.flag-only {
-  padding: 0 10px;
+  padding: 0px;
 }
 .filter-chip.flag-only .chip-flag {
   font-size: 22px;
@@ -707,9 +709,8 @@ a { text-decoration: none; color: inherit; }
   .logo-text { font-size: 15px; }
   .logo-icon { width: 34px; height: 34px; }
   .logo-icon img { width: 34px; height: 34px; }
-  .filter-bar { top: 60px; }
-  .filter-bar::before { background: linear-gradient(105deg, #1a3a2a 0%, #1e3d35 12%, #1a3060 38%, #0f1a70 62%, #0a0f8a 80%, #0505a0 100%); }
-  .round-filter-bar { top: 104px; }
+  /* filter-bar is in flow inside site-header */
+  .round-filter-bar { top: 116px; }
 }
 @media (max-width: 480px) {
   .t-name { max-width: 72px; font-size: 12px; }
@@ -775,36 +776,35 @@ a { text-decoration: none; color: inherit; }
 </head>
 <body>
 
-<!-- HERO HEADER -->
-<div class="topbar">
+<!-- SITE HEADER: logo + tabs in 1 sticky block -->
+<div class="site-header">
   <div class="topbar-bg"></div>
   <div class="topbar-blob1"></div>
   <div class="topbar-blob2"></div>
   <div class="topbar-blob3"></div>
-  <div class="topbar-inner">
-    <div class="topbar-logo">
-      <div class="logo-icon"><img src="https://images.fotmob.com/image_resources/logo/leaguelogo/dark/77.png" alt="World Cup" width="28" height="28"></div>
-      <div class="logo-titles">
-        <div class="logo-text">FIFA World Cup</div>
-        <div class="logo-sub">International</div>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-logo">
+        <div class="logo-icon"><img src="https://images.fotmob.com/image_resources/logo/leaguelogo/dark/77.png" alt="World Cup" width="28" height="28"></div>
+        <div class="logo-titles">
+          <div class="logo-text">FIFA World Cup</div>
+          <div class="logo-sub">International</div>
+        </div>
       </div>
-    </div>
-    <div class="topbar-actions">
-      <button class="pill-btn dark" id="updateBtn" onclick="fetchLiveScores()">
-        <span class="te btn-em">📡</span>
-        Làm mới
-      </button>
-    
+      <div class="topbar-actions">
+        <button class="pill-btn dark" id="updateBtn" onclick="fetchLiveScores()">
+          <span class="te btn-em">📡</span>
+          Làm mới
+        </button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- FILTER CHIPS -->
-<div class="filter-bar">
+  <div class="filter-bar">
   <div class="filter-scroll">
     <button class="filter-chip active" onclick="filterTeam('all',this)">
-      <span class="te chip-flag">🌍</span> Tất cả
+       Tất cả
     </button>
     <button class="filter-chip flag-only" onclick="filterTeam('england',this)">
       <span class="te chip-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
@@ -821,8 +821,8 @@ a { text-decoration: none; color: inherit; }
     <button class="filter-chip flag-only" onclick="filterTeam('argentina',this)">
       <span class="te chip-flag">🇦🇷</span>
     </button>
-  </div>
-</div>
+  </div><!-- /filter-bar -->
+</div><!-- /site-header -->
 
 <!-- MAIN CONTENT -->
 <div class="page-wrap">
