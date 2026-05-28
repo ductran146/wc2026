@@ -209,24 +209,6 @@ a { text-decoration: none; color: inherit; }
 
 .pill-btn .btn-em { font-size: 14px; line-height: 1; }
 
-/* year chip */
-.year-chip {
-  display: flex; align-items: center; gap: 4px;
-  padding: 7px 13px;
-  border-radius: 20px;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--inter);
-  transition: background 0.15s;
-  backdrop-filter: blur(6px);
-}
-.year-chip:hover { background: rgba(0,0,0,0.6); }
-.year-chip svg { opacity: 0.7; }
-
 /* ─── TEAM FILTER TABS ──────────────────────────────────────── */
 .filter-bar {
   background: var(--bg);
@@ -380,7 +362,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .match-badge.live     { background: rgba(219,83,87,0.2); color: #DB5357; }
-.match-badge.finished { background: rgba(255,255,255,0.1); color: #ffffff; }
+.match-badge.finished { background: rgba(255,255,255,0.1); color: #aeaeae; }
 
 @keyframes liveBlink { 0%,100%{opacity:1} 50%{opacity:0.5} }
 .match-badge.live { animation: liveBlink 1.5s infinite; }
@@ -437,9 +419,9 @@ a { text-decoration: none; color: inherit; }
 }
 
 .ms-name {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 15px;
+  line-height: 16px;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
@@ -451,8 +433,8 @@ a { text-decoration: none; color: inherit; }
   font-size: 24px;
   display: block;
   line-height: 1;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 .t-flag-wrap { position: relative; flex-shrink: 0; }
@@ -566,23 +548,7 @@ a { text-decoration: none; color: inherit; }
 .ai-box .ai-em { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
 .ai-box strong { color: var(--text1); font-weight: 600; }
 
-/* ─── TIMESTAMP ──────────────────────────────────────────────── */
-.timestamp-row {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 6px 20px 4px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 5px;
-}
 
-.ts-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text3); }
-.ts-label {
-  font-size: 10.5px;
-  color: var(--text3);
-  font-weight: 400;
-}
 
 /* ─── BOTTOM BAR ─────────────────────────────────────────────── */
 .bottombar {
@@ -634,7 +600,6 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── RESPONSIVE ─────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .pill-btn.outline, .year-chip { display: none; }
   .topbar-inner { height: 60px; }
   .logo-text { font-size: 15px; }
   .logo-icon { width: 34px; height: 34px; }
@@ -721,13 +686,8 @@ a { text-decoration: none; color: inherit; }
         <span class="te btn-em">📡</span>
         Làm mới
       </button>
-      <div class="year-chip">
-        2026
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-          <path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+    
       </div>
-      <button class="pill-btn outline">Follow</button>
     </div>
   </div>
 </div>
@@ -754,12 +714,6 @@ a { text-decoration: none; color: inherit; }
       <span class="te chip-flag">🇦🇷</span> Argentina
     </button>
   </div>
-</div>
-
-<!-- TIMESTAMP -->
-<div class="timestamp-row">
-  <div class="ts-dot"></div>
-  <div class="ts-label" id="tsLabel">Chưa cập nhật</div>
 </div>
 
 <!-- MAIN CONTENT -->
