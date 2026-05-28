@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA World Cup 2026 – Lịch Thi Đấu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'TossEmoji';
+  src: url('TossFaceFontWeb.otf') format('opentype');
+  font-display: swap;
+}
+
+/* ─── RESET & BASE ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #161616;
+  --bg2:         #1e1e1e;
+  --card:        #1e1e1e;
+  --card-hover:  #252525;
+  --border:      #2a2a2a;
+  --border2:     #333333;
+  --primary:     #00985f;
+  --primary-dim: rgba(0,152,95,0.15);
+  --accent:      #4f9cf9;
+  --live:        #e8344e;
+  --live-dim:    rgba(232,52,78,0.12);
+  --gold:        #f0b429;
+  --text1:       #ffffff;
+  --text2:       #999999;
+  --text3:       #666666;
+  --inter:       'Inter', sans-serif;
+  --emoji:       'TossEmoji', sans-serif;
+}
+
+body {
+  font-family: var(--inter);
+  background: var(--bg);
+  color: var(--text1);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: var(--inter); cursor: pointer; border: none; background: none; }
+a { text-decoration: none; color: inherit; }
+
+.te { font-family: var(--emoji); font-style: normal; line-height: 1; }
+
+/* ─── LAYOUT ────────────────────────────────────────────────── */
+.page-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+  padding-top: 8px;
+}
+
+/* ─── HEADER ────────────────────────────────────────────────── */
+/* ─── HERO HEADER (FotMob style) ────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* gradient mesh background – dark green left → deep blue right */
+.topbar-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg,
+    #1a3a2a 0%,
+    #1e3d35 12%,
+    #1a3060 38%,
+    #0f1a70 62%,
+    #0a0f8a 80%,
+    #0505a0 100%
+  );
+}
+
+/* blurred colour blobs – red/orange top-right, green top-left */
+.topbar-blob1 {
+  position: absolute;
+  top: -40px; left: 30px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(80,160,80,0.55) 0%, transparent 70%);
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+.topbar-blob2 {
+  position: absolute;
+  top: -50px; left: 160px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(190,60,40,0.45) 0%, transparent 70%);
+  filter: blur(36px);
+  pointer-events: none;
+}
+
+.topbar-blob3 {
+  position: absolute;
+  top: -20px; right: 80px;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20,40,160,0.4) 0%, transparent 70%);
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.topbar-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* FIFA logo badge */
+.logo-icon {
+  width: 42px; height: 42px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-icon img {
+  width: 42px; height: 42px;
+  object-fit: contain;
+  display: block;
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.logo-titles { display: flex; flex-direction: column; gap: 1px; }
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+}
+
+.logo-sub {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0;
+}
+
+/* Right-side action pills */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 15px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: var(--inter);
+  white-space: nowrap;
+}
+
+/* "Cập nhật" – dark fill pill */
+.pill-btn.dark {
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(6px);
+}
+.pill-btn.dark:hover   { background: rgba(0,0,0,0.72); }
+.pill-btn.dark:active  { transform: scale(0.97); }
+.pill-btn.dark:disabled { opacity: 0.5; cursor: wait; }
+
+/* "Follow" – white outline pill */
+.pill-btn.outline {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.75);
+}
+.pill-btn.outline:hover { background: rgba(255,255,255,0.1); }
+
+.pill-btn .btn-em { font-size: 14px; line-height: 1; }
+
+/* year chip */
+.year-chip {
+  display: flex; align-items: center; gap: 4px;
+  padding: 7px 13px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--inter);
+  transition: background 0.15s;
+  backdrop-filter: blur(6px);
+}
+.year-chip:hover { background: rgba(0,0,0,0.6); }
+.year-chip svg { opacity: 0.7; }
+
+/* ─── TEAM FILTER TABS ──────────────────────────────────────── */
+.filter-bar {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 72px;
+  z-index: 99;
+}
+
+.filter-scroll {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  height: 44px;
+  align-items: center;
+}
+.filter-scroll::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text2);
+  white-space: nowrap;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+
+.filter-chip:hover { color: var(--text1); background: #252525; }
+
+.filter-chip.active {
+  background: var(--primary-dim);
+  color: var(--primary);
+  border-color: rgba(0,152,95,0.3);
+  font-weight: 600;
+}
+
+.chip-flag { font-size: 15px; }
+
+/* ─── SECTION HEADER ────────────────────────────────────────── */
+.section-head {
+  display: none;
+}
+
+.section-icon { font-size: 16px; }
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text1);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.section-sub {
+  font-size: 11.5px;
+  color: var(--text3);
+  margin-left: auto;
+  font-weight: 400;
+}
+
+/* ─── GROUP BLOCK ────────────────────────────────────────────── */
+.group-block {
+  margin: 0 16px 16px;
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.group-label-row {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #222222;
+  border-radius: 16px 16px 0 0;
+  height: 40px;
+}
+
+.group-pill {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17px;
+  color: #ffffff;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  white-space: nowrap;
+}
+
+.group-teams-text {
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 14px;
+  color: #666666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.group-icon-right { display: none; }
+
+/* ─── MATCH ROW — Figma spec ─────────────────────────────────── */
+
+/* Each match-row is a flex column: info-block stacked */
+.match-row {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  gap: 15px;
+  background: var(--card);
+  transition: background 0.12s;
+  cursor: default;
+}
+
+.match-row + .match-row { border-top: 1px solid var(--border); }
+.match-row:hover { background: #232323; }
+.match-row:last-child { border-radius: 0 0 16px 16px; }
+.match-row:last-child:hover { border-radius: 0 0 16px 16px; }
+
+/* Status badge — absolute top-right corner */
+.match-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12px;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.match-badge.live     { background: rgba(219,83,87,0.2); color: #DB5357; }
+.match-badge.finished { background: rgba(255,255,255,0.1); color: #ffffff; }
+
+@keyframes liveBlink { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.match-badge.live { animation: liveBlink 1.5s infinite; }
+
+/* ── Match Info block (column: time → score row → venue) ── */
+.match-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px;
+  gap: 4px;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Time row */
+.match-time-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 13px;
+}
+
+.match-dt {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 13px;
+  color: #999999;
+  white-space: nowrap;
+}
+
+/* Score row: team1 | score-block | team2 — grid với fixed center */
+.match-score-row {
+  display: grid;
+  grid-template-columns: 1fr 96px 1fr;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+}
+
+/* Team block inside score row */
+.ms-team {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.ms-team.right {
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.ms-name {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 15px;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 68px;
+}
+
+.t-flag {
+  font-size: 24px;
+  display: block;
+  line-height: 1;
+  width: 26px;
+  height: 26px;
+}
+
+.t-flag-wrap { position: relative; flex-shrink: 0; }
+
+.t-dot {
+  position: absolute;
+  bottom: -1px; right: -2px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--card);
+}
+
+/* Score block center — fixed width để align đều */
+.ms-score-block {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  gap: 0;
+}
+
+/* Upcoming: show HH:MM in 20px bold */
+.ms-score-block .upcoming-time {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+/* Live/finished: score digits */
+.ms-sc {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  color: #ffffff;
+  min-width: 14px;
+  text-align: center;
+  padding: 2px 6px;
+}
+
+.ms-dash {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  color: #ffffff;
+  padding: 2px 4px;
+}
+
+/* Venue */
+.match-venue-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 12px;
+  width: 100%;
+}
+
+.venue-text {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12px;
+  color: #999999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+  text-align: center;
+}
+
+/* FEATURED highlight */
+.match-row.featured::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px; bottom: 8px;
+  width: 2.5px;
+  border-radius: 2px;
+  background: var(--primary);
+  opacity: 0.7;
+}
+
+/* FEATURED highlight – subtle left border */
+.match-row.featured::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 2.5px;
+  border-radius: 2px;
+  background: var(--primary);
+  opacity: 0.7;
+}
+
+/* ─── AI RESULT BOX ─────────────────────────────────────────── */
+.ai-box {
+  margin: 12px 20px 0;
+  background: rgba(79,156,249,0.07);
+  border: 1px solid rgba(79,156,249,0.18);
+  border-radius: 16px;
+  padding: 11px 14px;
+  display: none;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.ai-box.show { display: flex; }
+.ai-box .ai-em { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.ai-box strong { color: var(--text1); font-weight: 600; }
+
+/* ─── TIMESTAMP ──────────────────────────────────────────────── */
+.timestamp-row {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 6px 20px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.ts-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text3); }
+.ts-label {
+  font-size: 10.5px;
+  color: var(--text3);
+  font-weight: 400;
+}
+
+/* ─── BOTTOM BAR ─────────────────────────────────────────────── */
+.bottombar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: rgba(15,18,23,0.97);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.bar-em { font-size: 14px; flex-shrink: 0; }
+
+.bar-text {
+  font-size: 11.5px;
+  color: var(--text3);
+  flex: 1;
+  line-height: 1.4;
+}
+
+.bar-text span { color: var(--accent); font-weight: 500; }
+
+.bar-spinner {
+  width: 13px; height: 13px;
+  border: 2px solid rgba(79,156,249,0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none; flex-shrink: 0;
+}
+.bar-spinner.on { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── EMPTY STATE ────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 56px 20px;
+  color: var(--text3);
+  display: none;
+}
+.empty-state.show { display: block; }
+.es-em { font-size: 40px; margin-bottom: 10px; }
+.es-title { font-size: 14px; color: var(--text2); font-weight: 500; margin-bottom: 4px; }
+.es-sub { font-size: 12px; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .pill-btn.outline, .year-chip { display: none; }
+  .topbar-inner { height: 60px; }
+  .logo-text { font-size: 15px; }
+  .logo-icon { width: 34px; height: 34px; }
+  .logo-icon img { width: 34px; height: 34px; }
+  .filter-bar { top: 60px; }
+}
+@media (max-width: 480px) {
+  .t-name { max-width: 72px; font-size: 12px; }
+  .score-n { font-size: 16px; }
+  .match-row { padding: 10px 12px; }
+  .group-block { margin: 0 12px 16px; }
+  .section-head { padding: 18px 12px 8px; }
+  .pill-btn.dark span.btn-em { display: none; }
+}
+
+/* ── Score flash when updated ── */
+@keyframes scoreFlash {
+  0%   { background: rgba(0,200,100,0.25); border-radius: 4px; }
+  100% { background: transparent; }
+}
+.score-flash { animation: scoreFlash 1.2s ease-out; }
+
+/* ─── DEMO BOX ──────────────────────────────────────────────── */
+.demo-box {
+  margin: 16px 16px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.demo-label-row {
+  padding: 10px 16px 9px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.02);
+  border-radius: 16px 16px 0 0;
+}
+
+.demo-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.demo-close {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text3);
+  font-size: 11px;
+  line-height: 1;
+  transition: background 0.15s;
+  font-family: var(--inter);
+}
+.demo-close:hover { background: rgba(255,255,255,0.12); color: var(--text1); }
+</style>
+</head>
+<body>
+
+<!-- HERO HEADER -->
+<div class="topbar">
+  <div class="topbar-bg"></div>
+  <div class="topbar-blob1"></div>
+  <div class="topbar-blob2"></div>
+  <div class="topbar-blob3"></div>
+  <div class="topbar-inner">
+    <div class="topbar-logo">
+      <div class="logo-icon"><img src="https://images.fotmob.com/image_resources/logo/leaguelogo/dark/77.png" alt="World Cup" width="28" height="28"></div>
+      <div class="logo-titles">
+        <div class="logo-text">FIFA World Cup</div>
+        <div class="logo-sub">International</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="pill-btn dark" id="updateBtn" onclick="fetchLiveScores()">
+        <span class="te btn-em">📡</span>
+        Làm mới
+      </button>
+      <div class="year-chip">
+        2026
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <button class="pill-btn outline">Follow</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER CHIPS -->
+<div class="filter-bar">
+  <div class="filter-scroll">
+    <button class="filter-chip active" onclick="filterTeam('all',this)">
+      <span class="te chip-flag">🌍</span> Tất cả
+    </button>
+    <button class="filter-chip" onclick="filterTeam('england',this)">
+      <span class="te chip-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span> Anh
+    </button>
+    <button class="filter-chip" onclick="filterTeam('germany',this)">
+      <span class="te chip-flag">🇩🇪</span> Đức
+    </button>
+    <button class="filter-chip" onclick="filterTeam('france',this)">
+      <span class="te chip-flag">🇫🇷</span> Pháp
+    </button>
+    <button class="filter-chip" onclick="filterTeam('brazil',this)">
+      <span class="te chip-flag">🇧🇷</span> Brazil
+    </button>
+    <button class="filter-chip" onclick="filterTeam('argentina',this)">
+      <span class="te chip-flag">🇦🇷</span> Argentina
+    </button>
+  </div>
+</div>
+
+<!-- TIMESTAMP -->
+<div class="timestamp-row">
+  <div class="ts-dot"></div>
+  <div class="ts-label" id="tsLabel">Chưa cập nhật</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="page-wrap">
+  <div class="ai-box" id="aiBox">
+    <span class="te ai-em">⚽</span>
+    <div id="aiBoxText"></div>
+  </div>
+
+
+  <!-- DEMO BOX: trạng thái tỷ số -->
+  <div class="demo-box" id="demoBox">
+    <div class="demo-label-row">
+      <span class="demo-label">Preview · Demo tỷ số</span>
+      <button class="demo-close" onclick="document.getElementById('demoBox').style.display='none'" title="Đóng">✕</button>
+    </div>
+    <div id="demoRows"></div>
+  </div>
+
+  <div id="matchContainer"></div>
+
+  <div class="empty-state" id="emptyState">
+    <div class="te es-em">🔍</div>
+    <div class="es-title">Không có trận đấu</div>
+    <div class="es-sub">Chọn đội tuyển khác để xem</div>
+  </div>
+</div>
+
+<!-- BOTTOMBAR -->
+<div class="bottombar">
+  <span class="te bar-em" id="barEm">📅</span>
+  <div class="bar-text" id="barText">
+    Nhấn <span>"Cập nhật"</span> để AI tra kết quả mới nhất · Giải đấu 11/6 – 19/7/2026
+  </div>
+  <div class="bar-spinner" id="barSpinner"></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────────────────────
+const MATCHES = [
+  // GROUP C — BRAZIL
+  { id:'c1', g:'C', round:'Lượt 1',
+    date:'2026-06-13', time:'05:00',
+    home:{ name:'Brazil',   code:'brazil',   flag:'🇧🇷', color:'#009c3b' },
+    away:{ name:'Morocco',  code:'morocco',  flag:'🇲🇦', color:'#c1272d' },
+    venue:'MetLife Stadium, New York · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'c2', g:'C', round:'Lượt 2',
+    date:'2026-06-20', time:'03:30',
+    home:{ name:'Brazil',  code:'brazil', flag:'🇧🇷', color:'#009c3b' },
+    away:{ name:'Haiti',   code:'haiti',  flag:'🇭🇹', color:'#00209f' },
+    venue:'Lincoln Financial Field, Philadelphia · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'c3', g:'C', round:'Lượt 3',
+    date:'2026-06-25', time:'05:00',
+    home:{ name:'Scotland', code:'scotland', flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', color:'#005eb8' },
+    away:{ name:'Brazil',   code:'brazil',   flag:'🇧🇷', color:'#009c3b' },
+    venue:'Hard Rock Stadium, Miami · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  // GROUP E — GERMANY
+  { id:'e1', g:'E', round:'Lượt 1',
+    date:'2026-06-14', time:'00:00',
+    home:{ name:'Đức',     code:'germany', flag:'🇩🇪', color:'#e8b800' },
+    away:{ name:'Curaçao', code:'curacao', flag:'🇨🇼', color:'#003da5' },
+    venue:'NRG Stadium, Houston · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'e2', g:'E', round:'Lượt 2',
+    date:'2026-06-20', time:'03:00',
+    home:{ name:'Đức',          code:'germany',    flag:'🇩🇪', color:'#e8b800' },
+    away:{ name:'Ivory Coast',  code:'ivorycoast', flag:'🇨🇮', color:'#f77f00' },
+    venue:'BMO Field, Toronto · Canada',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'e3', g:'E', round:'Lượt 3',
+    date:'2026-06-28', time:'05:00',
+    home:{ name:'Ecuador', code:'ecuador', flag:'🇪🇨', color:'#ffd100' },
+    away:{ name:'Đức',     code:'germany', flag:'🇩🇪', color:'#e8b800' },
+    venue:'Arrowhead Stadium, Kansas City · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  // GROUP I — FRANCE
+  { id:'i1', g:'I', round:'Lượt 1',
+    date:'2026-06-18', time:'04:00',
+    home:{ name:'Pháp',    code:'france',  flag:'🇫🇷', color:'#002395' },
+    away:{ name:'Senegal', code:'senegal', flag:'🇸🇳', color:'#00853f' },
+    venue:'MetLife Stadium, New York · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'i2', g:'I', round:'Lượt 2',
+    date:'2026-06-22', time:'04:00',
+    home:{ name:'Pháp', code:'france', flag:'🇫🇷', color:'#002395' },
+    away:{ name:'Iraq', code:'iraq',   flag:'🇮🇶', color:'#007a3d' },
+    venue:'Lincoln Financial Field, Philadelphia · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'i3', g:'I', round:'Lượt 3',
+    date:'2026-06-28', time:'02:00',
+    home:{ name:'Na Uy', code:'norway', flag:'🇳🇴', color:'#ef2b2d' },
+    away:{ name:'Pháp',  code:'france', flag:'🇫🇷', color:'#002395' },
+    venue:'Gillette Stadium, Boston · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  // GROUP J — ARGENTINA
+  { id:'j1', g:'J', round:'Lượt 1',
+    date:'2026-06-17', time:'00:00',
+    home:{ name:'Argentina', code:'argentina', flag:'🇦🇷', color:'#74acdf' },
+    away:{ name:'Algeria',   code:'algeria',   flag:'🇩🇿', color:'#006233' },
+    venue:'Arrowhead Stadium, Kansas City · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'j2', g:'J', round:'Lượt 2',
+    date:'2026-06-22', time:'00:00',
+    home:{ name:'Argentina', code:'argentina', flag:'🇦🇷', color:'#74acdf' },
+    away:{ name:'Áo',        code:'austria',   flag:'🇦🇹', color:'#ed2939' },
+    venue:'AT&T Stadium, Dallas · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'j3', g:'J', round:'Lượt 3',
+    date:'2026-06-28', time:'09:00',
+    home:{ name:'Jordan',    code:'jordan',    flag:'🇯🇴', color:'#007a3d' },
+    away:{ name:'Argentina', code:'argentina', flag:'🇦🇷', color:'#74acdf' },
+    venue:'AT&T Stadium, Dallas · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  // GROUP L — ENGLAND
+  { id:'l1', g:'L', round:'Lượt 1',
+    date:'2026-06-17', time:'03:00',
+    home:{ name:'Anh',     code:'england', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#CF142B' },
+    away:{ name:'Croatia', code:'croatia', flag:'🇭🇷', color:'#0093dd' },
+    venue:'AT&T Stadium, Dallas · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'l2', g:'L', round:'Lượt 2',
+    date:'2026-06-23', time:'03:00',
+    home:{ name:'Anh',   code:'england', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#CF142B' },
+    away:{ name:'Ghana', code:'ghana',   flag:'🇬🇭', color:'#006b3f' },
+    venue:'Gillette Stadium, Boston · USA',
+    sh:null, sa:null, status:'upcoming' },
+
+  { id:'l3', g:'L', round:'Lượt 3',
+    date:'2026-06-28', time:'04:00',
+    home:{ name:'Panama', code:'panama',  flag:'🇵🇦', color:'#db121e' },
+    away:{ name:'Anh',    code:'england', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#CF142B' },
+    venue:'MetLife Stadium, New York · USA',
+    sh:null, sa:null, status:'upcoming' },
+];
+
+const TARGET = new Set(['england','germany','france','brazil','argentina']);
+
+const GROUP_META = {
+  C: { label:'Grp. C', teams:'Brazil · Morocco · Haiti · Scotland',    em:'🌎' },
+  E: { label:'Grp. E', teams:'Đức · Curaçao · Ivory Coast · Ecuador',  em:'⚽' },
+  I: { label:'Grp. I', teams:'Pháp · Senegal · Iraq · Na Uy',           em:'🔥' },
+  J: { label:'Grp. J', teams:'Argentina · Algeria · Áo · Jordan',       em:'⭐' },
+  L: { label:'Grp. L', teams:'Anh · Croatia · Ghana · Panama',          em:'🏆' },
+};
+
+let currentFilter = 'all';
+
+// ─────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────
+function fmtDate(dateStr, timeStr) {
+  const d = new Date(dateStr + 'T' + timeStr + ':00+07:00');
+  const DAYS = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+  const dd = d.getDate().toString().padStart(2,'0');
+  const mm = (d.getMonth()+1).toString().padStart(2,'0');
+  const hh = d.getHours().toString().padStart(2,'0');
+  const mi = d.getMinutes().toString().padStart(2,'0');
+  return {
+    time: hh + ':' + mi,
+    date: DAYS[d.getDay()] + ' · ' + dd + '/' + mm + ' · ' + hh + ':' + mi,
+  };
+}
+
+function statusBadge(s, minute) {
+  if (s === 'live') {
+    const label = minute ? `${minute}'` : 'Live';
+    return `<span class="match-badge live">${label}</span>`;
+  }
+  if (s === 'finished') {
+    return `<span class="match-badge finished">KT</span>`;
+  }
+  return ''; // upcoming: no badge
+}
+
+// ─────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────
+function renderMatchRow(m) {
+  const isFeat = TARGET.has(m.home.code) || TARGET.has(m.away.code);
+  const hFeat  = TARGET.has(m.home.code);
+  const aFeat  = TARGET.has(m.away.code);
+  const dt     = fmtDate(m.date, m.time);
+  const hasScore = m.sh !== null && m.sa !== null;
+
+  const homeDot = hFeat ? `<span class="t-dot" style="background:${m.home.color}"></span>` : '';
+  const awayDot = aFeat ? `<span class="t-dot" style="background:${m.away.color}"></span>` : '';
+
+  // Score block center
+  let scoreBlock;
+  if (!hasScore) {
+    // Upcoming: show HH:MM big
+    scoreBlock = `<div class="ms-score-block">
+      <span class="upcoming-time">${dt.time}</span>
+    </div>`;
+  } else {
+    // Live or finished
+    scoreBlock = `<div class="ms-score-block">
+      <span class="ms-sc" id="sh-${m.id}">${m.sh}</span>
+      <span class="ms-dash">-</span>
+      <span class="ms-sc" id="sa-${m.id}">${m.sa}</span>
+    </div>`;
+  }
+
+  const badge = statusBadge(m.status, m.minute);
+  const venue = m.venue || '';
+
+  return `
+<div class="match-row${isFeat?' featured':''}">
+  ${badge}
+  <div class="match-info">
+
+    <div class="match-time-row">
+      <span class="match-dt">${dt.date}</span>
+    </div>
+
+    <div class="match-score-row">
+      <div class="ms-team">
+        <span class="ms-name">${m.home.name}</span>
+        <div class="t-flag-wrap">
+          <span class="te t-flag">${m.home.flag}</span>
+          ${homeDot}
+        </div>
+      </div>
+
+      ${scoreBlock}
+
+      <div class="ms-team right">
+        <div class="t-flag-wrap">
+          <span class="te t-flag">${m.away.flag}</span>
+          ${awayDot}
+        </div>
+        <span class="ms-name">${m.away.name}</span>
+      </div>
+    </div>
+
+    ${venue ? `<div class="match-venue-row">
+      <span class="venue-text">${venue}</span>
+    </div>` : ''}
+
+  </div>
+</div>`;
+}
+
+function renderAll() {
+  const list = MATCHES.filter(m =>
+    currentFilter === 'all' ||
+    m.home.code === currentFilter ||
+    m.away.code === currentFilter
+  );
+
+  // Group
+  const groups = {};
+  list.forEach(m => { (groups[m.g] = groups[m.g] || []).push(m); });
+
+  const keys = Object.keys(groups).sort();
+  let html = '';
+
+  if (keys.length > 0) {
+    html += `
+    <div class="section-head">
+      <span class="te section-icon">📋</span>
+      <span class="section-title">Vòng bảng</span>
+      <span class="section-sub">11/6 – 27/6/2026</span>
+    </div>`;
+  }
+
+  keys.forEach(g => {
+    const meta = GROUP_META[g] || { label:'BẢNG '+g, teams:'', em:'⚽' };
+    html += `
+    <div class="group-block">
+      <div class="group-label-row">
+        <span class="group-pill">${meta.label}</span>
+        <span class="group-teams-text">${meta.teams}</span>
+        <span class="te group-icon-right">${meta.em}</span>
+      </div>
+      ${groups[g].map(renderMatchRow).join('')}
+    </div>`;
+  });
+
+  document.getElementById('matchContainer').innerHTML = html;
+  document.getElementById('emptyState').classList.toggle('show', list.length === 0);
+}
+
+function filterTeam(team, btn) {
+  currentFilter = team;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+// ─────────────────────────────────────────────────────────────
+// FOTMOB API INTEGRATION
+// World Cup 2026 league ID = 77
+// Proxy: allorigins.win để bypass CORS
+// ─────────────────────────────────────────────────────────────
+
+// FotMob match IDs cho 15 trận – map bằng team names
+// Sẽ được populate sau khi fetch lần đầu
+const FOTMOB_ID_MAP = {}; // key: "home_away" → fotmob matchId
+
+// Polling interval logic:
+// - Đang có trận LIVE  → 60 giây
+// - Hôm nay có trận    → 5 phút
+// - Không có trận hôm nay → 30 phút
+let _pollTimer = null;
+let _isFetching = false;
+
+function getMatchDay() {
+  // Trả về ngày VN hiện tại dạng YYYYMMDD
+  const now = new Date();
+  const vn  = new Date(now.getTime() + 7 * 3600000); // UTC+7
+  return vn.toISOString().slice(0,10).replace(/-/g,'');
+}
+
+function hasLiveMatch() {
+  return MATCHES.some(m => m.status === 'live');
+}
+
+function hasTodayMatch() {
+  const today = getMatchDay();
+  return MATCHES.some(m => m.date.replace(/-/g,'') === today);
+}
+
+function getPollInterval() {
+  if (hasLiveMatch())   return 60_000;       // 60s khi có trận đang đấu
+  if (hasTodayMatch())  return 5 * 60_000;   // 5 phút khi hôm nay có trận
+  return 30 * 60_000;                         // 30 phút các ngày khác
+}
+
+function schedulePoll() {
+  clearTimeout(_pollTimer);
+  const interval = getPollInterval();
+  const label = interval < 60000 ? `${interval/1000}s`
+              : interval < 3600000 ? `${interval/60000} phút`
+              : `${interval/3600000} giờ`;
+  setBarText(`⏱ Tự động cập nhật mỗi <span>${label}</span> · Nguồn: FotMob`);
+  _pollTimer = setTimeout(() => fetchFotmob(true), interval);
+}
+
+// ── Normalize team name để match với MATCHES data ──────────────
+const NAME_MAP = {
+  'Brazil':        'brazil',
+  'Morocco':       'morocco',
+  'Haiti':         'haiti',
+  'Scotland':      'scotland',
+  'Germany':       'germany',
+  'Curaçao':       'curacao',
+  'Curacao':       'curacao',
+  'Ivory Coast':   'ivorycoast',
+  "Côte d'Ivoire": 'ivorycoast',
+  'Ecuador':       'ecuador',
+  'France':        'france',
+  'Senegal':       'senegal',
+  'Iraq':          'iraq',
+  'Norway':        'norway',
+  'Argentina':     'argentina',
+  'Algeria':       'algeria',
+  'Austria':       'austria',
+  'Jordan':        'jordan',
+  'England':       'england',
+  'Croatia':       'croatia',
+  'Ghana':         'ghana',
+  'Panama':        'panama',
+  'South Korea':   'southkorea',
+  'Korea Republic':'southkorea',
+};
+
+function normName(n) {
+  return NAME_MAP[n] || n?.toLowerCase().replace(/\s+/g,'');
+}
+
+// ── UI helpers ─────────────────────────────────────────────────
+function setBarText(html) {
+  document.getElementById('barText').innerHTML = html;
+}
+function setBarEm(em) {
+  document.getElementById('barEm').textContent = em;
+}
+function setTs(text) {
+  document.getElementById('tsLabel').textContent = text;
+}
+function showAiBox(html) {
+  document.getElementById('aiBoxText').innerHTML = html;
+  document.getElementById('aiBox').classList.add('show');
+}
+function hideAiBox() {
+  document.getElementById('aiBox').classList.remove('show');
+}
+
+// ── Score flash animation ──────────────────────────────────────
+function flashScore(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('score-flash');
+  void el.offsetWidth; // reflow
+  el.classList.add('score-flash');
+}
+
+// ── Main fetch: FotMob /api/leagues?id=77 ─────────────────────
+async function fetchFotmob(auto = false) {
+  if (_isFetching) return;
+  _isFetching = true;
+
+  const btn = document.getElementById('updateBtn');
+  const spinner = document.getElementById('barSpinner');
+  btn.disabled = true;
+  spinner.classList.add('on');
+  setBarEm('📡');
+  if (!auto) setBarText('<span>Đang lấy dữ liệu từ FotMob...</span>');
+
+  // FotMob league endpoint – proxied qua allorigins để bypass CORS
+  const fotmobUrl = 'https://www.fotmob.com/api/leagues?id=77&tab=matches&type=league&timeZone=Asia%2FHo_Chi_Minh';
+  const proxyUrl  = `https://api.allorigins.win/get?url=${encodeURIComponent(fotmobUrl)}`;
+
+  try {
+    const res = await fetch(proxyUrl, { cache: 'no-cache' });
+    if (!res.ok) throw new Error('Proxy HTTP ' + res.status);
+
+    const wrapper = await res.json();
+    if (!wrapper.contents) throw new Error('No contents from proxy');
+
+    const data = JSON.parse(wrapper.contents);
+    applyFotmobData(data);
+
+  } catch (err) {
+    console.warn('FotMob primary failed:', err.message);
+    // Fallback: thử proxy thứ 2
+    await fetchFotmobFallback();
+  } finally {
+    _isFetching = false;
+    btn.disabled = false;
+    spinner.classList.remove('on');
+    schedulePoll();
+  }
+}
+
+// ── Fallback: corsproxy.io ─────────────────────────────────────
+async function fetchFotmobFallback() {
+  const fotmobUrl = 'https://www.fotmob.com/api/leagues?id=77&tab=matches&type=league&timeZone=Asia%2FHo_Chi_Minh';
+  const proxy2    = `https://corsproxy.io/?${encodeURIComponent(fotmobUrl)}`;
+  try {
+    const res  = await fetch(proxy2, { cache: 'no-cache' });
+    if (!res.ok) throw new Error('Fallback HTTP ' + res.status);
+    const data = await res.json();
+    applyFotmobData(data);
+  } catch (err2) {
+    console.error('Both proxies failed:', err2.message);
+    setBarEm('⚠️');
+    setBarText('Không kết nối được FotMob. <span>Thử lại sau...</span>');
+    setTs('Lỗi kết nối · ' + nowVN());
+  }
+}
+
+// ── Parse & apply FotMob data to MATCHES array ─────────────────
+function applyFotmobData(data) {
+  // FotMob structure: data.matches.allMatches[] hoặc data.matches.data.events[]
+  let events = [];
+
+  try {
+    // Try structure 1: leagues response
+    const allMatches = data?.matches?.allMatches ?? [];
+    if (allMatches.length) {
+      events = allMatches;
+    } else {
+      // Try structure 2: nested data
+      const staged = data?.matches?.data?.events ?? [];
+      events = staged;
+    }
+  } catch(e) { /* ignore */ }
+
+  if (!events.length) {
+    setBarEm('⚠️');
+    setBarText('FotMob: <span>Chưa có dữ liệu trận đấu (giải chưa bắt đầu)</span>');
+    setTs('Kiểm tra lúc ' + nowVN() + ' · Giải đấu: 11/6/2026');
+    return;
+  }
+
+  let changed = 0;
+
+  events.forEach(ev => {
+    const homeName = ev?.home?.name ?? ev?.homeTeam?.name ?? '';
+    const awayName = ev?.away?.name ?? ev?.awayTeam?.name ?? '';
+    const homeCode = normName(homeName);
+    const awayCode = normName(awayName);
+
+    // Find matching row in our MATCHES array
+    const idx = MATCHES.findIndex(m =>
+      m.home.code === homeCode && m.away.code === awayCode
+    );
+    if (idx < 0) return;
+
+    const m = MATCHES[idx];
+
+    // Status
+    const started  = ev?.status?.started  ?? false;
+    const finished = ev?.status?.finished ?? false;
+    const cancelled= ev?.status?.cancelled?? false;
+    const newStatus = finished ? 'finished' : started ? 'live' : 'upcoming';
+
+    // Scores – FotMob uses home.score / away.score
+    const newSH = ev?.home?.score ?? ev?.homeTeam?.score ?? null;
+    const newSA = ev?.away?.score ?? ev?.awayTeam?.score ?? null;
+
+    const prevSH = m.sh, prevSA = m.sa, prevSt = m.status;
+
+    m.status = newStatus;
+    m.sh     = (newSH !== undefined && newSH !== null) ? Number(newSH) : null;
+    m.sa     = (newSA !== undefined && newSA !== null) ? Number(newSA) : null;
+
+    if (prevSH !== m.sh || prevSA !== m.sa || prevSt !== m.status) changed++;
+  });
+
+  renderAll();
+
+  // Flash changed scores
+  if (changed > 0) {
+    MATCHES.forEach(m => {
+      if (m.sh !== null) {
+        flashScore('sh-' + m.id);
+        flashScore('sa-' + m.id);
+      }
+    });
+  }
+
+  const interval = getPollInterval();
+  const nextLabel = interval < 60000 ? `${interval/1000}s`
+                  : interval < 3600000 ? `${interval/60000} phút`
+                  : `${interval/3600000} giờ`;
+
+  setBarEm('✅');
+  setBarText(`Cập nhật từ FotMob · <span>tự động mỗi ${nextLabel}</span>`);
+  setTs(`Lúc ${nowVN()} · ${events.length} trận · ${changed} thay đổi`);
+  hideAiBox();
+}
+
+function nowVN() {
+  return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+}
+
+// Public trigger (button)
+function fetchLiveScores() {
+  clearTimeout(_pollTimer);
+  fetchFotmob(false);
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// DEMO BOX – preview 3 trạng thái
+// ─────────────────────────────────────────────────────────────
+function renderDemoBox() {
+  const demos = [
+    // Trận sắp đấu
+    {
+      id: 'demo1', g: 'L', round: 'Lượt 1',
+      date: '2026-06-17', time: '03:00',
+      home: { name: 'Anh',     code: 'england', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#CF142B' },
+      away: { name: 'Croatia', code: 'croatia', flag: '🇭🇷',    color: '#0093dd' },
+      venue: 'AT&T Stadium, Dallas · USA',
+      sh: null, sa: null, status: 'upcoming'
+    },
+    // Trận đang diễn ra
+    {
+      id: 'demo2', g: 'C', round: 'Lượt 1',
+      date: '2026-06-13', time: '05:00',
+      home: { name: 'Brazil',  code: 'brazil',  flag: '🇧🇷', color: '#009c3b' },
+      away: { name: 'Morocco', code: 'morocco', flag: '🇲🇦', color: '#c1272d' },
+      venue: 'MetLife Stadium, New York · USA',
+      sh: 1, sa: 0, status: 'live', minute: 67
+    },
+    // Trận đã kết thúc
+    {
+      id: 'demo3', g: 'J', round: 'Lượt 2',
+      date: '2026-06-22', time: '00:00',
+      home: { name: 'Argentina', code: 'argentina', flag: '🇦🇷', color: '#74acdf' },
+      away: { name: 'Áo',        code: 'austria',   flag: '🇦🇹', color: '#ed2939' },
+      venue: 'AT&T Stadium, Dallas · USA',
+      sh: 3, sa: 1, status: 'finished'
+    },
+  ];
+
+  function demoStatusPill(m) {
+    return statusBadge(m.status, m.minute);
+  }
+
+  function demoRow(m) {
+    const isFeat   = TARGET.has(m.home.code) || TARGET.has(m.away.code);
+    const dt       = fmtDate(m.date, m.time);
+    const hasScore = m.sh !== null && m.sa !== null;
+
+    const homeDot = TARGET.has(m.home.code) ? `<span class="t-dot" style="background:${m.home.color}"></span>` : '';
+    const awayDot = TARGET.has(m.away.code) ? `<span class="t-dot" style="background:${m.away.color}"></span>` : '';
+
+    let scoreBlock;
+    if (!hasScore) {
+      scoreBlock = `<div class="ms-score-block"><span class="upcoming-time">${dt.time}</span></div>`;
+    } else {
+      scoreBlock = `<div class="ms-score-block">
+        <span class="ms-sc">${m.sh}</span>
+        <span class="ms-dash">-</span>
+        <span class="ms-sc">${m.sa}</span>
+      </div>`;
+    }
+
+    const badge = demoStatusPill(m);
+
+    return `
+<div class="match-row${isFeat?' featured':''}" style="${m.id!=='demo1'?'border-top:1px solid var(--border)':''}">
+  ${badge}
+  <div class="match-info">
+    <div class="match-time-row"><span class="match-dt">${dt.date}</span></div>
+    <div class="match-score-row">
+      <div class="ms-team">
+        <span class="ms-name">${m.home.name}</span>
+        <div class="t-flag-wrap"><span class="te t-flag">${m.home.flag}</span>${homeDot}</div>
+      </div>
+      ${scoreBlock}
+      <div class="ms-team right">
+        <div class="t-flag-wrap"><span class="te t-flag">${m.away.flag}</span>${awayDot}</div>
+        <span class="ms-name">${m.away.name}</span>
+      </div>
+    </div>
+    <div class="match-venue-row"><span class="venue-text">${m.venue}</span></div>
+  </div>
+</div>`;
+  }
+
+  const el = document.getElementById('demoRows');
+  if (el) el.innerHTML = demos.map(demoRow).join('');
+}
+
+// ── Init ───────────────────────────────────────────────────────
+(function init() {
+  // Auto-detect live từ đồng hồ client
+  const now = Date.now();
+  MATCHES.forEach(m => {
+    if (m.status === 'finished') return;
+    const start = new Date(m.date + 'T' + m.time + ':00+07:00').getTime();
+    const end   = start + 2.5 * 3600000; // 2h30 buffer
+    if (now >= start && now <= end) m.status = 'live';
+  });
+
+  renderAll();
+  renderDemoBox();
+
+  // Fetch ngay lập tức khi load trang
+  fetchFotmob(true);
+})();
+</script>
+</body>
+</html>
