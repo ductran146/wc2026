@@ -43,6 +43,8 @@ body {
   color: var(--text1);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+  z-index: 0;
 }
 
 button { font-family: var(--inter); cursor: pointer; border: none; background: none; }
@@ -51,14 +53,18 @@ a { text-decoration: none; color: inherit; }
 .te { font-family: var(--emoji); font-style: normal; line-height: 1; }
 
 /* ─── LAYOUT ────────────────────────────────────────────────── */
+.content-area {
+  background: var(--bg);
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
 .page-wrap {
   max-width: 960px;
   margin: 0 auto;
   padding-bottom: 80px;
   padding-top: 8px;
-  background: var(--bg);
-  position: relative;
-  z-index: 1;
 }
 
 /* ─── HEADER ────────────────────────────────────────────────── */
@@ -772,6 +778,138 @@ a { text-decoration: none; color: inherit; }
   font-family: var(--inter);
 }
 .demo-close:hover { background: rgba(255,255,255,0.12); color: var(--text1); }
+
+/* ─── STANDINGS TABLE ───────────────────────────────────────── */
+.standings-block {
+  margin: 0 16px 16px;
+  background: #1e1e1e;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.standings-header {
+  padding: 10px 16px;
+  background: #222222;
+  border-bottom: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.standings-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex: 1;
+}
+
+.standings-subtitle {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text3);
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.standings-table thead tr {
+  border-bottom: 1px solid var(--border);
+}
+
+.standings-table thead th {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+  text-align: center;
+  padding: 6px 8px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.standings-table thead th.th-team {
+  text-align: left;
+  padding-left: 14px;
+  width: 100%;
+}
+
+.standings-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.12s;
+}
+.standings-table tbody tr:last-child { border-bottom: none; }
+.standings-table tbody tr:hover { background: #252525; }
+
+/* Highlight the tracked team row */
+.standings-table tbody tr.tracked-row {
+  background: rgba(0,152,95,0.08);
+}
+.standings-table tbody tr.tracked-row:hover { background: rgba(0,152,95,0.14); }
+
+.standings-table tbody td {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text2);
+  text-align: center;
+  padding: 10px;
+  white-space: nowrap;
+}
+
+.standings-table tbody td.td-rank {
+  font-size: 11px;
+  color: var(--text3);
+  padding-left: 0px;
+  text-align: center;
+  width: 18px;
+}
+
+.standings-table tbody td.td-team {
+  text-align: left;
+  padding-left: 0px;
+}
+
+.td-team-inner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.td-flag {
+  font-size: 18px;
+  line-height: 1;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.td-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.td-pts {
+  font-weight: 700;
+  color: #fff !important;
+  font-size: 12px;
+}
+
+.td-gd.pos { color: var(--primary); }
+.td-gd.neg { color: var(--live); }
+
+/* rank-dot removed */
+
+/* Standings section label */
+.standings-section-label {
+  padding: 16px 16px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
 </style>
 </head>
 <body>
@@ -804,7 +942,7 @@ a { text-decoration: none; color: inherit; }
   <div class="filter-bar">
   <div class="filter-scroll">
     <button class="filter-chip active" onclick="filterTeam('all',this)">
-       Tất cả
+    Tất cả
     </button>
     <button class="filter-chip flag-only" onclick="filterTeam('england',this)">
       <span class="te chip-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
@@ -825,6 +963,7 @@ a { text-decoration: none; color: inherit; }
 </div><!-- /site-header -->
 
 <!-- MAIN CONTENT -->
+<div class="content-area">
 <div class="page-wrap">
   <div class="ai-box" id="aiBox">
     <span class="te ai-em">⚽</span>
@@ -851,6 +990,7 @@ a { text-decoration: none; color: inherit; }
 </div>
 
 <!-- BOTTOMBAR -->
+</div><!-- /content-area -->
 <div class="bottombar">
   <span class="te bar-em" id="barEm">📅</span>
   <div class="bar-text" id="barText">
@@ -2683,6 +2823,138 @@ function renderMatchRow(m) {
 </div>`;
 }
 
+
+// ─────────────────────────────────────────────────────────────
+// STANDINGS DATA (static, update khi có kết quả thực)
+// ─────────────────────────────────────────────────────────────
+const STANDINGS = {
+  // Bảng C — BRAZIL
+  C: [
+    { name:'Brazil',   code:'brazil',   flag:'🇧🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Morocco',  code:'morocco',  flag:'🇲🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Haiti',    code:'haiti',    flag:'🇭🇹', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Scotland', code:'scotland', flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng E — GERMANY
+  E: [
+    { name:'Đức',         code:'germany',    flag:'🇩🇪', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Ecuador',     code:'ecuador',    flag:'🇪🇨', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Bờ Biển Ngà', code:'ivorycoast', flag:'🇨🇮', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Curaçao',     code:'curacao',    flag:'🇨🇼', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng I — FRANCE
+  I: [
+    { name:'Pháp',    code:'france',  flag:'🇫🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Na Uy',   code:'norway',  flag:'🇳🇴', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Senegal', code:'senegal', flag:'🇸🇳', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Iraq',    code:'iraq',    flag:'🇮🇶', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng J — ARGENTINA
+  J: [
+    { name:'Argentina', code:'argentina', flag:'🇦🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Algeria',   code:'algeria',   flag:'🇩🇿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Áo',        code:'austria',   flag:'🇦🇹', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Jordan',    code:'jordan',    flag:'🇯🇴', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng L — ENGLAND
+  L: [
+    { name:'Anh',    code:'england', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Croatia', code:'croatia', flag:'🇭🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Ghana',   code:'ghana',   flag:'🇬🇭', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Panama',  code:'panama',  flag:'🇵🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+};
+
+// Map tracked team → their group
+const TEAM_GROUP = {
+  england: 'L', germany: 'E', france: 'I', brazil: 'C', argentina: 'J'
+};
+
+function gdText(gf, ga) {
+  const d = gf - ga;
+  return d > 0 ? '+' + d : String(d);
+}
+
+function renderStandingsTable(group, highlightCode) {
+  const rows = STANDINGS[group];
+  if (!rows) return '';
+
+  const meta = GROUP_META[group] || { label: 'Grp. ' + group };
+
+  const rowsHtml = rows.map((t, i) => {
+    const rank = i + 1;
+    const dotClass = rank === 1 ? 'q1' : rank === 2 ? 'q2' : 'out';
+    const isTracked = t.code === highlightCode;
+    const gd = t.gf - t.ga;
+    const gdClass = gd > 0 ? 'pos' : gd < 0 ? 'neg' : '';
+
+    return `
+    <tr class="${isTracked ? 'tracked-row' : ''}">
+      <td class="td-rank">${rank}</td>
+      <td class="td-team">
+        <div class="td-team-inner">
+          <span class="te td-flag">${t.flag}</span>
+          <span class="td-name">${t.name}</span>
+        </div>
+      </td>
+      <td>${t.pl}</td>
+      <td>${t.w}</td>
+      <td>${t.d}</td>
+      <td>${t.l}</td>
+      <td class="td-gd ${gdClass}">${gdText(t.gf, t.ga)}</td>
+      <td class="td-pts">${t.pts}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+<div class="standings-block">
+  <div class="standings-header">
+    <span class="standings-title">${meta.label}</span>
+    <span class="standings-subtitle">Vòng bảng</span>
+  </div>
+  <table class="standings-table">
+    <thead>
+      <tr>
+        <th class="th-team" colspan="2">#</th>
+        <th>TR</th>
+        <th>T</th>
+        <th>H</th>
+        <th>B</th>
+        <th>+/-</th>
+        <th>ĐS</th>
+      </tr>
+    </thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+</div>`;
+}
+
+// Update standings from FotMob data when available
+function applyStandingsFromFotmob(data) {
+  try {
+    const table = data?.details?.table ?? data?.table ?? null;
+    if (!table) return;
+    const entries = table[0]?.all ?? table?.all ?? table ?? [];
+    entries.forEach(e => {
+      const code = normName(e?.name ?? '');
+      for (const g in STANDINGS) {
+        const idx = STANDINGS[g].findIndex(t => t.code === code);
+        if (idx < 0) continue;
+        STANDINGS[g][idx] = {
+          ...STANDINGS[g][idx],
+          pl:  e.played ?? 0,
+          w:   e.wins   ?? 0,
+          d:   e.draws  ?? 0,
+          l:   e.losses ?? 0,
+          gf:  e.scoresStr ? parseInt(e.scoresStr.split('-')[0]) : 0,
+          ga:  e.scoresStr ? parseInt(e.scoresStr.split('-')[1]) : 0,
+          pts: e.pts ?? 0,
+        };
+      }
+    });
+  } catch(e) { console.warn('standings parse error', e); }
+}
+
 function renderAll() {
   const list = MATCHES.filter(m => {
     const teamOk = currentFilter === 'all' ||
@@ -2717,6 +2989,13 @@ function renderAll() {
       ${groups[g].map(renderMatchRow).join('')}
     </div>`;
   });
+
+  // Append standings block when a specific team is selected
+  if (currentFilter !== 'all' && TEAM_GROUP[currentFilter]) {
+    const group = TEAM_GROUP[currentFilter];
+    html += `<div class="standings-section-label">Bảng xếp hạng</div>`;
+    html += renderStandingsTable(group, currentFilter);
+  }
 
   document.getElementById('matchContainer').innerHTML = html;
   document.getElementById('emptyState').classList.toggle('show', list.length === 0);
