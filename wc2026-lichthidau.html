@@ -1171,6 +1171,13 @@ a { text-decoration: none; color: inherit; }
         <option value="J">Bảng J</option>
         <option value="K">Bảng K</option>
         <option value="L">Bảng L</option>
+        <optgroup label="─── Vòng loại trực tiếp ───────"></optgroup>
+        <option value="R32">Vòng 1/16</option>
+        <option value="R16">Vòng 1/8</option>
+        <option value="QF">Tứ kết</option>
+        <option value="SF">Bán kết</option>
+        <option value="TP">Tranh hạng 3</option>
+        <option value="FIN">🏆 Chung kết</option>
       </select>
     </div>
   </div>
@@ -2857,7 +2864,209 @@ const MATCHES = [
     "sh": null,
     "sa": null,
     "status": "upcoming"
-  }
+  },
+  // ══════════════════════════════════════════════════════════════
+  // KNOCKOUT STAGE — placeholder (cập nhật tên đội sau vòng bảng)
+  // ══════════════════════════════════════════════════════════════
+
+  // ── ROUND OF 32 (Vòng 1/16) — 29/6 – 2/7 ────────────────────
+  { "id":"r32_1",  "g":"R32", "round":"Vòng 1/16 · Trận 1",
+    "date":"2026-06-29", "time":"02:00",
+    "home":{"name":"Nhất A", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì B",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_2",  "g":"R32", "round":"Vòng 1/16 · Trận 2",
+    "date":"2026-06-29", "time":"05:00",
+    "home":{"name":"Nhất C", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì D",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"SoFi Stadium, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_3",  "g":"R32", "round":"Vòng 1/16 · Trận 3",
+    "date":"2026-06-30", "time":"02:00",
+    "home":{"name":"Nhất E", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì F",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"AT&T Stadium, Dallas · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_4",  "g":"R32", "round":"Vòng 1/16 · Trận 4",
+    "date":"2026-06-30", "time":"05:00",
+    "home":{"name":"Nhất G", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì H",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Hard Rock Stadium, Miami · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_5",  "g":"R32", "round":"Vòng 1/16 · Trận 5",
+    "date":"2026-07-01", "time":"02:00",
+    "home":{"name":"Nhất I", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì J",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Gillette Stadium, Boston · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_6",  "g":"R32", "round":"Vòng 1/16 · Trận 6",
+    "date":"2026-07-01", "time":"05:00",
+    "home":{"name":"Nhất K", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì L",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Arrowhead Stadium, Kansas City · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_7",  "g":"R32", "round":"Vòng 1/16 · Trận 7",
+    "date":"2026-07-02", "time":"02:00",
+    "home":{"name":"Nhất B", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì A",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"NRG Stadium, Houston · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_8",  "g":"R32", "round":"Vòng 1/16 · Trận 8",
+    "date":"2026-07-02", "time":"05:00",
+    "home":{"name":"Nhất D", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì C",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"BC Place, Vancouver · Canada", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_9",  "g":"R32", "round":"Vòng 1/16 · Trận 9",
+    "date":"2026-07-03", "time":"02:00",
+    "home":{"name":"Nhất F", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì E",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_10", "g":"R32", "round":"Vòng 1/16 · Trận 10",
+    "date":"2026-07-03", "time":"05:00",
+    "home":{"name":"Nhất H", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì G",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Levi\'s Stadium, San Francisco · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_11", "g":"R32", "round":"Vòng 1/16 · Trận 11",
+    "date":"2026-07-04", "time":"02:00",
+    "home":{"name":"Nhất J", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì I",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Estadio Azteca, Mexico City · Mexico", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_12", "g":"R32", "round":"Vòng 1/16 · Trận 12",
+    "date":"2026-07-04", "time":"05:00",
+    "home":{"name":"Nhất L", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì K",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"BMO Field, Toronto · Canada", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_13", "g":"R32", "round":"Vòng 1/16 · Trận 13",
+    "date":"2026-07-05", "time":"02:00",
+    "home":{"name":"Nhất A*","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì L*", "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Estadio Guadalajara, Guadalajara · Mexico", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_14", "g":"R32", "round":"Vòng 1/16 · Trận 14",
+    "date":"2026-07-05", "time":"05:00",
+    "home":{"name":"Nhất B*","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì K*", "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Estadio Monterrey, Monterrey · Mexico", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_15", "g":"R32", "round":"Vòng 1/16 · Trận 15",
+    "date":"2026-07-06", "time":"02:00",
+    "home":{"name":"Nhất C*","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì J*", "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Lumen Field, Seattle · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r32_16", "g":"R32", "round":"Vòng 1/16 · Trận 16",
+    "date":"2026-07-06", "time":"05:00",
+    "home":{"name":"Nhất D*","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì I*", "code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Lincoln Financial Field, Philadelphia · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  // ── ROUND OF 16 (Vòng Tứ kết 1/8) — 4/7 – 7/7 ──────────────
+  { "id":"r16_1", "g":"R16", "round":"Vòng 1/8 · Trận 1",
+    "date":"2026-07-09", "time":"02:00",
+    "home":{"name":"Thắng R32-1","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R32-2","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r16_2", "g":"R16", "round":"Vòng 1/8 · Trận 2",
+    "date":"2026-07-09", "time":"05:00",
+    "home":{"name":"Thắng R32-3","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R32-4","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"AT&T Stadium, Dallas · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r16_3", "g":"R16", "round":"Vòng 1/8 · Trận 3",
+    "date":"2026-07-10", "time":"02:00",
+    "home":{"name":"Thắng R32-5","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R32-6","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Hard Rock Stadium, Miami · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r16_4", "g":"R16", "round":"Vòng 1/8 · Trận 4",
+    "date":"2026-07-10", "time":"05:00",
+    "home":{"name":"Thắng R32-7","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R32-8","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"SoFi Stadium, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r16_5", "g":"R16", "round":"Vòng 1/8 · Trận 5",
+    "date":"2026-07-11", "time":"02:00",
+    "home":{"name":"Thắng R32-9", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R32-10","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Arrowhead Stadium, Kansas City · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r16_6", "g":"R16", "round":"Vòng 1/8 · Trận 6",
+    "date":"2026-07-11", "time":"05:00",
+    "home":{"name":"Thắng R32-11","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R32-12","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r16_7", "g":"R16", "round":"Vòng 1/8 · Trận 7",
+    "date":"2026-07-12", "time":"02:00",
+    "home":{"name":"Thắng R32-13","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R32-14","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Gillette Stadium, Boston · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"r16_8", "g":"R16", "round":"Vòng 1/8 · Trận 8",
+    "date":"2026-07-12", "time":"05:00",
+    "home":{"name":"Thắng R32-15","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R32-16","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"NRG Stadium, Houston · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  // ── TỨ KẾT (Quarter-finals) — 10/7 – 11/7 ───────────────────
+  { "id":"qf_1", "g":"QF", "round":"Tứ kết · Trận 1",
+    "date":"2026-07-14", "time":"05:00",
+    "home":{"name":"Thắng R16-1","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R16-2","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"qf_2", "g":"QF", "round":"Tứ kết · Trận 2",
+    "date":"2026-07-15", "time":"05:00",
+    "home":{"name":"Thắng R16-3","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R16-4","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"AT&T Stadium, Dallas · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"qf_3", "g":"QF", "round":"Tứ kết · Trận 3",
+    "date":"2026-07-16", "time":"05:00",
+    "home":{"name":"Thắng R16-5","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R16-6","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"SoFi Stadium, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"qf_4", "g":"QF", "round":"Tứ kết · Trận 4",
+    "date":"2026-07-17", "time":"05:00",
+    "home":{"name":"Thắng R16-7","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng R16-8","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  // ── BÁN KẾT (Semi-finals) — 14/7 – 15/7 ────────────────────
+  { "id":"sf_1", "g":"SF", "round":"Bán kết · Trận 1",
+    "date":"2026-07-19", "time":"05:00",
+    "home":{"name":"Thắng TK-1","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng TK-2","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  { "id":"sf_2", "g":"SF", "round":"Bán kết · Trận 2",
+    "date":"2026-07-20", "time":"05:00",
+    "home":{"name":"Thắng TK-3","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng TK-4","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  // ── TRANH HẠNG 3 (Third place) — 18/7 ───────────────────────
+  { "id":"tp_1", "g":"TP", "round":"Tranh hạng 3",
+    "date":"2026-07-23", "time":"05:00",
+    "home":{"name":"Thua BK-1","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thua BK-2","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"Hard Rock Stadium, Miami · USA", "sh":null,"sa":null,"status":"upcoming" },
+
+  // ── CHUNG KẾT (Final) — 19/7 ────────────────────────────────
+  { "id":"fin_1", "g":"FIN", "round":"Chung kết",
+    "date":"2026-07-26", "time":"05:00",
+    "home":{"name":"Thắng BK-1","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Thắng BK-2","code":"tbd","flag":"🏳️","color":"#555"},
+    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" }
+
 ];
 
 const TARGET = new Set(['england','germany','france','brazil','argentina','spain','portugal']);
@@ -2910,7 +3119,13 @@ const GROUP_META = {
   "L": {
     "label": "Grp. L",
     "teams": "Anh · Croatia · Ghana · Panama"
-  }
+  },
+  "R32": { "label": "Vòng 1/16",   "teams": "32 trận · 29/06 – 06/07" },
+  "R16": { "label": "Vòng 1/8",    "teams": "16 trận · 09/07 – 12/07" },
+  "QF":  { "label": "Tứ kết",      "teams": "4 trận · 14/07 – 17/07" },
+  "SF":  { "label": "Bán kết",     "teams": "2 trận · 19/07 – 20/07" },
+  "TP":  { "label": "Tranh hạng 3","teams": "23/07/2026" },
+  "FIN": { "label": "🏆 Chung kết","teams": "MetLife Stadium · 26/07/2026" }
 };
 
 let currentFilter = 'all';
@@ -3178,8 +3393,8 @@ function renderAll() {
       currentRoundFilter === 'all' ||
       m.round === currentRoundFilter;
 
-    // Group filter (only when view=group and filter=all)
-    const groupOk = !(currentFilter === 'all' && currentView === 'group' && currentGroupFilter !== 'all') ||
+    // Group filter: áp dụng cho cả 2 view khi tab = 'all'
+    const groupOk = !(currentFilter === 'all' && currentGroupFilter !== 'all') ||
       m.g === currentGroupFilter;
 
     return teamOk && roundOk && groupOk;
@@ -3203,7 +3418,7 @@ function renderAll() {
       const d = new Date(dateStr + 'T12:00:00+07:00');
       const label = DAYS[d.getDay()] + ' · ' + d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0');
       html += `
-      <div class="group-block">
+      <div class="group-block" data-date="${dateStr}">
         <div class="group-label-row">
           <span class="group-pill">${label}</span>
           <span class="group-teams-text">${byDate[dateStr].length} trận</span>
@@ -3246,9 +3461,14 @@ function switchView(view, btn) {
   currentView = view;
   document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
+  // Select bảng hiển thị cho cả 2 view
   const wrap = document.getElementById('groupSelectWrap');
-  if (wrap) wrap.classList.toggle('show', view === 'group');
+  if (wrap) wrap.classList.add('show');
   renderAll();
+  // Auto-scroll to today when switching to date view
+  if (view === 'date' && currentFilter === 'all') {
+    requestAnimationFrame(() => requestAnimationFrame(() => scrollToToday(false)));
+  }
 }
 
 function onGroupSelectChange(val) {
@@ -3263,6 +3483,12 @@ function filterTeam(team, btn) {
 
   const roundBar = document.getElementById('roundFilterBar');
   if (roundBar) roundBar.classList.toggle('show', team === 'all');
+
+  // Ẩn/hiện demo box và view switcher — chỉ hiện trong tab "Tất cả"
+  const demoBox = document.getElementById('demoBox');
+  if (demoBox) demoBox.style.display = team === 'all' ? '' : 'none';
+  const viewBar = document.getElementById('viewBar');
+  if (viewBar) viewBar.classList.toggle('show', team === 'all');
 
   // Khi chuyển sang tab đội tuyển, bỏ lọc vòng để tránh màn hình rỗng khó hiểu.
   if (team !== 'all') {
@@ -3479,84 +3705,242 @@ async function fetchFotmobFallback() {
 }
 
 // ── Parse & apply FotMob data to MATCHES array ─────────────────
-function applyFotmobData(data) {
-  // FotMob structure: data.matches.allMatches[] hoặc data.matches.data.events[]
-  let events = [];
+// ── Flag emoji lookup from country code ──────────────────────
+const FLAG_MAP = {
+  'england': String.fromCodePoint(0x1F3F4,0xE0067,0xE0062,0xE0065,0xE006E,0xE0067,0xE007F),
+  'scotland': String.fromCodePoint(0x1F3F4,0xE0067,0xE0062,0xE0073,0xE0063,0xE0074,0xE007F),
+  'brazil':'\u{1F1E7}\u{1F1F7}','france':'\u{1F1EB}\u{1F1F7}',
+  'germany':'\u{1F1E9}\u{1F1EA}','argentina':'\u{1F1E6}\u{1F1F7}',
+  'spain':'\u{1F1EA}\u{1F1F8}','portugal':'\u{1F1F5}\u{1F1F9}',
+  'netherlands':'\u{1F1F3}\u{1F1F1}','belgium':'\u{1F1E7}\u{1F1EA}',
+  'italy':'\u{1F1EE}\u{1F1F9}','croatia':'\u{1F1ED}\u{1F1F7}',
+  'denmark':'\u{1F1E9}\u{1F1F0}','switzerland':'\u{1F1E8}\u{1F1ED}',
+  'austria':'\u{1F1E6}\u{1F1F9}','norway':'\u{1F1F3}\u{1F1F4}',
+  'sweden':'\u{1F1F8}\u{1F1EA}','poland':'\u{1F1F5}\u{1F1F1}',
+  'ukraine':'\u{1F1FA}\u{1F1E6}','serbia':'\u{1F1F7}\u{1F1F8}',
+  'turkey':'\u{1F1F9}\u{1F1F7}','turkiye':'\u{1F1F9}\u{1F1F7}',
+  'usa':'\u{1F1FA}\u{1F1F8}','canada':'\u{1F1E8}\u{1F1E6}',
+  'mexico':'\u{1F1F2}\u{1F1FD}','uruguay':'\u{1F1FA}\u{1F1FE}',
+  'colombia':'\u{1F1E8}\u{1F1F4}','chile':'\u{1F1E8}\u{1F1F1}',
+  'ecuador':'\u{1F1EA}\u{1F1E8}','peru':'\u{1F1F5}\u{1F1EA}',
+  'panama':'\u{1F1F5}\u{1F1E6}','paraguay':'\u{1F1F5}\u{1F1FE}',
+  'morocco':'\u{1F1F2}\u{1F1E6}','senegal':'\u{1F1F8}\u{1F1F3}',
+  'nigeria':'\u{1F1F3}\u{1F1EC}','ghana':'\u{1F1EC}\u{1F1ED}',
+  'cameroon':'\u{1F1E8}\u{1F1F2}','ivorycoast':'\u{1F1E8}\u{1F1EE}',
+  'egypt':'\u{1F1EA}\u{1F1EC}','algeria':'\u{1F1E9}\u{1F1FF}',
+  'tunisia':'\u{1F1F9}\u{1F1F3}','southafrica':'\u{1F1FF}\u{1F1E6}',
+  'drcongo':'\u{1F1E8}\u{1F1E9}','capeverde':'\u{1F1E8}\u{1F1FB}',
+  'mali':'\u{1F1F2}\u{1F1F1}','angola':'\u{1F1E6}\u{1F1F4}',
+  'japan':'\u{1F1EF}\u{1F1F5}','southkorea':'\u{1F1F0}\u{1F1F7}',
+  'australia':'\u{1F1E6}\u{1F1FA}','iran':'\u{1F1EE}\u{1F1F7}',
+  'saudi':'\u{1F1F8}\u{1F1E6}','saudiarabia':'\u{1F1F8}\u{1F1E6}',
+  'iraq':'\u{1F1EE}\u{1F1F6}','qatar':'\u{1F1F6}\u{1F1E6}',
+  'jordan':'\u{1F1EF}\u{1F1F4}','uzbekistan':'\u{1F1FA}\u{1F1FF}',
+  'czechia':'\u{1F1E8}\u{1F1FF}','slovakia':'\u{1F1F8}\u{1F1F0}',
+  'hungary':'\u{1F1ED}\u{1F1FA}','romania':'\u{1F1F7}\u{1F1F4}',
+  'greece':'\u{1F1EC}\u{1F1F7}','newzealand':'\u{1F1F3}\u{1F1FF}',
+  'haiti':'\u{1F1ED}\u{1F1F9}','cuba':'\u{1F1E8}\u{1F1FA}',
+  'curacao':'\u{1F1E8}\u{1F1FC}','bosnia':'\u{1F1E7}\u{1F1E6}',
+  'northmacedonia':'\u{1F1F2}\u{1F1F0}',
+};
 
+function getFlag(code) {
+  return FLAG_MAP[code] || '\u{1F3F3}\uFE0F';
+}
+
+// ── Extract VN-date (YYYY-MM-DD) from FotMob event ────────────
+function evDate(ev) {
   try {
-    // Try structure 1: leagues response
-    const allMatches = data?.matches?.allMatches ?? [];
-    if (allMatches.length) {
-      events = allMatches;
-    } else {
-      // Try structure 2: nested data
-      const staged = data?.matches?.data?.events ?? [];
-      events = staged;
-    }
-  } catch(e) { /* ignore */ }
+    const t = ev?.status?.utcTime ?? ev?.matchDate ?? '';
+    if (!t) return '';
+    const d = new Date(t);
+    d.setHours(d.getHours() + 7); // UTC+7
+    return d.toISOString().slice(0,10);
+  } catch { return ''; }
+}
+
+// ── Map FotMob stage string → our group key ────────────────────
+function koGroup(stageName) {
+  if (!stageName) return null;
+  const s = stageName.toLowerCase();
+  if (s.includes('round of 32') || s.includes('1/16') || s.includes('32'))  return 'R32';
+  if (s.includes('round of 16') || s.includes('1/8')  || s.includes('16'))  return 'R16';
+  if (s.includes('quarter'))   return 'QF';
+  if (s.includes('semi'))      return 'SF';
+  if (s.includes('third') || s.includes('bronze') || s.includes('3rd')) return 'TP';
+  if (s.includes('final'))     return 'FIN';
+  return null;
+}
+
+// ── Try multiple FotMob response structures ────────────────────
+function parseEvents(data) {
+  const paths = [
+    () => data?.matches?.allMatches,
+    () => data?.matches?.data?.events,
+    () => data?.data?.events,
+    () => data?.events,
+    () => Array.isArray(data) ? data : null,
+  ];
+  for (const fn of paths) {
+    try { const r = fn(); if (Array.isArray(r) && r.length) return r; } catch {}
+  }
+  return [];
+}
+
+// ── isTBD: FotMob sometimes fills "Winner Match X" as placeholder
+function isTBD(name) {
+  if (!name) return true;
+  const n = name.toLowerCase();
+  return n === 'tbd' || n.includes('winner') || n.includes('loser')
+      || n.includes('match') || n.includes('placeholder');
+}
+
+function applyFotmobData(data) {
+  const events = parseEvents(data);
 
   if (!events.length) {
-    setBarEm('⚠️');
-    setBarText('FotMob: <span>Chưa có dữ liệu trận đấu (giải chưa bắt đầu)</span>');
-    setTs('Kiểm tra lúc ' + nowVN() + ' · Giải đấu: 11/6/2026');
+    setBarEm('\u26A0\uFE0F');
+    setBarText('FotMob: <span>Ch\u01B0a c\u00F3 d\u1EEF li\u1EC7u tr\u1EADn \u0111\u1EA5u</span>');
+    setTs('Ki\u1EC3m tra l\u00FAc ' + nowVN() + ' · Gi\u1EA3i \u0111\u1EA5u: 11/6/2026');
     return;
   }
 
   let changed = 0;
 
-  events.forEach(ev => {
-    const homeName = ev?.home?.name ?? ev?.homeTeam?.name ?? '';
-    const awayName = ev?.away?.name ?? ev?.awayTeam?.name ?? '';
-    const homeCode = normName(homeName);
-    const awayCode = normName(awayName);
-
-    // Find matching row in our MATCHES array
-    const idx = MATCHES.findIndex(m =>
-      m.home.code === homeCode && m.away.code === awayCode
-    );
-    if (idx < 0) return;
-
-    const m = MATCHES[idx];
-
-    // Status
-    const started  = ev?.status?.started  ?? false;
-    const finished = ev?.status?.finished ?? false;
-    const cancelled= ev?.status?.cancelled?? false;
-    const newStatus = finished ? 'finished' : started ? 'live' : 'upcoming';
-
-    // Scores – FotMob uses home.score / away.score
-    const newSH = ev?.home?.score ?? ev?.homeTeam?.score ?? null;
-    const newSA = ev?.away?.score ?? ev?.awayTeam?.score ?? null;
-
-    const prevSH = m.sh, prevSA = m.sa, prevSt = m.status;
-
-    m.status = newStatus;
-    m.sh     = (newSH !== undefined && newSH !== null) ? Number(newSH) : null;
-    m.sa     = (newSA !== undefined && newSA !== null) ? Number(newSA) : null;
-
-    if (prevSH !== m.sh || prevSA !== m.sa || prevSt !== m.status) changed++;
+  // ── Sort events by utcTime ─────────────────────────────────────
+  const sorted = [...events].sort((a,b) => {
+    const ta = a?.status?.utcTime ?? a?.matchDate ?? '';
+    const tb = b?.status?.utcTime ?? b?.matchDate ?? '';
+    return ta < tb ? -1 : ta > tb ? 1 : 0;
   });
 
-  renderAll();
+  // ── Build: byTeams map for group stage ────────────────────────
+  const byTeams = {};
+  sorted.forEach(ev => {
+    const hn = ev?.home?.name ?? ev?.homeTeam?.name ?? '';
+    const an = ev?.away?.name ?? ev?.awayTeam?.name ?? '';
+    const hc = normName(hn), ac = normName(an);
+    if (hc && ac && !isTBD(hn) && !isTBD(an)) {
+      byTeams[hc + '_' + ac] = ev;
+    }
+  });
 
-  // Flash changed scores
+  // ── Build: byStageIdx map for knockout ────────────────────────
+  // Group FotMob events by their stage
+  const byStage = {};
+  sorted.forEach(ev => {
+    const stageName = ev?.stage?.name ?? ev?.tournament?.name
+                   ?? ev?.leagueName ?? ev?.roundName ?? '';
+    const kg = koGroup(stageName);
+    if (kg) {
+      if (!byStage[kg]) byStage[kg] = [];
+      byStage[kg].push(ev);
+    }
+  });
+
+  // ── Also build: byDateOrder for fallback date+position matching
+  const byDateOrder = {};
+  const dayCounter = {};
+  sorted.forEach(ev => {
+    const d = evDate(ev);
+    if (!d) return;
+    dayCounter[d] = (dayCounter[d] || 0);
+    byDateOrder[d + '_' + dayCounter[d]] = ev;
+    dayCounter[d]++;
+  });
+
+  // ── Track MATCHES iteration counters ─────────────────────────
+  const matchDayCounter = {};
+  const matchStageCounter = {};
+
+  MATCHES.forEach(m => {
+    const isKO = ['R32','R16','QF','SF','TP','FIN'].includes(m.g);
+    let ev = null;
+
+    if (!isKO) {
+      // ── Group stage: match by team codes ──────────────────────
+      ev = byTeams[m.home.code + '_' + m.away.code]
+        ?? byTeams[m.away.code + '_' + m.home.code]
+        ?? null;
+
+    } else {
+      // ── Knockout: Strategy 1 — match by stage + position ──────
+      const stageEvs = byStage[m.g] ?? [];
+      if (!matchStageCounter[m.g]) matchStageCounter[m.g] = 0;
+      const si = matchStageCounter[m.g];
+      if (si < stageEvs.length) {
+        ev = stageEvs[si];
+        matchStageCounter[m.g]++;
+      }
+
+      // Strategy 2 fallback — match by date+position if stage map failed
+      if (!ev) {
+        const dk = m.date + '_' + (matchDayCounter[m.date] ?? 0);
+        ev = byDateOrder[dk] ?? null;
+      }
+
+      // ── Update team names/flags from FotMob ───────────────────
+      if (ev) {
+        const hn = ev?.home?.name ?? ev?.homeTeam?.name ?? '';
+        const an = ev?.away?.name ?? ev?.awayTeam?.name ?? '';
+        const hc = normName(hn), ac = normName(an);
+
+        if (!isTBD(hn) && hc && hc !== m.home.code) {
+          m.home.name  = hn;
+          m.home.code  = hc;
+          m.home.flag  = getFlag(hc);
+          m.home.color = '#666';
+          changed++;
+        }
+        if (!isTBD(an) && ac && ac !== m.away.code) {
+          m.away.name  = an;
+          m.away.code  = ac;
+          m.away.flag  = getFlag(ac);
+          m.away.color = '#666';
+          changed++;
+        }
+      }
+    }
+
+    // Track date counter
+    matchDayCounter[m.date] = (matchDayCounter[m.date] ?? 0) + 1;
+
+    if (!ev) return;
+
+    // ── Update score + status ─────────────────────────────────
+    const started  = ev?.status?.started  ?? false;
+    const finished = ev?.status?.finished ?? false;
+    const newSt    = finished ? 'finished' : started ? 'live' : 'upcoming';
+    const rawSH    = ev?.home?.score ?? ev?.homeTeam?.score ?? null;
+    const rawSA    = ev?.away?.score ?? ev?.awayTeam?.score ?? null;
+    const newSH    = rawSH !== null && rawSH !== undefined ? Number(rawSH) : null;
+    const newSA    = rawSA !== null && rawSA !== undefined ? Number(rawSA) : null;
+
+    const prevSH = m.sh, prevSA = m.sa, prevSt = m.status;
+    m.status = newSt;
+    m.sh = newSH;
+    m.sa = newSA;
+    if (prevSH !== newSH || prevSA !== newSA || prevSt !== newSt) changed++;
+  });
+
+  // ── Update standings ──────────────────────────────────────────
+  try { applyStandingsFromFotmob(data); } catch {}
+
+  // ── Re-render ─────────────────────────────────────────────────
+  renderAll();
   if (changed > 0) {
     MATCHES.forEach(m => {
-      if (m.sh !== null) {
-        flashScore('sh-' + m.id);
-        flashScore('sa-' + m.id);
-      }
+      if (m.sh !== null) { flashScore('sh-' + m.id); flashScore('sa-' + m.id); }
     });
   }
 
   const interval = getPollInterval();
-  const nextLabel = interval < 60000 ? `${interval/1000}s`
-                  : interval < 3600000 ? `${interval/60000} phút`
-                  : `${interval/3600000} giờ`;
-
-  setBarEm('✅');
-  setBarText(`Cập nhật từ FotMob · <span>tự động mỗi ${nextLabel}</span>`);
-  setTs(`Lúc ${nowVN()} · ${events.length} trận · ${changed} thay đổi`);
+  const nextLabel = interval < 60000   ? interval/1000 + 's'
+                  : interval < 3600000 ? interval/60000 + ' ph\u00FAt'
+                  : interval/3600000 + ' gi\u1EDD';
+  setBarEm('\u2705');
+  setBarText('C\u1EADp nh\u1EADt t\u1EEB FotMob \u00B7 <span>t\u1EF1 \u0111\u1ED9ng m\u1ED7i ' + nextLabel + '</span>');
+  setTs('L\u00FAc ' + nowVN() + ' \u00B7 ' + events.length + ' tr\u1EADn \u00B7 ' + changed + ' thay \u0111\u1ED5i');
   hideAiBox();
 }
 
@@ -3600,6 +3984,58 @@ function renderDemoBox() {
 }
 
 // ── Init ───────────────────────────────────────────────────────
+
+// ── Auto-scroll to today (or nearest future date) ─────────────
+function scrollToToday(isInit = false) {
+  // Only in "Tất cả" + "Theo ngày" view
+  if (currentFilter !== 'all' || currentView !== 'date') return;
+
+  // Get today in VN timezone (YYYY-MM-DD)
+  const now = new Date();
+  const vnNow = new Date(now.getTime() + 7 * 3600000);
+  const today = vnNow.toISOString().slice(0, 10);
+
+  // Find all date group-blocks
+  const blocks = Array.from(document.querySelectorAll('[data-date]'));
+  if (!blocks.length) return;
+
+  // 1. Exact today
+  let target = blocks.find(b => b.dataset.date === today);
+
+  // 2. No match → nearest future date
+  if (!target) {
+    const future = blocks
+      .filter(b => b.dataset.date > today)
+      .sort((a,b) => a.dataset.date.localeCompare(b.dataset.date));
+    target = future[0] ?? null;
+  }
+
+  // 3. Still no match → nearest past date (latest)
+  if (!target) {
+    const past = blocks
+      .filter(b => b.dataset.date < today)
+      .sort((a,b) => b.dataset.date.localeCompare(a.dataset.date));
+    target = past[0] ?? null;
+  }
+
+  if (!target) return;
+
+  // Offset: height of sticky headers (site-header ~116px + some breathing room)
+  const stickyH = 116 + 12;
+
+  if (isInit) {
+    // On initial load: instant scroll (no animation) so user sees correct position
+    const rect = target.getBoundingClientRect();
+    const scrollY = window.scrollY + rect.top - stickyH;
+    window.scrollTo({ top: Math.max(0, scrollY), behavior: 'instant' });
+  } else {
+    // On manual re-render: smooth scroll
+    const rect = target.getBoundingClientRect();
+    const scrollY = window.scrollY + rect.top - stickyH;
+    window.scrollTo({ top: Math.max(0, scrollY), behavior: 'smooth' });
+  }
+}
+
 (function init() {
   // Auto-detect live từ đồng hồ client
   const now = Date.now();
@@ -3615,6 +4051,13 @@ function renderDemoBox() {
   // Show view switcher by default (tab 'all' is active)
   const viewBar = document.getElementById('viewBar');
   if (viewBar) viewBar.classList.add('show');
+  const groupWrap = document.getElementById('groupSelectWrap');
+  if (groupWrap) groupWrap.classList.add('show');
+
+  // Scroll to today after DOM is painted
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => scrollToToday(true));
+  });
 
   // Không tự fetch khi load để trang tĩnh mở nhanh và không phụ thuộc proxy CORS.
   // Người dùng có thể bấm “Làm mới” để thử cập nhật live từ FotMob khi API/proxy khả dụng.
