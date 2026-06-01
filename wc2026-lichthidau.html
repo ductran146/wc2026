@@ -561,11 +561,23 @@ a { text-decoration: none; color: inherit; }
 /* Score row: team1 | score-block | team2 — grid với fixed center */
 .match-score-row {
   display: grid;
-  grid-template-columns: 1fr 96px 1fr;
+  grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr);
   align-items: center;
   width: 100%;
   height: 30px;
   padding: 0;
+}
+
+/* Upcoming: full width center */
+.match-score-row.upcoming {
+  grid-template-columns: 1fr;
+}
+.match-score-row.upcoming .ms-team { display: none; }
+.match-score-row.upcoming .ms-score-block { width: 100%; }
+.match-score-row.upcoming .upcoming-time {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -1px;
 }
 
 /* Team block inside score row */
@@ -575,22 +587,29 @@ a { text-decoration: none; color: inherit; }
   align-items: center;
   gap: 8px;
   justify-content: flex-end;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .ms-team.right {
   flex-direction: row;
   justify-content: flex-start;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .ms-name {
-  font-size: 14px;
+  /* clamp: co lại từ 14px xuống tối thiểu 9px khi tên dài */
+  font-size: clamp(9px, 2.8vw, 14px);
   font-weight: 500;
-  line-height: 16px;
+  line-height: 1.2;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px;
+  /* max-width = full 1fr column minus flag(32px) minus gap(8px) */
+  max-width: calc(100% - 40px);
+  min-width: 0;
 }
 
 .t-flag {
