@@ -146,29 +146,70 @@ a { text-decoration: none; color: inherit; }
 
 /* Refresh button — Figma: 32×32px, border:1px solid rgba(255,255,255,0.05), radius:30px */
 .refresh-btn {
-  box-sizing: border-box;
+  position: relative;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 6px;
-  gap: 10px;
   width: 32px;
   height: 32px;
-  background: rgba(0,0,0,0.004);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 30px;
+  border-radius: 50%;
   cursor: pointer;
   flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1);
   outline: none;
-  transition: background 0.15s, transform 0.12s;
+
+  /* Core glass: backdrop blur */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+  /* Glass fill: semi-transparent white */
+  background: rgba(255,255,255,0.12);
+
+  /* Gradient border via border-image trick using outline+pseudo */
+  border: none;
+  box-shadow:
+
+    /* inner top highlight */
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    /* inner bottom shadow */
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+ 
 }
-.refresh-btn:hover   { background: rgba(255,255,255,0.06); }
-.refresh-btn:active  { transform: scale(0.93); }
-.refresh-btn:disabled { opacity: 0.4; cursor: wait; }
-.refresh-btn svg { width: 20px; height: 20px; display: block; }
-.refresh-btn.spinning svg { animation: spin360 0.6s cubic-bezier(.4,0,.2,1); }
-@keyframes spin360 { to { transform: rotate(360deg); } }
+.refresh-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: scale(1.06);
+}
+
+.refresh-btn:active {
+  transform: scale(0.91);
+  background: rgba(255,255,255,0.08);
+  transition: transform 0.1s ease;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.35;
+  cursor: wait;
+  transform: none;
+}
+
+.refresh-btn svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+  position: relative;
+  z-index: 3;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+  flex-shrink: 0;
+}
+
+.refresh-btn.spinning svg {
+  animation: spinOnce 0.65s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes spinOnce {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
 /* Row 2: Filter chips (height 40px per Figma: bottom:40px, height:40px) */
 .header-filter-row {
@@ -198,7 +239,7 @@ a { text-decoration: none; color: inherit; }
   border: none;
   background: transparent;
   flex-shrink: 0;
-  opacity: 0.45;
+  opacity: 1;
   transition: opacity 0.15s;
   padding: 0;
 }
@@ -224,7 +265,7 @@ a { text-decoration: none; color: inherit; }
   display: none;
   height: 40px;
   padding: 0 16px;
-  gap: 10px;
+  gap: 20px;
   overflow-x: auto;
   scrollbar-width: none;
   position: relative;
@@ -236,7 +277,7 @@ a { text-decoration: none; color: inherit; }
 
 .view-tabs {
   display: flex;
-  gap: 10px;
+  gap: 20px;
   align-items: center;
   flex-shrink: 0;
 }
@@ -270,7 +311,7 @@ a { text-decoration: none; color: inherit; }
 /* Select bảng — inside page-wrap, below sticky header */
 .group-select-wrap.page-select {
   display: none;
-  padding: 12px 16px 0;
+  padding: 12px 16px 12px;
 }
 .group-select-wrap.page-select.show { display: block; }
 .group-select-wrap.page-select { align-items: unset; gap: unset; }
@@ -304,22 +345,13 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.02);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 8px rgba(0,0,0,0.25);
   transition: transform 0.15s, background 0.15s;
   position: relative;
   outline: none;
 }
-.refresh-btn::before {
-  content: '';
-  position: absolute;
-  top: 3px; left: 4px;
-  width: 50%; height: 40%;
-  border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
-  background: linear-gradient(150deg, rgba(255,255,255,0.45) 0%, transparent 100%);
-  pointer-events: none;
-}
+
 .refresh-btn:hover   { background: rgba(255,255,255,0.18); transform: scale(1.06); }
 .refresh-btn:active  { transform: scale(0.92); }
 .refresh-btn:disabled { opacity: 0.35; cursor: wait; transform: none; }
