@@ -1111,18 +1111,6 @@ a { text-decoration: none; color: inherit; }
   overflow: hidden;
   flex-shrink: 0;
 }
-.flag-england {
-  background:
-    linear-gradient(90deg, transparent 0 40%, #cf142b 40% 60%, transparent 60% 100%),
-    linear-gradient(0deg, transparent 0 36%, #cf142b 36% 64%, transparent 64% 100%),
-    #fff;
-}
-.flag-scotland {
-  background:
-    linear-gradient(32deg, transparent 0 43%, #fff 43% 57%, transparent 57% 100%),
-    linear-gradient(-32deg, transparent 0 43%, #fff 43% 57%, transparent 57% 100%),
-    #005eb8;
-}
 .chip-flag.flag-css { width: 24px; height: 16px; }
 
 </style>
@@ -1376,7 +1364,7 @@ const MATCHES = [
     "away": {
       "name": "Scotland",
       "code": "scotland",
-      "flag": "🏴",
+      "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
       "color": "#005eb8"
     },
     "venue": "Gillette Stadium, Boston · USA",
@@ -1778,7 +1766,7 @@ const MATCHES = [
     "home": {
       "name": "Anh",
       "code": "england",
-      "flag": "🏴",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
       "color": "#CF142B"
     },
     "away": {
@@ -1970,7 +1958,7 @@ const MATCHES = [
     "home": {
       "name": "Scotland",
       "code": "scotland",
-      "flag": "🏴",
+      "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
       "color": "#005eb8"
     },
     "away": {
@@ -2330,7 +2318,7 @@ const MATCHES = [
     "home": {
       "name": "Anh",
       "code": "england",
-      "flag": "🏴",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
       "color": "#CF142B"
     },
     "away": {
@@ -2426,7 +2414,7 @@ const MATCHES = [
     "home": {
       "name": "Scotland",
       "code": "scotland",
-      "flag": "🏴",
+      "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
       "color": "#005eb8"
     },
     "away": {
@@ -2864,7 +2852,7 @@ const MATCHES = [
     "away": {
       "name": "Anh",
       "code": "england",
-      "flag": "🏴",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
       "color": "#CF142B"
     },
     "venue": "MetLife Stadium, New York/New Jersey · USA",
@@ -3885,8 +3873,6 @@ function renderFlag(team) {
       </svg>
     </span>`;
   }
-  if (team.code === 'england') return `<span class="flag-css flag-england" title="England"></span>`;
-  if (team.code === 'scotland') return `<span class="flag-css flag-scotland" title="Scotland"></span>`;
   return `<span class="te t-flag">${team.flag}</span>`;
 }
 
