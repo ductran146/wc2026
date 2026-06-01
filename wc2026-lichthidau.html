@@ -3449,15 +3449,15 @@ function fetchLiveScores() {
 function renderDemoBox() {
   const demos = [
     // Trận đang diễn ra
-    { id:'demo2', g:'C', date:'2026-06-13', time:'05:00',
-      home:{name:'Brazil',   code:'brazil',   flag:'🇧🇷', color:'#009c3b'},
-      away:{name:'Morocco',  code:'morocco',  flag:'🇲🇦', color:'#c1272d'},
-      venue:'MetLife Stadium, New York · USA', sh:1, sa:0, status:'live', minute:67 },
+    { id:'demo2', g:'C', date:'2026-06-18', time:'03:00',
+      home:{name:'Anh',   code:'england',   flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#009c3b'},
+      away:{name:'Croatia',  code:'croatia',  flag:'🇭🇷', color:'#c1272d'},
+      venue:'AT&T Stadium, Dallas · USA', sh:3, sa:0, status:'live', minute:67 },
     // Trận đã kết thúc
-    { id:'demo3', g:'J', date:'2026-06-22', time:'00:00',
-      home:{name:'Argentina',code:'argentina',flag:'🇦🇷', color:'#74acdf'},
-      away:{name:'Áo',       code:'austria',  flag:'🇦🇹', color:'#ed2939'},
-      venue:'AT&T Stadium, Dallas · USA', sh:3, sa:1, status:'finished' },
+    { id:'demo3', g:'J', date:'2026-06-15', time:'00:00',
+      home:{name:'Đức',code:'germany',flag:'🇩🇪', color:'#74acdf'},
+      away:{name:'Curaçao',       code:'curaçao',  flag:'🇨🇼', color:'#ed2939'},
+      venue:'NRG Stadium, Houston · USA', sh:7, sa:1, status:'finished' },
   ];
   const el = document.getElementById('demoRows');
   if (el) el.innerHTML = demos.map(renderMatchRow).join('');
