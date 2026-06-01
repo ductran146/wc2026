@@ -599,25 +599,29 @@ a { text-decoration: none; color: inherit; }
 }
 
 .ms-name {
-  /* clamp: co lại từ 14px xuống tối thiểu 9px khi tên dài */
-  font-size: clamp(9px, 2.8vw, 14px);
+  font-size: 14px; /* default */
   font-weight: 500;
   line-height: 1.2;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* max-width = full 1fr column minus flag(32px) minus gap(8px) */
   max-width: calc(100% - 40px);
   min-width: 0;
 }
 
+/* Tên trung bình (10–13 ký tự): scale xuống nhẹ */
+.ms-name.name-md { font-size: 12px; }
+
+/* Tên dài (≥14 ký tự): scale nhỏ hơn */
+.ms-name.name-lg { font-size: 10px; letter-spacing: -0.2px; }
+
 .t-flag {
-  font-size: 28px;
+  font-size: 24px;
   display: block;
   line-height: 1;
-  width: 32px;
-  height: 27px;
+  width: 28px;
+  height: 24px;
 }
 
 .t-flag-img {
@@ -2882,7 +2886,7 @@ function renderMatchRow(m) {
 
     <div class="match-score-row">
       <div class="ms-team">
-        <span class="ms-name">${m.home.name}</span>
+        <span class="ms-name ${m.home.name.length >= 14 ? 'name-lg' : m.home.name.length >= 10 ? 'name-md' : ''}">${m.home.name}</span>
         <div class="t-flag-wrap">
           ${renderFlag(m.home)}
           ${homeDot}
@@ -2896,7 +2900,7 @@ function renderMatchRow(m) {
           ${renderFlag(m.away)}
           ${awayDot}
         </div>
-        <span class="ms-name">${m.away.name}</span>
+        <span class="ms-name ${m.away.name.length >= 14 ? 'name-lg' : m.away.name.length >= 10 ? 'name-md' : ''}">${m.away.name}</span>
       </div>
     </div>
 
