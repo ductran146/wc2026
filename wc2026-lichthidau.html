@@ -538,7 +538,7 @@ a { text-decoration: none; color: inherit; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 82px;
+  max-width: 150px;
 }
 
 .t-flag {
@@ -829,9 +829,16 @@ a { text-decoration: none; color: inherit; }
   text-transform: uppercase;
 }
 
+.standings-table thead th.th-rank {
+  width: 32px;
+  min-width: 32px;
+  text-align: center;
+  padding: 6px 8px 6px 14px;
+}
+
 .standings-table thead th.th-team {
   text-align: left;
-  padding-left: 14px;
+  padding-left: 8px;
   width: 100%;
 }
 
@@ -860,14 +867,14 @@ a { text-decoration: none; color: inherit; }
 .standings-table tbody td.td-rank {
   font-size: 11px;
   color: var(--text3);
-  padding-left: 0px;
   text-align: center;
-  width: 18px;
+  padding: 9px 8px 9px 14px;
+  white-space: nowrap;
 }
 
 .standings-table tbody td.td-team {
   text-align: left;
-  padding-left: 0px;
+  padding-left: 8px;
 }
 
 .td-team-inner {
@@ -958,6 +965,12 @@ a { text-decoration: none; color: inherit; }
     </button>
     <button class="filter-chip flag-only" onclick="filterTeam('argentina',this)">
       <span class="te chip-flag">🇦🇷</span>
+    </button>
+    <button class="filter-chip flag-only" onclick="filterTeam('spain',this)">
+      <span class="te chip-flag">🇪🇸</span>
+    </button>
+    <button class="filter-chip flag-only" onclick="filterTeam('portugal',this)">
+      <span class="te chip-flag">🇵🇹</span>
     </button>
   </div><!-- /filter-bar -->
 </div><!-- /site-header -->
@@ -2665,7 +2678,7 @@ const MATCHES = [
   }
 ];
 
-const TARGET = new Set(['england','germany','france','brazil','argentina']);
+const TARGET = new Set(['england','germany','france','brazil','argentina','spain','portugal']);
 
 const GROUP_META = {
   "A": {
@@ -2856,6 +2869,20 @@ const STANDINGS = {
     { name:'Áo',        code:'austria',   flag:'🇦🇹', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Jordan',    code:'jordan',    flag:'🇯🇴', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
   ],
+  // Bảng H — SPAIN
+  H: [
+    { name:'Tây Ban Nha', code:'spain',       flag:'🇪🇸', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Uruguay',     code:'uruguay',     flag:'🇺🇾', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Ả Rập Xê Út', code:'saudiarabia', flag:'🇸🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Cape Verde',  code:'capeverde',   flag:'🇨🇻', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng K — PORTUGAL
+  K: [
+    { name:'Bồ Đào Nha', code:'portugal',   flag:'🇵🇹', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Colombia',   code:'colombia',   flag:'🇨🇴', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'DR Congo',   code:'drcongo',    flag:'🇨🇩', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Uzbekistan', code:'uzbekistan', flag:'🇺🇿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
   // Bảng L — ENGLAND
   L: [
     { name:'Anh',    code:'england', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
@@ -2867,7 +2894,8 @@ const STANDINGS = {
 
 // Map tracked team → their group
 const TEAM_GROUP = {
-  england: 'L', germany: 'E', france: 'I', brazil: 'C', argentina: 'J'
+  england: 'L', germany: 'E', france: 'I', brazil: 'C', argentina: 'J',
+  spain: 'H', portugal: 'K'
 };
 
 function gdText(gf, ga) {
@@ -2915,7 +2943,8 @@ function renderStandingsTable(group, highlightCode) {
   <table class="standings-table">
     <thead>
       <tr>
-        <th class="th-team" colspan="2">#</th>
+        <th class="th-rank">#</th>
+        <th class="th-team">Đội</th>
         <th>TR</th>
         <th>T</th>
         <th>H</th>
