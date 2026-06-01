@@ -558,10 +558,17 @@ a { text-decoration: none; color: inherit; }
   white-space: nowrap;
 }
 
+
 /* Score row: team1 | score-block | team2 — grid với fixed center */
 .match-score-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 0px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 80px minmax(0, 1fr);
   align-items: center;
   width: 100%;
   height: 30px;
@@ -642,7 +649,7 @@ a { text-decoration: none; color: inherit; }
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 96px;
+  width: 80px;
   gap: 0;
 }
 
@@ -811,32 +818,34 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── DEMO BOX ──────────────────────────────────────────────── */
 .demo-box {
-  margin: 16px 16px 0;
+  margin: 16px 16px 16px;
   background: transparent;
   border: none;
   border-radius: 0;
   overflow: visible;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 10px;
 }
 
 .demo-label-row {
-  padding: 10px 0 4px;
+  padding: 10px 0;
   border-bottom: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 9px;
   background: transparent;
   border-radius: 0;
+  height: 40px;
 }
 
 .demo-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--text3);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18px;
+  color: #ffffff;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .demo-close {
@@ -853,6 +862,12 @@ a { text-decoration: none; color: inherit; }
   font-family: var(--inter);
 }
 .demo-close:hover { background: rgba(255,255,255,0.12); color: var(--text1); }
+
+#demoRows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
 /* ─── STANDINGS TABLE ───────────────────────────────────────── */
 .standings-block {
@@ -1062,10 +1077,9 @@ a { text-decoration: none; color: inherit; }
 
 
   <!-- DEMO BOX: trạng thái tỷ số -->
-  <div class="demo-box" id="demoBox" style="display:none;">
+  <div class="demo-box" id="demoBox">
     <div class="demo-label-row">
-      <span class="demo-label">Preview · Demo tỷ số</span>
-      <button class="demo-close" onclick="document.getElementById('demoBox').style.display='none'" title="Đóng">✕</button>
+      <span class="demo-label">Demo hiển thị kết quả</span>
     </div>
     <div id="demoRows"></div>
   </div>
@@ -3434,16 +3448,13 @@ function fetchLiveScores() {
 // DEMO BOX – preview 3 trạng thái
 // ─────────────────────────────────────────────────────────────
 function renderDemoBox() {
-  // Reuse renderMatchRow with mock data for 3 states
   const demos = [
-    { id:'demo1', g:'L', date:'2026-06-17', time:'03:00',
-      home:{name:'Anh',      code:'england',  flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#CF142B'},
-      away:{name:'Croatia',  code:'croatia',  flag:'🇭🇷',    color:'#0093dd'},
-      venue:'AT&T Stadium, Dallas · USA', sh:null, sa:null, status:'upcoming' },
+    // Trận đang diễn ra
     { id:'demo2', g:'C', date:'2026-06-13', time:'05:00',
       home:{name:'Brazil',   code:'brazil',   flag:'🇧🇷', color:'#009c3b'},
       away:{name:'Morocco',  code:'morocco',  flag:'🇲🇦', color:'#c1272d'},
       venue:'MetLife Stadium, New York · USA', sh:1, sa:0, status:'live', minute:67 },
+    // Trận đã kết thúc
     { id:'demo3', g:'J', date:'2026-06-22', time:'00:00',
       home:{name:'Argentina',code:'argentina',flag:'🇦🇷', color:'#74acdf'},
       away:{name:'Áo',       code:'austria',  flag:'🇦🇹', color:'#ed2939'},
