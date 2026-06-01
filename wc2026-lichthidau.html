@@ -641,6 +641,26 @@ a { text-decoration: none; color: inherit; }
 
 .t-flag-wrap { position: relative; flex-shrink: 0; }
 
+/* ── TBD placeholder flag ─────────────────────────────────────── */
+.flag-tbd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2a2a2a;
+  border: 1.5px dashed #444444;
+  flex-shrink: 0;
+}
+
+.flag-tbd svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.35;
+}
+
+
 
 /* Score block center — fixed width để align đều */
 .ms-score-block {
@@ -1079,6 +1099,32 @@ a { text-decoration: none; color: inherit; }
 }
 .group-select:hover { border-color: rgba(255,255,255,0.2); }
 .group-select option { background: #1e1e1e; color: #fff; }
+
+/* CSS flags for subdivision teams that emoji fonts render unreliably */
+.flag-css {
+  display: inline-block;
+  width: 28px;
+  height: 18px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.14);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.flag-england {
+  background:
+    linear-gradient(90deg, transparent 0 40%, #cf142b 40% 60%, transparent 60% 100%),
+    linear-gradient(0deg, transparent 0 36%, #cf142b 36% 64%, transparent 64% 100%),
+    #fff;
+}
+.flag-scotland {
+  background:
+    linear-gradient(32deg, transparent 0 43%, #fff 43% 57%, transparent 57% 100%),
+    linear-gradient(-32deg, transparent 0 43%, #fff 43% 57%, transparent 57% 100%),
+    #005eb8;
+}
+.chip-flag.flag-css { width: 24px; height: 16px; }
+
 </style>
 </head>
 <body>
@@ -1161,8 +1207,8 @@ a { text-decoration: none; color: inherit; }
     <div class="view-tabs">
       <button class="view-tab active" id="viewTabDate" onclick="switchView('date', this)">Theo ngày</button>
       <button class="view-tab" onclick="switchView('group', this)">Theo bảng</button>
-      <button class="view-tab" onclick="switchView('R32', this)">1/32</button>
-      <button class="view-tab" onclick="switchView('R16', this)">1/16</button>
+      <button class="view-tab" onclick="switchView('R32', this)">Vòng 32</button>
+      <button class="view-tab" onclick="switchView('R16', this)">Vòng 16</button>
       <button class="view-tab" onclick="switchView('QF', this)">Tứ kết</button>
       <button class="view-tab" onclick="switchView('SF', this)">Bán kết</button>
       <button class="view-tab" onclick="switchView('TP', this)">3/4</button>
@@ -1185,8 +1231,8 @@ a { text-decoration: none; color: inherit; }
         <option value="L">Bảng L</option>
         <optgroup label="─── Vòng loại trực tiếp ───────"></optgroup>
         <option value="R32">Vòng 32 đội</option>
-        <option value="R16">Vòng 1/16</option>
-        <option value="QF">Vòng 1/8 (Tứ kết)</option>
+        <option value="R16">Vòng 16 đội</option>
+        <option value="QF">Tứ kết</option>
         <option value="SF">Bán kết</option>
         <option value="TP">Tranh hạng 3</option>
         <option value="FIN">🏆 Chung kết</option>
@@ -1208,7 +1254,7 @@ a { text-decoration: none; color: inherit; }
 <div class="bottombar">
   <span class="te bar-em" id="barEm">📅</span>
   <div class="bar-text" id="barText">
-    Lịch vòng bảng World Cup 2026 · Giờ hiển thị theo <span>Việt Nam (UTC+7)</span>
+    Lịch World Cup 2026 · Giờ hiển thị theo <span>Việt Nam (UTC+7)</span>
   </div>
   <div class="bar-spinner" id="barSpinner"></div>
 </div>
@@ -1220,6 +1266,7 @@ a { text-decoration: none; color: inherit; }
 const MATCHES = [
   {
     "id": "a1",
+    "matchNo": 1,
     "g": "A",
     "round": "Lượt 1",
     "date": "2026-06-12",
@@ -1243,6 +1290,7 @@ const MATCHES = [
   },
   {
     "id": "a2",
+    "matchNo": 2,
     "g": "A",
     "round": "Lượt 1",
     "date": "2026-06-12",
@@ -1259,13 +1307,14 @@ const MATCHES = [
       "flag": "🇨🇿",
       "color": "#d7141a"
     },
-    "venue": "Estadio Guadalajara, Guadalajara · Mexico",
+    "venue": "Estadio Akron, Guadalajara · Mexico",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "b1",
+    "id": "b3",
+    "matchNo": 3,
     "g": "B",
     "round": "Lượt 1",
     "date": "2026-06-13",
@@ -1280,7 +1329,7 @@ const MATCHES = [
       "name": "Bosnia & Herzegovina",
       "code": "bosnia",
       "flag": "🇧🇦",
-      "color": "#002395"
+      "color": "#777777"
     },
     "venue": "BMO Field, Toronto · Canada",
     "sh": null,
@@ -1288,7 +1337,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "d1",
+    "id": "d4",
+    "matchNo": 4,
     "g": "D",
     "round": "Lượt 1",
     "date": "2026-06-13",
@@ -1303,7 +1353,7 @@ const MATCHES = [
       "name": "Paraguay",
       "code": "paraguay",
       "flag": "🇵🇾",
-      "color": "#0038a8"
+      "color": "#777777"
     },
     "venue": "SoFi Stadium, Los Angeles · USA",
     "sh": null,
@@ -1311,30 +1361,56 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "b2",
-    "g": "B",
+    "id": "c5",
+    "matchNo": 5,
+    "g": "C",
     "round": "Lượt 1",
     "date": "2026-06-14",
-    "time": "02:00",
+    "time": "08:00",
     "home": {
-      "name": "Qatar",
-      "code": "qatar",
-      "flag": "🇶🇦",
-      "color": "#8d1b3d"
+      "name": "Haiti",
+      "code": "haiti",
+      "flag": "🇭🇹",
+      "color": "#777777"
     },
     "away": {
-      "name": "Thụy Sĩ",
-      "code": "switzerland",
-      "flag": "🇨🇭",
-      "color": "#ff0000"
+      "name": "Scotland",
+      "code": "scotland",
+      "flag": "🏴",
+      "color": "#005eb8"
     },
-    "venue": "Levi’s Stadium, San Francisco Bay Area · USA",
+    "venue": "Gillette Stadium, Boston · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "d6",
+    "matchNo": 6,
+    "g": "D",
+    "round": "Lượt 1",
+    "date": "2026-06-13",
+    "time": "11:00",
+    "home": {
+      "name": "Australia",
+      "code": "australia",
+      "flag": "🇦🇺",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Thổ Nhĩ Kỳ",
+      "code": "turkiye",
+      "flag": "🇹🇷",
+      "color": "#777777"
+    },
+    "venue": "BC Place, Vancouver · Canada",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
     "id": "c1",
+    "matchNo": 7,
     "g": "C",
     "round": "Lượt 1",
     "date": "2026-06-14",
@@ -1349,7 +1425,7 @@ const MATCHES = [
       "name": "Morocco",
       "code": "morocco",
       "flag": "🇲🇦",
-      "color": "#c1272d"
+      "color": "#777777"
     },
     "venue": "MetLife Stadium, New York/New Jersey · USA",
     "sh": null,
@@ -1357,54 +1433,56 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "c2",
-    "g": "C",
+    "id": "b2",
+    "matchNo": 8,
+    "g": "B",
     "round": "Lượt 1",
     "date": "2026-06-14",
-    "time": "08:00",
+    "time": "02:00",
     "home": {
-      "name": "Haiti",
-      "code": "haiti",
-      "flag": "🇭🇹",
-      "color": "#00209f"
+      "name": "Qatar",
+      "code": "qatar",
+      "flag": "🇶🇦",
+      "color": "#777777"
     },
     "away": {
-      "name": "Scotland",
-      "code": "scotland",
-      "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-      "flagImg": "https://flagcdn.com/w40/gb-sct.png",
-      "color": "#005eb8"
+      "name": "Thụy Sĩ",
+      "code": "switzerland",
+      "flag": "🇨🇭",
+      "color": "#777777"
     },
-    "venue": "Gillette Stadium, Boston · USA",
+    "venue": "Levi's Stadium, San Francisco Bay Area · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "d2",
-    "g": "D",
+    "id": "e3",
+    "matchNo": 9,
+    "g": "E",
     "round": "Lượt 1",
-    "date": "2026-06-14",
-    "time": "11:00",
+    "date": "2026-06-15",
+    "time": "06:00",
     "home": {
-      "name": "Úc",
-      "code": "australia",
-      "flag": "🇦🇺",
-      "color": "#00843d"
+      "name": "Bờ Biển Ngà",
+      "code": "ivorycoast",
+      "flag": "🇨🇮",
+      "color": "#777777"
     },
     "away": {
-      "name": "Thổ Nhĩ Kỳ",
-      "code": "turkiye",
-      "flag": "🇹🇷",
-      "color": "#e30a17"
+      "name": "Ecuador",
+      "code": "ecuador",
+      "flag": "🇪🇨",
+      "color": "#777777"
     },
-    "venue": "BC Place, Vancouver · Canada",
+    "venue": "Lincoln Financial Field, Philadelphia · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "e1",
+    "id": "e4",
+    "matchNo": 10,
     "g": "E",
     "round": "Lượt 1",
     "date": "2026-06-15",
@@ -1419,7 +1497,7 @@ const MATCHES = [
       "name": "Curaçao",
       "code": "curacao",
       "flag": "🇨🇼",
-      "color": "#003da5"
+      "color": "#777777"
     },
     "venue": "NRG Stadium, Houston · USA",
     "sh": null,
@@ -1427,7 +1505,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "f1",
+    "id": "f5",
+    "matchNo": 11,
     "g": "F",
     "round": "Lượt 1",
     "date": "2026-06-15",
@@ -1436,13 +1515,13 @@ const MATCHES = [
       "name": "Hà Lan",
       "code": "netherlands",
       "flag": "🇳🇱",
-      "color": "#ff6600"
+      "color": "#777777"
     },
     "away": {
       "name": "Nhật Bản",
       "code": "japan",
       "flag": "🇯🇵",
-      "color": "#bc002d"
+      "color": "#777777"
     },
     "venue": "AT&T Stadium, Dallas · USA",
     "sh": null,
@@ -1450,30 +1529,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "e2",
-    "g": "E",
-    "round": "Lượt 1",
-    "date": "2026-06-15",
-    "time": "06:00",
-    "home": {
-      "name": "Bờ Biển Ngà",
-      "code": "ivorycoast",
-      "flag": "🇨🇮",
-      "color": "#f77f00"
-    },
-    "away": {
-      "name": "Ecuador",
-      "code": "ecuador",
-      "flag": "🇪🇨",
-      "color": "#ffd100"
-    },
-    "venue": "Lincoln Financial Field, Philadelphia · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "f2",
+    "id": "f6",
+    "matchNo": 12,
     "g": "F",
     "round": "Lượt 1",
     "date": "2026-06-15",
@@ -1482,21 +1539,46 @@ const MATCHES = [
       "name": "Thụy Điển",
       "code": "sweden",
       "flag": "🇸🇪",
-      "color": "#006aa7"
+      "color": "#777777"
     },
     "away": {
       "name": "Tunisia",
       "code": "tunisia",
       "flag": "🇹🇳",
-      "color": "#e70013"
+      "color": "#777777"
     },
-    "venue": "Estadio Monterrey, Monterrey · Mexico",
+    "venue": "Estadio BBVA, Monterrey · Mexico",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
     "id": "h1",
+    "matchNo": 13,
+    "g": "H",
+    "round": "Lượt 1",
+    "date": "2026-06-16",
+    "time": "05:00",
+    "home": {
+      "name": "Ả Rập Xê Út",
+      "code": "saudiarabia",
+      "flag": "🇸🇦",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Uruguay",
+      "code": "uruguay",
+      "flag": "🇺🇾",
+      "color": "#777777"
+    },
+    "venue": "Hard Rock Stadium, Miami · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "h2",
+    "matchNo": 14,
     "g": "H",
     "round": "Lượt 1",
     "date": "2026-06-15",
@@ -1508,10 +1590,10 @@ const MATCHES = [
       "color": "#aa151b"
     },
     "away": {
-      "name": "Cape Verde",
-      "code": "capeverde",
+      "name": "Cabo Verde",
+      "code": "caboverde",
       "flag": "🇨🇻",
-      "color": "#003893"
+      "color": "#777777"
     },
     "venue": "Mercedes-Benz Stadium, Atlanta · USA",
     "sh": null,
@@ -1519,53 +1601,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "g1",
-    "g": "G",
-    "round": "Lượt 1",
-    "date": "2026-06-16",
-    "time": "02:00",
-    "home": {
-      "name": "Bỉ",
-      "code": "belgium",
-      "flag": "🇧🇪",
-      "color": "#000000"
-    },
-    "away": {
-      "name": "Ai Cập",
-      "code": "egypt",
-      "flag": "🇪🇬",
-      "color": "#ce1126"
-    },
-    "venue": "Lumen Field, Seattle · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "h2",
-    "g": "H",
-    "round": "Lượt 1",
-    "date": "2026-06-16",
-    "time": "05:00",
-    "home": {
-      "name": "Ả Rập Xê Út",
-      "code": "saudiarabia",
-      "flag": "🇸🇦",
-      "color": "#006c35"
-    },
-    "away": {
-      "name": "Uruguay",
-      "code": "uruguay",
-      "flag": "🇺🇾",
-      "color": "#5aaaa8"
-    },
-    "venue": "Hard Rock Stadium, Miami · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "g2",
+    "id": "g3",
+    "matchNo": 15,
     "g": "G",
     "round": "Lượt 1",
     "date": "2026-06-16",
@@ -1574,13 +1611,13 @@ const MATCHES = [
       "name": "Iran",
       "code": "iran",
       "flag": "🇮🇷",
-      "color": "#239f40"
+      "color": "#777777"
     },
     "away": {
       "name": "New Zealand",
       "code": "newzealand",
       "flag": "🇳🇿",
-      "color": "#00247d"
+      "color": "#777777"
     },
     "venue": "SoFi Stadium, Los Angeles · USA",
     "sh": null,
@@ -1588,7 +1625,32 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "i1",
+    "id": "g4",
+    "matchNo": 16,
+    "g": "G",
+    "round": "Lượt 1",
+    "date": "2026-06-16",
+    "time": "02:00",
+    "home": {
+      "name": "Belgium",
+      "code": "belgium",
+      "flag": "🇧🇪",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Ai Cập",
+      "code": "egypt",
+      "flag": "🇪🇬",
+      "color": "#777777"
+    },
+    "venue": "Lumen Field, Seattle · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "i5",
+    "matchNo": 17,
     "g": "I",
     "round": "Lượt 1",
     "date": "2026-06-17",
@@ -1603,7 +1665,7 @@ const MATCHES = [
       "name": "Senegal",
       "code": "senegal",
       "flag": "🇸🇳",
-      "color": "#00853f"
+      "color": "#777777"
     },
     "venue": "MetLife Stadium, New York/New Jersey · USA",
     "sh": null,
@@ -1611,7 +1673,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "i2",
+    "id": "i6",
+    "matchNo": 18,
     "g": "I",
     "round": "Lượt 1",
     "date": "2026-06-17",
@@ -1620,13 +1683,13 @@ const MATCHES = [
       "name": "Iraq",
       "code": "iraq",
       "flag": "🇮🇶",
-      "color": "#007a3d"
+      "color": "#777777"
     },
     "away": {
       "name": "Na Uy",
       "code": "norway",
       "flag": "🇳🇴",
-      "color": "#ef2b2d"
+      "color": "#777777"
     },
     "venue": "Gillette Stadium, Boston · USA",
     "sh": null,
@@ -1635,6 +1698,7 @@ const MATCHES = [
   },
   {
     "id": "j1",
+    "matchNo": 19,
     "g": "J",
     "round": "Lượt 1",
     "date": "2026-06-17",
@@ -1649,7 +1713,7 @@ const MATCHES = [
       "name": "Algeria",
       "code": "algeria",
       "flag": "🇩🇿",
-      "color": "#006233"
+      "color": "#777777"
     },
     "venue": "Arrowhead Stadium, Kansas City · USA",
     "sh": null,
@@ -1658,29 +1722,79 @@ const MATCHES = [
   },
   {
     "id": "j2",
+    "matchNo": 20,
     "g": "J",
     "round": "Lượt 1",
-    "date": "2026-06-17",
+    "date": "2026-06-16",
     "time": "11:00",
     "home": {
       "name": "Áo",
       "code": "austria",
       "flag": "🇦🇹",
-      "color": "#ed2939"
+      "color": "#777777"
     },
     "away": {
       "name": "Jordan",
       "code": "jordan",
       "flag": "🇯🇴",
-      "color": "#007a3d"
+      "color": "#777777"
     },
-    "venue": "Levi’s Stadium, San Francisco Bay Area · USA",
+    "venue": "Levi's Stadium, San Francisco Bay Area · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "k1",
+    "id": "l3",
+    "matchNo": 21,
+    "g": "L",
+    "round": "Lượt 1",
+    "date": "2026-06-18",
+    "time": "06:00",
+    "home": {
+      "name": "Ghana",
+      "code": "ghana",
+      "flag": "🇬🇭",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Panama",
+      "code": "panama",
+      "flag": "🇵🇦",
+      "color": "#777777"
+    },
+    "venue": "BMO Field, Toronto · Canada",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "l4",
+    "matchNo": 22,
+    "g": "L",
+    "round": "Lượt 1",
+    "date": "2026-06-18",
+    "time": "03:00",
+    "home": {
+      "name": "Anh",
+      "code": "england",
+      "flag": "🏴",
+      "color": "#CF142B"
+    },
+    "away": {
+      "name": "Croatia",
+      "code": "croatia",
+      "flag": "🇭🇷",
+      "color": "#777777"
+    },
+    "venue": "AT&T Stadium, Dallas · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "k5",
+    "matchNo": 23,
     "g": "K",
     "round": "Lượt 1",
     "date": "2026-06-18",
@@ -1695,7 +1809,7 @@ const MATCHES = [
       "name": "DR Congo",
       "code": "drcongo",
       "flag": "🇨🇩",
-      "color": "#007fff"
+      "color": "#777777"
     },
     "venue": "NRG Stadium, Houston · USA",
     "sh": null,
@@ -1703,53 +1817,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "l1",
-    "g": "L",
-    "round": "Lượt 1",
-    "date": "2026-06-18",
-    "time": "03:00",
-    "home": {
-      "name": "Anh",
-      "code": "england",
-      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "color": "#CF142B"
-    },
-    "away": {
-      "name": "Croatia",
-      "code": "croatia",
-      "flag": "🇭🇷",
-      "color": "#0093dd"
-    },
-    "venue": "AT&T Stadium, Dallas · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "l2",
-    "g": "L",
-    "round": "Lượt 1",
-    "date": "2026-06-18",
-    "time": "06:00",
-    "home": {
-      "name": "Ghana",
-      "code": "ghana",
-      "flag": "🇬🇭",
-      "color": "#006b3f"
-    },
-    "away": {
-      "name": "Panama",
-      "code": "panama",
-      "flag": "🇵🇦",
-      "color": "#db121e"
-    },
-    "venue": "BMO Field, Toronto · Canada",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "k2",
+    "id": "k6",
+    "matchNo": 24,
     "g": "K",
     "round": "Lượt 1",
     "date": "2026-06-18",
@@ -1758,21 +1827,22 @@ const MATCHES = [
       "name": "Uzbekistan",
       "code": "uzbekistan",
       "flag": "🇺🇿",
-      "color": "#1eb53a"
+      "color": "#777777"
     },
     "away": {
       "name": "Colombia",
       "code": "colombia",
       "flag": "🇨🇴",
-      "color": "#fcd116"
+      "color": "#777777"
     },
-    "venue": "Estadio Guadalajara, Guadalajara · Mexico",
+    "venue": "Estadio Azteca, Mexico City · Mexico",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "a3",
+    "id": "a1",
+    "matchNo": 25,
     "g": "A",
     "round": "Lượt 2",
     "date": "2026-06-18",
@@ -1795,7 +1865,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "b3",
+    "id": "b2",
+    "matchNo": 26,
     "g": "B",
     "round": "Lượt 2",
     "date": "2026-06-19",
@@ -1804,13 +1875,13 @@ const MATCHES = [
       "name": "Thụy Sĩ",
       "code": "switzerland",
       "flag": "🇨🇭",
-      "color": "#ff0000"
+      "color": "#777777"
     },
     "away": {
       "name": "Bosnia & Herzegovina",
       "code": "bosnia",
       "flag": "🇧🇦",
-      "color": "#002395"
+      "color": "#777777"
     },
     "venue": "SoFi Stadium, Los Angeles · USA",
     "sh": null,
@@ -1818,7 +1889,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "b4",
+    "id": "b3",
+    "matchNo": 27,
     "g": "B",
     "round": "Lượt 2",
     "date": "2026-06-19",
@@ -1833,7 +1905,7 @@ const MATCHES = [
       "name": "Qatar",
       "code": "qatar",
       "flag": "🇶🇦",
-      "color": "#8d1b3d"
+      "color": "#777777"
     },
     "venue": "BC Place, Vancouver · Canada",
     "sh": null,
@@ -1842,6 +1914,7 @@ const MATCHES = [
   },
   {
     "id": "a4",
+    "matchNo": 28,
     "g": "A",
     "round": "Lượt 2",
     "date": "2026-06-19",
@@ -1858,13 +1931,86 @@ const MATCHES = [
       "flag": "🇰🇷",
       "color": "#cd2e3a"
     },
-    "venue": "Estadio Guadalajara, Guadalajara · Mexico",
+    "venue": "Estadio Akron, Guadalajara · Mexico",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "d3",
+    "id": "c5",
+    "matchNo": 29,
+    "g": "C",
+    "round": "Lượt 2",
+    "date": "2026-06-20",
+    "time": "08:00",
+    "home": {
+      "name": "Brazil",
+      "code": "brazil",
+      "flag": "🇧🇷",
+      "color": "#009c3b"
+    },
+    "away": {
+      "name": "Haiti",
+      "code": "haiti",
+      "flag": "🇭🇹",
+      "color": "#777777"
+    },
+    "venue": "Lincoln Financial Field, Philadelphia · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "c6",
+    "matchNo": 30,
+    "g": "C",
+    "round": "Lượt 2",
+    "date": "2026-06-20",
+    "time": "05:00",
+    "home": {
+      "name": "Scotland",
+      "code": "scotland",
+      "flag": "🏴",
+      "color": "#005eb8"
+    },
+    "away": {
+      "name": "Morocco",
+      "code": "morocco",
+      "flag": "🇲🇦",
+      "color": "#777777"
+    },
+    "venue": "Gillette Stadium, Boston · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "d1",
+    "matchNo": 31,
+    "g": "D",
+    "round": "Lượt 2",
+    "date": "2026-06-20",
+    "time": "10:00",
+    "home": {
+      "name": "Thổ Nhĩ Kỳ",
+      "code": "turkiye",
+      "flag": "🇹🇷",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Paraguay",
+      "code": "paraguay",
+      "flag": "🇵🇾",
+      "color": "#777777"
+    },
+    "venue": "Levi's Stadium, San Francisco Bay Area · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "d2",
+    "matchNo": 32,
     "g": "D",
     "round": "Lượt 2",
     "date": "2026-06-20",
@@ -1876,10 +2022,10 @@ const MATCHES = [
       "color": "#002868"
     },
     "away": {
-      "name": "Úc",
+      "name": "Australia",
       "code": "australia",
       "flag": "🇦🇺",
-      "color": "#00843d"
+      "color": "#777777"
     },
     "venue": "Lumen Field, Seattle · USA",
     "sh": null,
@@ -1887,100 +2033,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "c3",
-    "g": "C",
-    "round": "Lượt 2",
-    "date": "2026-06-20",
-    "time": "05:00",
-    "home": {
-      "name": "Scotland",
-      "code": "scotland",
-      "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-      "flagImg": "https://flagcdn.com/w40/gb-sct.png",
-      "color": "#005eb8"
-    },
-    "away": {
-      "name": "Morocco",
-      "code": "morocco",
-      "flag": "🇲🇦",
-      "color": "#c1272d"
-    },
-    "venue": "Gillette Stadium, Boston · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "c4",
-    "g": "C",
-    "round": "Lượt 2",
-    "date": "2026-06-20",
-    "time": "07:30",
-    "home": {
-      "name": "Brazil",
-      "code": "brazil",
-      "flag": "🇧🇷",
-      "color": "#009c3b"
-    },
-    "away": {
-      "name": "Haiti",
-      "code": "haiti",
-      "flag": "🇭🇹",
-      "color": "#00209f"
-    },
-    "venue": "Lincoln Financial Field, Philadelphia · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "d4",
-    "g": "D",
-    "round": "Lượt 2",
-    "date": "2026-06-20",
-    "time": "10:00",
-    "home": {
-      "name": "Thổ Nhĩ Kỳ",
-      "code": "turkiye",
-      "flag": "🇹🇷",
-      "color": "#e30a17"
-    },
-    "away": {
-      "name": "Paraguay",
-      "code": "paraguay",
-      "flag": "🇵🇾",
-      "color": "#0038a8"
-    },
-    "venue": "Levi’s Stadium, San Francisco Bay Area · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "f3",
-    "g": "F",
-    "round": "Lượt 2",
-    "date": "2026-06-21",
-    "time": "00:00",
-    "home": {
-      "name": "Hà Lan",
-      "code": "netherlands",
-      "flag": "🇳🇱",
-      "color": "#ff6600"
-    },
-    "away": {
-      "name": "Thụy Điển",
-      "code": "sweden",
-      "flag": "🇸🇪",
-      "color": "#006aa7"
-    },
-    "venue": "NRG Stadium, Houston · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
     "id": "e3",
+    "matchNo": 33,
     "g": "E",
     "round": "Lượt 2",
     "date": "2026-06-21",
@@ -1995,7 +2049,7 @@ const MATCHES = [
       "name": "Bờ Biển Ngà",
       "code": "ivorycoast",
       "flag": "🇨🇮",
-      "color": "#f77f00"
+      "color": "#777777"
     },
     "venue": "BMO Field, Toronto · Canada",
     "sh": null,
@@ -2004,6 +2058,7 @@ const MATCHES = [
   },
   {
     "id": "e4",
+    "matchNo": 34,
     "g": "E",
     "round": "Lượt 2",
     "date": "2026-06-21",
@@ -2012,13 +2067,13 @@ const MATCHES = [
       "name": "Ecuador",
       "code": "ecuador",
       "flag": "🇪🇨",
-      "color": "#ffd100"
+      "color": "#777777"
     },
     "away": {
       "name": "Curaçao",
       "code": "curacao",
       "flag": "🇨🇼",
-      "color": "#003da5"
+      "color": "#777777"
     },
     "venue": "Arrowhead Stadium, Kansas City · USA",
     "sh": null,
@@ -2026,30 +2081,80 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "f4",
+    "id": "f5",
+    "matchNo": 35,
     "g": "F",
     "round": "Lượt 2",
     "date": "2026-06-21",
-    "time": "11:00",
+    "time": "00:00",
     "home": {
-      "name": "Tunisia",
-      "code": "tunisia",
-      "flag": "🇹🇳",
-      "color": "#e70013"
+      "name": "Hà Lan",
+      "code": "netherlands",
+      "flag": "🇳🇱",
+      "color": "#777777"
     },
     "away": {
-      "name": "Nhật Bản",
-      "code": "japan",
-      "flag": "🇯🇵",
-      "color": "#bc002d"
+      "name": "Thụy Điển",
+      "code": "sweden",
+      "flag": "🇸🇪",
+      "color": "#777777"
     },
-    "venue": "Estadio Monterrey, Monterrey · Mexico",
+    "venue": "NRG Stadium, Houston · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "h3",
+    "id": "f6",
+    "matchNo": 36,
+    "g": "F",
+    "round": "Lượt 2",
+    "date": "2026-06-20",
+    "time": "11:00",
+    "home": {
+      "name": "Tunisia",
+      "code": "tunisia",
+      "flag": "🇹🇳",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Nhật Bản",
+      "code": "japan",
+      "flag": "🇯🇵",
+      "color": "#777777"
+    },
+    "venue": "Estadio BBVA, Monterrey · Mexico",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "h1",
+    "matchNo": 37,
+    "g": "H",
+    "round": "Lượt 2",
+    "date": "2026-06-22",
+    "time": "05:00",
+    "home": {
+      "name": "Uruguay",
+      "code": "uruguay",
+      "flag": "🇺🇾",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Cabo Verde",
+      "code": "caboverde",
+      "flag": "🇨🇻",
+      "color": "#777777"
+    },
+    "venue": "Hard Rock Stadium, Miami · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "h2",
+    "matchNo": 38,
     "g": "H",
     "round": "Lượt 2",
     "date": "2026-06-21",
@@ -2064,7 +2169,7 @@ const MATCHES = [
       "name": "Ả Rập Xê Út",
       "code": "saudiarabia",
       "flag": "🇸🇦",
-      "color": "#006c35"
+      "color": "#777777"
     },
     "venue": "Mercedes-Benz Stadium, Atlanta · USA",
     "sh": null,
@@ -2073,21 +2178,22 @@ const MATCHES = [
   },
   {
     "id": "g3",
+    "matchNo": 39,
     "g": "G",
     "round": "Lượt 2",
     "date": "2026-06-22",
     "time": "02:00",
     "home": {
-      "name": "Bỉ",
+      "name": "Belgium",
       "code": "belgium",
       "flag": "🇧🇪",
-      "color": "#000000"
+      "color": "#777777"
     },
     "away": {
       "name": "Iran",
       "code": "iran",
       "flag": "🇮🇷",
-      "color": "#239f40"
+      "color": "#777777"
     },
     "venue": "SoFi Stadium, Los Angeles · USA",
     "sh": null,
@@ -2095,30 +2201,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "h4",
-    "g": "H",
-    "round": "Lượt 2",
-    "date": "2026-06-22",
-    "time": "05:00",
-    "home": {
-      "name": "Uruguay",
-      "code": "uruguay",
-      "flag": "🇺🇾",
-      "color": "#5aaaa8"
-    },
-    "away": {
-      "name": "Cape Verde",
-      "code": "capeverde",
-      "flag": "🇨🇻",
-      "color": "#003893"
-    },
-    "venue": "Hard Rock Stadium, Miami · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
     "id": "g4",
+    "matchNo": 40,
     "g": "G",
     "round": "Lượt 2",
     "date": "2026-06-22",
@@ -2127,13 +2211,13 @@ const MATCHES = [
       "name": "New Zealand",
       "code": "newzealand",
       "flag": "🇳🇿",
-      "color": "#00247d"
+      "color": "#777777"
     },
     "away": {
       "name": "Ai Cập",
       "code": "egypt",
       "flag": "🇪🇬",
-      "color": "#ce1126"
+      "color": "#777777"
     },
     "venue": "BC Place, Vancouver · Canada",
     "sh": null,
@@ -2141,30 +2225,32 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "j3",
-    "g": "J",
+    "id": "i5",
+    "matchNo": 41,
+    "g": "I",
     "round": "Lượt 2",
     "date": "2026-06-23",
-    "time": "00:00",
+    "time": "07:00",
     "home": {
-      "name": "Argentina",
-      "code": "argentina",
-      "flag": "🇦🇷",
-      "color": "#74acdf"
+      "name": "Na Uy",
+      "code": "norway",
+      "flag": "🇳🇴",
+      "color": "#777777"
     },
     "away": {
-      "name": "Áo",
-      "code": "austria",
-      "flag": "🇦🇹",
-      "color": "#ed2939"
+      "name": "Senegal",
+      "code": "senegal",
+      "flag": "🇸🇳",
+      "color": "#777777"
     },
-    "venue": "AT&T Stadium, Dallas · USA",
+    "venue": "MetLife Stadium, New York/New Jersey · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "i3",
+    "id": "i6",
+    "matchNo": 42,
     "g": "I",
     "round": "Lượt 2",
     "date": "2026-06-23",
@@ -2179,7 +2265,7 @@ const MATCHES = [
       "name": "Iraq",
       "code": "iraq",
       "flag": "🇮🇶",
-      "color": "#007a3d"
+      "color": "#777777"
     },
     "venue": "Lincoln Financial Field, Philadelphia · USA",
     "sh": null,
@@ -2187,30 +2273,32 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "i4",
-    "g": "I",
+    "id": "j1",
+    "matchNo": 43,
+    "g": "J",
     "round": "Lượt 2",
     "date": "2026-06-23",
-    "time": "07:00",
+    "time": "00:00",
     "home": {
-      "name": "Na Uy",
-      "code": "norway",
-      "flag": "🇳🇴",
-      "color": "#ef2b2d"
+      "name": "Argentina",
+      "code": "argentina",
+      "flag": "🇦🇷",
+      "color": "#74acdf"
     },
     "away": {
-      "name": "Senegal",
-      "code": "senegal",
-      "flag": "🇸🇳",
-      "color": "#00853f"
+      "name": "Áo",
+      "code": "austria",
+      "flag": "🇦🇹",
+      "color": "#777777"
     },
-    "venue": "BMO Field, Toronto · Canada",
+    "venue": "AT&T Stadium, Dallas · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "j4",
+    "id": "j2",
+    "matchNo": 44,
     "g": "J",
     "round": "Lượt 2",
     "date": "2026-06-23",
@@ -2219,21 +2307,70 @@ const MATCHES = [
       "name": "Jordan",
       "code": "jordan",
       "flag": "🇯🇴",
-      "color": "#007a3d"
+      "color": "#777777"
     },
     "away": {
       "name": "Algeria",
       "code": "algeria",
       "flag": "🇩🇿",
-      "color": "#006233"
+      "color": "#777777"
     },
-    "venue": "Levi’s Stadium, San Francisco Bay Area · USA",
+    "venue": "Levi's Stadium, San Francisco Bay Area · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "k3",
+    "id": "l3",
+    "matchNo": 45,
+    "g": "L",
+    "round": "Lượt 2",
+    "date": "2026-06-24",
+    "time": "03:00",
+    "home": {
+      "name": "Anh",
+      "code": "england",
+      "flag": "🏴",
+      "color": "#CF142B"
+    },
+    "away": {
+      "name": "Ghana",
+      "code": "ghana",
+      "flag": "🇬🇭",
+      "color": "#777777"
+    },
+    "venue": "Gillette Stadium, Boston · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "l4",
+    "matchNo": 46,
+    "g": "L",
+    "round": "Lượt 2",
+    "date": "2026-06-24",
+    "time": "06:00",
+    "home": {
+      "name": "Panama",
+      "code": "panama",
+      "flag": "🇵🇦",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Croatia",
+      "code": "croatia",
+      "flag": "🇭🇷",
+      "color": "#777777"
+    },
+    "venue": "BMO Field, Toronto · Canada",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "k5",
+    "matchNo": 47,
     "g": "K",
     "round": "Lượt 2",
     "date": "2026-06-24",
@@ -2248,7 +2385,7 @@ const MATCHES = [
       "name": "Uzbekistan",
       "code": "uzbekistan",
       "flag": "🇺🇿",
-      "color": "#1eb53a"
+      "color": "#777777"
     },
     "venue": "NRG Stadium, Houston · USA",
     "sh": null,
@@ -2256,53 +2393,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "l3",
-    "g": "L",
-    "round": "Lượt 2",
-    "date": "2026-06-24",
-    "time": "03:00",
-    "home": {
-      "name": "Anh",
-      "code": "england",
-      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "color": "#CF142B"
-    },
-    "away": {
-      "name": "Ghana",
-      "code": "ghana",
-      "flag": "🇬🇭",
-      "color": "#006b3f"
-    },
-    "venue": "Gillette Stadium, Boston · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "l4",
-    "g": "L",
-    "round": "Lượt 2",
-    "date": "2026-06-24",
-    "time": "06:00",
-    "home": {
-      "name": "Panama",
-      "code": "panama",
-      "flag": "🇵🇦",
-      "color": "#db121e"
-    },
-    "away": {
-      "name": "Croatia",
-      "code": "croatia",
-      "flag": "🇭🇷",
-      "color": "#0093dd"
-    },
-    "venue": "BMO Field, Toronto · Canada",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "k4",
+    "id": "k6",
+    "matchNo": 48,
     "g": "K",
     "round": "Lượt 2",
     "date": "2026-06-24",
@@ -2311,90 +2403,22 @@ const MATCHES = [
       "name": "Colombia",
       "code": "colombia",
       "flag": "🇨🇴",
-      "color": "#fcd116"
+      "color": "#777777"
     },
     "away": {
       "name": "DR Congo",
       "code": "drcongo",
       "flag": "🇨🇩",
-      "color": "#007fff"
+      "color": "#777777"
     },
-    "venue": "Estadio Guadalajara, Guadalajara · Mexico",
+    "venue": "Estadio Akron, Guadalajara · Mexico",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "b5",
-    "g": "B",
-    "round": "Lượt 3",
-    "date": "2026-06-25",
-    "time": "02:00",
-    "home": {
-      "name": "Thụy Sĩ",
-      "code": "switzerland",
-      "flag": "🇨🇭",
-      "color": "#ff0000"
-    },
-    "away": {
-      "name": "Canada",
-      "code": "canada",
-      "flag": "🇨🇦",
-      "color": "#ff0000"
-    },
-    "venue": "BC Place, Vancouver · Canada",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "b6",
-    "g": "B",
-    "round": "Lượt 3",
-    "date": "2026-06-25",
-    "time": "02:00",
-    "home": {
-      "name": "Bosnia & Herzegovina",
-      "code": "bosnia",
-      "flag": "🇧🇦",
-      "color": "#002395"
-    },
-    "away": {
-      "name": "Qatar",
-      "code": "qatar",
-      "flag": "🇶🇦",
-      "color": "#8d1b3d"
-    },
-    "venue": "Lumen Field, Seattle · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "c5",
-    "g": "C",
-    "round": "Lượt 3",
-    "date": "2026-06-25",
-    "time": "05:00",
-    "home": {
-      "name": "Morocco",
-      "code": "morocco",
-      "flag": "🇲🇦",
-      "color": "#c1272d"
-    },
-    "away": {
-      "name": "Haiti",
-      "code": "haiti",
-      "flag": "🇭🇹",
-      "color": "#00209f"
-    },
-    "venue": "Mercedes-Benz Stadium, Atlanta · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "c6",
+    "id": "c1",
+    "matchNo": 49,
     "g": "C",
     "round": "Lượt 3",
     "date": "2026-06-25",
@@ -2402,8 +2426,7 @@ const MATCHES = [
     "home": {
       "name": "Scotland",
       "code": "scotland",
-      "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-      "flagImg": "https://flagcdn.com/w40/gb-sct.png",
+      "flag": "🏴",
       "color": "#005eb8"
     },
     "away": {
@@ -2418,30 +2441,80 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "a5",
-    "g": "A",
+    "id": "c2",
+    "matchNo": 50,
+    "g": "C",
     "round": "Lượt 3",
     "date": "2026-06-25",
-    "time": "08:00",
+    "time": "05:00",
     "home": {
-      "name": "Nam Phi",
-      "code": "southafrica",
-      "flag": "🇿🇦",
-      "color": "#007a4d"
+      "name": "Morocco",
+      "code": "morocco",
+      "flag": "🇲🇦",
+      "color": "#777777"
     },
     "away": {
-      "name": "Hàn Quốc",
-      "code": "southkorea",
-      "flag": "🇰🇷",
-      "color": "#cd2e3a"
+      "name": "Haiti",
+      "code": "haiti",
+      "flag": "🇭🇹",
+      "color": "#777777"
     },
-    "venue": "Estadio Monterrey, Monterrey · Mexico",
+    "venue": "Mercedes-Benz Stadium, Atlanta · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "a6",
+    "id": "b3",
+    "matchNo": 51,
+    "g": "B",
+    "round": "Lượt 3",
+    "date": "2026-06-25",
+    "time": "02:00",
+    "home": {
+      "name": "Thụy Sĩ",
+      "code": "switzerland",
+      "flag": "🇨🇭",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Canada",
+      "code": "canada",
+      "flag": "🇨🇦",
+      "color": "#ff0000"
+    },
+    "venue": "BC Place, Vancouver · Canada",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "b4",
+    "matchNo": 52,
+    "g": "B",
+    "round": "Lượt 3",
+    "date": "2026-06-25",
+    "time": "02:00",
+    "home": {
+      "name": "Bosnia & Herzegovina",
+      "code": "bosnia",
+      "flag": "🇧🇦",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Qatar",
+      "code": "qatar",
+      "flag": "🇶🇦",
+      "color": "#777777"
+    },
+    "venue": "Lumen Field, Seattle · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "a5",
+    "matchNo": 53,
     "g": "A",
     "round": "Lượt 3",
     "date": "2026-06-25",
@@ -2464,7 +2537,32 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "e5",
+    "id": "a6",
+    "matchNo": 54,
+    "g": "A",
+    "round": "Lượt 3",
+    "date": "2026-06-25",
+    "time": "08:00",
+    "home": {
+      "name": "Nam Phi",
+      "code": "southafrica",
+      "flag": "🇿🇦",
+      "color": "#007a4d"
+    },
+    "away": {
+      "name": "Hàn Quốc",
+      "code": "southkorea",
+      "flag": "🇰🇷",
+      "color": "#cd2e3a"
+    },
+    "venue": "Estadio BBVA, Monterrey · Mexico",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "e1",
+    "matchNo": 55,
     "g": "E",
     "round": "Lượt 3",
     "date": "2026-06-26",
@@ -2473,13 +2571,13 @@ const MATCHES = [
       "name": "Curaçao",
       "code": "curacao",
       "flag": "🇨🇼",
-      "color": "#003da5"
+      "color": "#777777"
     },
     "away": {
       "name": "Bờ Biển Ngà",
       "code": "ivorycoast",
       "flag": "🇨🇮",
-      "color": "#f77f00"
+      "color": "#777777"
     },
     "venue": "Lincoln Financial Field, Philadelphia · USA",
     "sh": null,
@@ -2487,7 +2585,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "e6",
+    "id": "e2",
+    "matchNo": 56,
     "g": "E",
     "round": "Lượt 3",
     "date": "2026-06-26",
@@ -2496,7 +2595,7 @@ const MATCHES = [
       "name": "Ecuador",
       "code": "ecuador",
       "flag": "🇪🇨",
-      "color": "#ffd100"
+      "color": "#777777"
     },
     "away": {
       "name": "Đức",
@@ -2510,7 +2609,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "f5",
+    "id": "f3",
+    "matchNo": 57,
     "g": "F",
     "round": "Lượt 3",
     "date": "2026-06-26",
@@ -2519,13 +2619,13 @@ const MATCHES = [
       "name": "Nhật Bản",
       "code": "japan",
       "flag": "🇯🇵",
-      "color": "#bc002d"
+      "color": "#777777"
     },
     "away": {
       "name": "Thụy Điển",
       "code": "sweden",
       "flag": "🇸🇪",
-      "color": "#006aa7"
+      "color": "#777777"
     },
     "venue": "AT&T Stadium, Dallas · USA",
     "sh": null,
@@ -2533,7 +2633,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "f6",
+    "id": "f4",
+    "matchNo": 58,
     "g": "F",
     "round": "Lượt 3",
     "date": "2026-06-26",
@@ -2542,13 +2643,13 @@ const MATCHES = [
       "name": "Tunisia",
       "code": "tunisia",
       "flag": "🇹🇳",
-      "color": "#e70013"
+      "color": "#777777"
     },
     "away": {
       "name": "Hà Lan",
       "code": "netherlands",
       "flag": "🇳🇱",
-      "color": "#ff6600"
+      "color": "#777777"
     },
     "venue": "Arrowhead Stadium, Kansas City · USA",
     "sh": null,
@@ -2557,29 +2658,7 @@ const MATCHES = [
   },
   {
     "id": "d5",
-    "g": "D",
-    "round": "Lượt 3",
-    "date": "2026-06-26",
-    "time": "09:00",
-    "home": {
-      "name": "Paraguay",
-      "code": "paraguay",
-      "flag": "🇵🇾",
-      "color": "#0038a8"
-    },
-    "away": {
-      "name": "Úc",
-      "code": "australia",
-      "flag": "🇦🇺",
-      "color": "#00843d"
-    },
-    "venue": "BC Place, Vancouver · Canada",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "d6",
+    "matchNo": 59,
     "g": "D",
     "round": "Lượt 3",
     "date": "2026-06-26",
@@ -2588,7 +2667,7 @@ const MATCHES = [
       "name": "Thổ Nhĩ Kỳ",
       "code": "turkiye",
       "flag": "🇹🇷",
-      "color": "#e30a17"
+      "color": "#777777"
     },
     "away": {
       "name": "Mỹ",
@@ -2602,7 +2681,32 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "i5",
+    "id": "d6",
+    "matchNo": 60,
+    "g": "D",
+    "round": "Lượt 3",
+    "date": "2026-06-26",
+    "time": "09:00",
+    "home": {
+      "name": "Paraguay",
+      "code": "paraguay",
+      "flag": "🇵🇾",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Australia",
+      "code": "australia",
+      "flag": "🇦🇺",
+      "color": "#777777"
+    },
+    "venue": "Levi's Stadium, San Francisco Bay Area · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "i1",
+    "matchNo": 61,
     "g": "I",
     "round": "Lượt 3",
     "date": "2026-06-27",
@@ -2611,7 +2715,7 @@ const MATCHES = [
       "name": "Na Uy",
       "code": "norway",
       "flag": "🇳🇴",
-      "color": "#ef2b2d"
+      "color": "#777777"
     },
     "away": {
       "name": "Pháp",
@@ -2619,13 +2723,14 @@ const MATCHES = [
       "flag": "🇫🇷",
       "color": "#002395"
     },
-    "venue": "Lumen Field, Seattle · USA",
+    "venue": "Gillette Stadium, Boston · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "i6",
+    "id": "i2",
+    "matchNo": 62,
     "g": "I",
     "round": "Lượt 3",
     "date": "2026-06-27",
@@ -2634,13 +2739,13 @@ const MATCHES = [
       "name": "Senegal",
       "code": "senegal",
       "flag": "🇸🇳",
-      "color": "#00853f"
+      "color": "#777777"
     },
     "away": {
       "name": "Iraq",
       "code": "iraq",
       "flag": "🇮🇶",
-      "color": "#007a3d"
+      "color": "#777777"
     },
     "venue": "BMO Field, Toronto · Canada",
     "sh": null,
@@ -2648,53 +2753,8 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "h5",
-    "g": "H",
-    "round": "Lượt 3",
-    "date": "2026-06-27",
-    "time": "07:00",
-    "home": {
-      "name": "Cape Verde",
-      "code": "capeverde",
-      "flag": "🇨🇻",
-      "color": "#003893"
-    },
-    "away": {
-      "name": "Ả Rập Xê Út",
-      "code": "saudiarabia",
-      "flag": "🇸🇦",
-      "color": "#006c35"
-    },
-    "venue": "BC Place, Vancouver · Canada",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "h6",
-    "g": "H",
-    "round": "Lượt 3",
-    "date": "2026-06-27",
-    "time": "07:00",
-    "home": {
-      "name": "Uruguay",
-      "code": "uruguay",
-      "flag": "🇺🇾",
-      "color": "#5aaaa8"
-    },
-    "away": {
-      "name": "Tây Ban Nha",
-      "code": "spain",
-      "flag": "🇪🇸",
-      "color": "#aa151b"
-    },
-    "venue": "Arrowhead Stadium, Kansas City · USA",
-    "sh": null,
-    "sa": null,
-    "status": "upcoming"
-  },
-  {
-    "id": "g5",
+    "id": "g3",
+    "matchNo": 63,
     "g": "G",
     "round": "Lượt 3",
     "date": "2026-06-27",
@@ -2703,21 +2763,22 @@ const MATCHES = [
       "name": "Ai Cập",
       "code": "egypt",
       "flag": "🇪🇬",
-      "color": "#ce1126"
+      "color": "#777777"
     },
     "away": {
       "name": "Iran",
       "code": "iran",
       "flag": "🇮🇷",
-      "color": "#239f40"
+      "color": "#777777"
     },
-    "venue": "Lincoln Financial Field, Philadelphia · USA",
+    "venue": "Lumen Field, Seattle · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "g6",
+    "id": "g4",
+    "matchNo": 64,
     "g": "G",
     "round": "Lượt 3",
     "date": "2026-06-27",
@@ -2726,44 +2787,70 @@ const MATCHES = [
       "name": "New Zealand",
       "code": "newzealand",
       "flag": "🇳🇿",
-      "color": "#00247d"
+      "color": "#777777"
     },
     "away": {
-      "name": "Bỉ",
+      "name": "Belgium",
       "code": "belgium",
       "flag": "🇧🇪",
-      "color": "#000000"
+      "color": "#777777"
     },
-    "venue": "AT&T Stadium, Dallas · USA",
+    "venue": "BC Place, Vancouver · Canada",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "l5",
-    "g": "L",
+    "id": "h5",
+    "matchNo": 65,
+    "g": "H",
     "round": "Lượt 3",
-    "date": "2026-06-28",
-    "time": "04:00",
+    "date": "2026-06-27",
+    "time": "07:00",
     "home": {
-      "name": "Croatia",
-      "code": "croatia",
-      "flag": "🇭🇷",
-      "color": "#0093dd"
+      "name": "Cabo Verde",
+      "code": "caboverde",
+      "flag": "🇨🇻",
+      "color": "#777777"
     },
     "away": {
-      "name": "Ghana",
-      "code": "ghana",
-      "flag": "🇬🇭",
-      "color": "#006b3f"
+      "name": "Ả Rập Xê Út",
+      "code": "saudiarabia",
+      "flag": "🇸🇦",
+      "color": "#777777"
     },
-    "venue": "Lincoln Financial Field, Philadelphia · USA",
+    "venue": "NRG Stadium, Houston · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
   {
-    "id": "l6",
+    "id": "h6",
+    "matchNo": 66,
+    "g": "H",
+    "round": "Lượt 3",
+    "date": "2026-06-27",
+    "time": "07:00",
+    "home": {
+      "name": "Uruguay",
+      "code": "uruguay",
+      "flag": "🇺🇾",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Tây Ban Nha",
+      "code": "spain",
+      "flag": "🇪🇸",
+      "color": "#aa151b"
+    },
+    "venue": "Estadio Akron, Guadalajara · Mexico",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "l1",
+    "matchNo": 67,
     "g": "L",
     "round": "Lượt 3",
     "date": "2026-06-28",
@@ -2772,12 +2859,12 @@ const MATCHES = [
       "name": "Panama",
       "code": "panama",
       "flag": "🇵🇦",
-      "color": "#db121e"
+      "color": "#777777"
     },
     "away": {
       "name": "Anh",
       "code": "england",
-      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "flag": "🏴",
       "color": "#CF142B"
     },
     "venue": "MetLife Stadium, New York/New Jersey · USA",
@@ -2786,7 +2873,80 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
+    "id": "l2",
+    "matchNo": 68,
+    "g": "L",
+    "round": "Lượt 3",
+    "date": "2026-06-28",
+    "time": "04:00",
+    "home": {
+      "name": "Croatia",
+      "code": "croatia",
+      "flag": "🇭🇷",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Ghana",
+      "code": "ghana",
+      "flag": "🇬🇭",
+      "color": "#777777"
+    },
+    "venue": "Lincoln Financial Field, Philadelphia · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "j3",
+    "matchNo": 69,
+    "g": "J",
+    "round": "Lượt 3",
+    "date": "2026-06-28",
+    "time": "09:00",
+    "home": {
+      "name": "Algeria",
+      "code": "algeria",
+      "flag": "🇩🇿",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Áo",
+      "code": "austria",
+      "flag": "🇦🇹",
+      "color": "#777777"
+    },
+    "venue": "Arrowhead Stadium, Kansas City · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "j4",
+    "matchNo": 70,
+    "g": "J",
+    "round": "Lượt 3",
+    "date": "2026-06-28",
+    "time": "09:00",
+    "home": {
+      "name": "Jordan",
+      "code": "jordan",
+      "flag": "🇯🇴",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "Argentina",
+      "code": "argentina",
+      "flag": "🇦🇷",
+      "color": "#74acdf"
+    },
+    "venue": "AT&T Stadium, Dallas · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
     "id": "k5",
+    "matchNo": 71,
     "g": "K",
     "round": "Lượt 3",
     "date": "2026-06-28",
@@ -2795,7 +2955,7 @@ const MATCHES = [
       "name": "Colombia",
       "code": "colombia",
       "flag": "🇨🇴",
-      "color": "#fcd116"
+      "color": "#777777"
     },
     "away": {
       "name": "Bồ Đào Nha",
@@ -2810,6 +2970,7 @@ const MATCHES = [
   },
   {
     "id": "k6",
+    "matchNo": 72,
     "g": "K",
     "round": "Lượt 3",
     "date": "2026-06-28",
@@ -2818,13 +2979,13 @@ const MATCHES = [
       "name": "DR Congo",
       "code": "drcongo",
       "flag": "🇨🇩",
-      "color": "#007fff"
+      "color": "#777777"
     },
     "away": {
       "name": "Uzbekistan",
       "code": "uzbekistan",
       "flag": "🇺🇿",
-      "color": "#1eb53a"
+      "color": "#777777"
     },
     "venue": "Mercedes-Benz Stadium, Atlanta · USA",
     "sh": null,
@@ -2832,22 +2993,359 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "j5",
-    "g": "J",
-    "round": "Lượt 3",
-    "date": "2026-06-28",
-    "time": "09:00",
+    "id": "m73",
+    "matchNo": 73,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-06-29",
+    "time": "02:00",
     "home": {
-      "name": "Algeria",
-      "code": "algeria",
-      "flag": "🇩🇿",
-      "color": "#006233"
+      "name": "2A",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
     },
     "away": {
-      "name": "Áo",
-      "code": "austria",
-      "flag": "🇦🇹",
-      "color": "#ed2939"
+      "name": "2B",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "SoFi Stadium, Los Angeles · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m74",
+    "matchNo": 74,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-06-30",
+    "time": "03:30",
+    "home": {
+      "name": "1E",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "3ABCDF",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Gillette Stadium, Boston · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m75",
+    "matchNo": 75,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-06-30",
+    "time": "08:00",
+    "home": {
+      "name": "1F",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "2C",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Estadio BBVA, Monterrey · Mexico",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m76",
+    "matchNo": 76,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-06-30",
+    "time": "00:00",
+    "home": {
+      "name": "1C",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "2F",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "NRG Stadium, Houston · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m77",
+    "matchNo": 77,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-01",
+    "time": "04:00",
+    "home": {
+      "name": "1I",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "3CDFGH",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "MetLife Stadium, New York/New Jersey · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m78",
+    "matchNo": 78,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-01",
+    "time": "00:00",
+    "home": {
+      "name": "2E",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "2I",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "AT&T Stadium, Dallas · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m79",
+    "matchNo": 79,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-01",
+    "time": "08:00",
+    "home": {
+      "name": "1A",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "3CEFHI",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Estadio Azteca, Mexico City · Mexico",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m80",
+    "matchNo": 80,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-01",
+    "time": "23:00",
+    "home": {
+      "name": "1L",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "3EHIJK",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Mercedes-Benz Stadium, Atlanta · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m81",
+    "matchNo": 81,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-02",
+    "time": "07:00",
+    "home": {
+      "name": "1D",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "3BEFIJ",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Levi's Stadium, San Francisco Bay Area · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m82",
+    "matchNo": 82,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-02",
+    "time": "03:00",
+    "home": {
+      "name": "1G",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "3AEHIJ",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Lumen Field, Seattle · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m83",
+    "matchNo": 83,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-03",
+    "time": "06:00",
+    "home": {
+      "name": "2K",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "2L",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "BMO Field, Toronto · Canada",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m84",
+    "matchNo": 84,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-03",
+    "time": "02:00",
+    "home": {
+      "name": "1H",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "2J",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "SoFi Stadium, Los Angeles · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m85",
+    "matchNo": 85,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-03",
+    "time": "10:00",
+    "home": {
+      "name": "1B",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "3EFGIJ",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "BC Place, Vancouver · Canada",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m86",
+    "matchNo": 86,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-04",
+    "time": "05:00",
+    "home": {
+      "name": "1J",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "2H",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Hard Rock Stadium, Miami · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m87",
+    "matchNo": 87,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-04",
+    "time": "08:30",
+    "home": {
+      "name": "1K",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "3DEIJL",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
     },
     "venue": "Arrowhead Stadium, Kansas City · USA",
     "sh": null,
@@ -2855,230 +3353,413 @@ const MATCHES = [
     "status": "upcoming"
   },
   {
-    "id": "j6",
-    "g": "J",
-    "round": "Lượt 3",
-    "date": "2026-06-28",
-    "time": "09:00",
+    "id": "m88",
+    "matchNo": 88,
+    "g": "R32",
+    "round": "Vòng 32 đội",
+    "date": "2026-07-04",
+    "time": "01:00",
     "home": {
-      "name": "Jordan",
-      "code": "jordan",
-      "flag": "🇯🇴",
-      "color": "#007a3d"
+      "name": "2D",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
     },
     "away": {
-      "name": "Argentina",
-      "code": "argentina",
-      "flag": "🇦🇷",
-      "color": "#74acdf"
+      "name": "2G",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
     },
     "venue": "AT&T Stadium, Dallas · USA",
     "sh": null,
     "sa": null,
     "status": "upcoming"
   },
-  // ══════════════════════════════════════════════════════════════
-  // KNOCKOUT STAGE — placeholder (cập nhật tên đội sau vòng bảng)
-  // ══════════════════════════════════════════════════════════════
-
-  // ── ROUND OF 32 (Vòng 1/16) — 29/6 – 2/7 ────────────────────
-  { "id":"r32_1",  "g":"R32", "round":"Vòng 1/16 · Trận 1",
-    "date":"2026-06-29", "time":"02:00",
-    "home":{"name":"Nhì A", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì B",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_2",  "g":"R32", "round":"Vòng 1/16 · Trận 2",
-    "date":"2026-06-29", "time":"05:00",
-    "home":{"name":"Nhất E", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Hạng 3 A/B/C/D/F",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"SoFi Stadium, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_3",  "g":"R32", "round":"Vòng 1/16 · Trận 3",
-    "date":"2026-06-30", "time":"02:00",
-    "home":{"name":"Nhất F", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì C",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"AT&T Stadium, Dallas · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_4",  "g":"R32", "round":"Vòng 1/16 · Trận 4",
-    "date":"2026-06-30", "time":"05:00",
-    "home":{"name":"Nhất C", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì F",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Hard Rock Stadium, Miami · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_5",  "g":"R32", "round":"Vòng 1/16 · Trận 5",
-    "date":"2026-07-01", "time":"02:00",
-    "home":{"name":"Nhất I", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Hạng 3 C/D/F/G/H",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Gillette Stadium, Boston · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_6",  "g":"R32", "round":"Vòng 1/16 · Trận 6",
-    "date":"2026-07-01", "time":"05:00",
-    "home":{"name":"Nhì E", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì I",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Arrowhead Stadium, Kansas City · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_7",  "g":"R32", "round":"Vòng 1/16 · Trận 7",
-    "date":"2026-07-02", "time":"02:00",
-    "home":{"name":"Nhất A", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Hạng 3 C/E/F/H/I",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"NRG Stadium, Houston · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_8",  "g":"R32", "round":"Vòng 1/16 · Trận 8",
-    "date":"2026-07-02", "time":"05:00",
-    "home":{"name":"Nhất L", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Hạng 3 E/H/I/J/K",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"BC Place, Vancouver · Canada", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_9",  "g":"R32", "round":"Vòng 1/16 · Trận 9",
-    "date":"2026-07-03", "time":"02:00",
-    "home":{"name":"Nhất D", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Hạng 3 B/E/F/I/J",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_10", "g":"R32", "round":"Vòng 1/16 · Trận 10",
-    "date":"2026-07-03", "time":"05:00",
-    "home":{"name":"Nhất G", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Hạng 3 A/E/H/I/J",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Levi\'s Stadium, San Francisco · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_11", "g":"R32", "round":"Vòng 1/16 · Trận 11",
-    "date":"2026-07-04", "time":"02:00",
-    "home":{"name":"Nhì K", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì L",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Estadio Azteca, Mexico City · Mexico", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_12", "g":"R32", "round":"Vòng 1/16 · Trận 12",
-    "date":"2026-07-04", "time":"05:00",
-    "home":{"name":"Nhất H", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì J",  "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"BMO Field, Toronto · Canada", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_13", "g":"R32", "round":"Vòng 1/16 · Trận 13",
-    "date":"2026-07-05", "time":"02:00",
-    "home":{"name":"Nhất B","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Hạng 3 E/F/G/I/J", "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Estadio Guadalajara, Guadalajara · Mexico", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_14", "g":"R32", "round":"Vòng 1/16 · Trận 14",
-    "date":"2026-07-05", "time":"05:00",
-    "home":{"name":"Nhì D","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì G", "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Estadio Monterrey, Monterrey · Mexico", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_15", "g":"R32", "round":"Vòng 1/16 · Trận 15",
-    "date":"2026-07-06", "time":"02:00",
-    "home":{"name":"Nhất J","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì H", "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Lumen Field, Seattle · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r32_16", "g":"R32", "round":"Vòng 1/16 · Trận 16",
-    "date":"2026-07-06", "time":"05:00",
-    "home":{"name":"Nhất K","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Hạng 3 D/E/I/J/L", "code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Lincoln Financial Field, Philadelphia · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  // ── ROUND OF 16 (Vòng Tứ kết 1/8) — 4/7 – 7/7 ──────────────
-  { "id":"r16_1", "g":"R16", "round":"Vòng 1/8 · Trận 1",
-    "date":"2026-07-09", "time":"02:00",
-    "home":{"name":"Thắng R32-1","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R32-2","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r16_2", "g":"R16", "round":"Vòng 1/8 · Trận 2",
-    "date":"2026-07-09", "time":"05:00",
-    "home":{"name":"Thắng R32-3","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R32-4","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"AT&T Stadium, Dallas · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r16_3", "g":"R16", "round":"Vòng 1/8 · Trận 3",
-    "date":"2026-07-10", "time":"02:00",
-    "home":{"name":"Thắng R32-5","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R32-6","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Hard Rock Stadium, Miami · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r16_4", "g":"R16", "round":"Vòng 1/8 · Trận 4",
-    "date":"2026-07-10", "time":"05:00",
-    "home":{"name":"Thắng R32-7","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R32-8","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"SoFi Stadium, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r16_5", "g":"R16", "round":"Vòng 1/8 · Trận 5",
-    "date":"2026-07-11", "time":"02:00",
-    "home":{"name":"Thắng R32-9", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R32-10","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Arrowhead Stadium, Kansas City · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r16_6", "g":"R16", "round":"Vòng 1/8 · Trận 6",
-    "date":"2026-07-11", "time":"05:00",
-    "home":{"name":"Thắng R32-11","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R32-12","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r16_7", "g":"R16", "round":"Vòng 1/8 · Trận 7",
-    "date":"2026-07-12", "time":"02:00",
-    "home":{"name":"Thắng R32-13","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R32-14","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Gillette Stadium, Boston · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"r16_8", "g":"R16", "round":"Vòng 1/8 · Trận 8",
-    "date":"2026-07-12", "time":"05:00",
-    "home":{"name":"Thắng R32-15","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R32-16","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"NRG Stadium, Houston · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  // ── TỨ KẾT (Quarter-finals) — 10/7 – 11/7 ───────────────────
-  { "id":"qf_1", "g":"QF", "round":"Tứ kết · Trận 1",
-    "date":"2026-07-14", "time":"05:00",
-    "home":{"name":"Thắng R16-1","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R16-2","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"qf_2", "g":"QF", "round":"Tứ kết · Trận 2",
-    "date":"2026-07-15", "time":"05:00",
-    "home":{"name":"Thắng R16-3","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R16-4","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"AT&T Stadium, Dallas · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"qf_3", "g":"QF", "round":"Tứ kết · Trận 3",
-    "date":"2026-07-16", "time":"05:00",
-    "home":{"name":"Thắng R16-5","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R16-6","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"SoFi Stadium, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"qf_4", "g":"QF", "round":"Tứ kết · Trận 4",
-    "date":"2026-07-17", "time":"05:00",
-    "home":{"name":"Thắng R16-7","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng R16-8","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  // ── BÁN KẾT (Semi-finals) — 14/7 – 15/7 ────────────────────
-  { "id":"sf_1", "g":"SF", "round":"Bán kết · Trận 1",
-    "date":"2026-07-19", "time":"05:00",
-    "home":{"name":"Thắng TK-1","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng TK-2","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  { "id":"sf_2", "g":"SF", "round":"Bán kết · Trận 2",
-    "date":"2026-07-20", "time":"05:00",
-    "home":{"name":"Thắng TK-3","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng TK-4","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  // ── TRANH HẠNG 3 (Third place) — 18/7 ───────────────────────
-  { "id":"tp_1", "g":"TP", "round":"Tranh hạng 3",
-    "date":"2026-07-23", "time":"05:00",
-    "home":{"name":"Thua BK-1","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thua BK-2","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"Hard Rock Stadium, Miami · USA", "sh":null,"sa":null,"status":"upcoming" },
-
-  // ── CHUNG KẾT (Final) — 19/7 ────────────────────────────────
-  { "id":"fin_1", "g":"FIN", "round":"Chung kết",
-    "date":"2026-07-26", "time":"05:00",
-    "home":{"name":"Thắng BK-1","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Thắng BK-2","code":"tbd","flag":"🏳️","color":"#555"},
-    "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" }
-
+  {
+    "id": "m89",
+    "matchNo": 89,
+    "g": "R16",
+    "round": "Vòng 16 đội",
+    "date": "2026-07-05",
+    "time": "04:00",
+    "home": {
+      "name": "W74",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W77",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Lincoln Financial Field, Philadelphia · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m90",
+    "matchNo": 90,
+    "g": "R16",
+    "round": "Vòng 16 đội",
+    "date": "2026-07-05",
+    "time": "00:00",
+    "home": {
+      "name": "W73",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W75",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "NRG Stadium, Houston · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m91",
+    "matchNo": 91,
+    "g": "R16",
+    "round": "Vòng 16 đội",
+    "date": "2026-07-06",
+    "time": "03:00",
+    "home": {
+      "name": "W76",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W78",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "MetLife Stadium, New York/New Jersey · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m92",
+    "matchNo": 92,
+    "g": "R16",
+    "round": "Vòng 16 đội",
+    "date": "2026-07-06",
+    "time": "07:00",
+    "home": {
+      "name": "W79",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W80",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Estadio Azteca, Mexico City · Mexico",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m93",
+    "matchNo": 93,
+    "g": "R16",
+    "round": "Vòng 16 đội",
+    "date": "2026-07-07",
+    "time": "02:00",
+    "home": {
+      "name": "W83",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W84",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "AT&T Stadium, Dallas · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m94",
+    "matchNo": 94,
+    "g": "R16",
+    "round": "Vòng 16 đội",
+    "date": "2026-07-07",
+    "time": "07:00",
+    "home": {
+      "name": "W81",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W82",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Lumen Field, Seattle · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m95",
+    "matchNo": 95,
+    "g": "R16",
+    "round": "Vòng 16 đội",
+    "date": "2026-07-07",
+    "time": "23:00",
+    "home": {
+      "name": "W86",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W88",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Mercedes-Benz Stadium, Atlanta · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m96",
+    "matchNo": 96,
+    "g": "R16",
+    "round": "Vòng 16 đội",
+    "date": "2026-07-08",
+    "time": "03:00",
+    "home": {
+      "name": "W85",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W87",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "BC Place, Vancouver · Canada",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m97",
+    "matchNo": 97,
+    "g": "QF",
+    "round": "Tứ kết",
+    "date": "2026-07-10",
+    "time": "03:00",
+    "home": {
+      "name": "W89",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W90",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Gillette Stadium, Boston · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m98",
+    "matchNo": 98,
+    "g": "QF",
+    "round": "Tứ kết",
+    "date": "2026-07-11",
+    "time": "02:00",
+    "home": {
+      "name": "W93",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W94",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "SoFi Stadium, Los Angeles · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m99",
+    "matchNo": 99,
+    "g": "QF",
+    "round": "Tứ kết",
+    "date": "2026-07-12",
+    "time": "04:00",
+    "home": {
+      "name": "W91",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W92",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Hard Rock Stadium, Miami · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m100",
+    "matchNo": 100,
+    "g": "QF",
+    "round": "Tứ kết",
+    "date": "2026-07-12",
+    "time": "08:00",
+    "home": {
+      "name": "W95",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W96",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Arrowhead Stadium, Kansas City · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m101",
+    "matchNo": 101,
+    "g": "SF",
+    "round": "Bán kết",
+    "date": "2026-07-15",
+    "time": "02:00",
+    "home": {
+      "name": "W97",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W98",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "AT&T Stadium, Dallas · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m102",
+    "matchNo": 102,
+    "g": "SF",
+    "round": "Bán kết",
+    "date": "2026-07-16",
+    "time": "02:00",
+    "home": {
+      "name": "W99",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W100",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Mercedes-Benz Stadium, Atlanta · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m103",
+    "matchNo": 103,
+    "g": "TP",
+    "round": "Tranh hạng 3",
+    "date": "2026-07-19",
+    "time": "04:00",
+    "home": {
+      "name": "L101",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "L102",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "Hard Rock Stadium, Miami · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  },
+  {
+    "id": "m104",
+    "matchNo": 104,
+    "g": "FIN",
+    "round": "Chung kết",
+    "date": "2026-07-20",
+    "time": "02:00",
+    "home": {
+      "name": "W101",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "away": {
+      "name": "W102",
+      "code": "placeholder",
+      "flag": "",
+      "color": "#777777"
+    },
+    "venue": "MetLife Stadium, New York/New Jersey · USA",
+    "sh": null,
+    "sa": null,
+    "status": "upcoming"
+  }
 ];
 
 const TARGET = new Set(['england','germany','france','brazil','argentina','spain','portugal']);
@@ -3090,7 +3771,7 @@ const GROUP_META = {
   },
   "B": {
     "label": "Grp. B",
-    "teams": "Canada · Bosnia & Herzegovina · Qatar · Thụy Sĩ"
+    "teams": "Canada · Thụy Sĩ · Qatar · Bosnia & Herzegovina"
   },
   "C": {
     "label": "Grp. C",
@@ -3106,7 +3787,7 @@ const GROUP_META = {
   },
   "F": {
     "label": "Grp. F",
-    "teams": "Hà Lan · Nhật Bản · Thụy Điển · Tunisia"
+    "teams": "Hà Lan · Nhật Bản · Tunisia · Thụy Điển"
   },
   "G": {
     "label": "Grp. G",
@@ -3114,11 +3795,11 @@ const GROUP_META = {
   },
   "H": {
     "label": "Grp. H",
-    "teams": "Tây Ban Nha · Cape Verde · Ả Rập Xê Út · Uruguay"
+    "teams": "Tây Ban Nha · Cabo Verde · Ả Rập Xê Út · Uruguay"
   },
   "I": {
     "label": "Grp. I",
-    "teams": "Pháp · Senegal · Iraq · Na Uy"
+    "teams": "Pháp · Senegal · Na Uy · Iraq"
   },
   "J": {
     "label": "Grp. J",
@@ -3126,34 +3807,36 @@ const GROUP_META = {
   },
   "K": {
     "label": "Grp. K",
-    "teams": "Bồ Đào Nha · DR Congo · Uzbekistan · Colombia"
+    "teams": "Bồ Đào Nha · Uzbekistan · Colombia · DR Congo"
   },
   "L": {
     "label": "Grp. L",
     "teams": "Anh · Croatia · Ghana · Panama"
   },
-  "R32":   { "label": "Vòng 32 đội",  "teams": "16 trận · 29/06 – 06/07" },
-  "r32_1":  { "label": "M73 · Vòng 1/16", "teams": "Nhì A vs Nhì B" },
-  "r32_2":  { "label": "M74 · Vòng 1/16", "teams": "Nhất E vs Hạng 3 A/B/C/D/F" },
-  "r32_3":  { "label": "M75 · Vòng 1/16", "teams": "Nhất F vs Nhì C" },
-  "r32_4":  { "label": "M76 · Vòng 1/16", "teams": "Nhất C vs Nhì F" },
-  "r32_5":  { "label": "M77 · Vòng 1/16", "teams": "Nhất I vs Hạng 3 C/D/F/G/H" },
-  "r32_6":  { "label": "M78 · Vòng 1/16", "teams": "Nhì E vs Nhì I" },
-  "r32_7":  { "label": "M79 · Vòng 1/16", "teams": "Nhất A vs Hạng 3 C/E/F/H/I" },
-  "r32_8":  { "label": "M80 · Vòng 1/16", "teams": "Nhất L vs Hạng 3 E/H/I/J/K" },
-  "r32_9":  { "label": "M81 · Vòng 1/16", "teams": "Nhất D vs Hạng 3 B/E/F/I/J" },
-  "r32_10": { "label": "M82 · Vòng 1/16", "teams": "Nhất G vs Hạng 3 A/E/H/I/J" },
-  "r32_11": { "label": "M83 · Vòng 1/16", "teams": "Nhì K vs Nhì L" },
-  "r32_12": { "label": "M84 · Vòng 1/16", "teams": "Nhất H vs Nhì J" },
-  "r32_13": { "label": "M85 · Vòng 1/16", "teams": "Nhất B vs Hạng 3 E/F/G/I/J" },
-  "r32_14": { "label": "M86 · Vòng 1/16", "teams": "Nhì D vs Nhì G" },
-  "r32_15": { "label": "M87 · Vòng 1/16", "teams": "Nhất J vs Nhì H" },
-  "r32_16": { "label": "M88 · Vòng 1/16", "teams": "Nhất K vs Hạng 3 D/E/I/J/L" },
-  "R16": { "label": "Vòng 1/16",   "teams": "8 trận · 09/07 – 12/07" },
-  "QF":  { "label": "Vòng 1/8 · Tứ kết", "teams": "4 trận · 14/07 – 17/07" },
-  "SF":  { "label": "Bán kết",     "teams": "2 trận · 19/07 – 20/07" },
-  "TP":  { "label": "Tranh hạng 3","teams": "23/07/2026" },
-  "FIN": { "label": "🏆 Chung kết","teams": "MetLife Stadium · 26/07/2026" }
+  "R32": {
+    "label": "Vòng 32 đội",
+    "teams": "16 trận · 29/06 – 04/07 theo giờ Việt Nam"
+  },
+  "R16": {
+    "label": "Vòng 16 đội",
+    "teams": "8 trận · 05/07 – 08/07 theo giờ Việt Nam"
+  },
+  "QF": {
+    "label": "Tứ kết",
+    "teams": "4 trận · 10/07 – 12/07 theo giờ Việt Nam"
+  },
+  "SF": {
+    "label": "Bán kết",
+    "teams": "2 trận · 15/07 – 16/07 theo giờ Việt Nam"
+  },
+  "TP": {
+    "label": "Tranh hạng 3",
+    "teams": "19/07 theo giờ Việt Nam"
+  },
+  "FIN": {
+    "label": "Chung kết",
+    "teams": "20/07 theo giờ Việt Nam"
+  }
 };
 
 let currentFilter = 'all';
@@ -3193,6 +3876,17 @@ function statusBadge(s, minute) {
 // RENDER
 // ─────────────────────────────────────────────────────────────
 function renderFlag(team) {
+  // Placeholder for unknown knockout teams
+  if (team.code === 'tbd' || !team.flag || team.flag === '🏳️' || team.flag === '\u{1F3F3}\uFE0F') {
+    return `<span class="flag-tbd" title="${team.name || 'TBD'}">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="8" r="7" stroke="#666" stroke-width="1.2"/>
+        <path d="M8 4v4l2.5 2.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </span>`;
+  }
+  if (team.code === 'england') return `<span class="flag-css flag-england" title="England"></span>`;
+  if (team.code === 'scotland') return `<span class="flag-css flag-scotland" title="Scotland"></span>`;
   return `<span class="te t-flag">${team.flag}</span>`;
 }
 
@@ -3595,9 +4289,9 @@ function hasTodayMatch() {
 }
 
 function getPollInterval() {
-  if (hasLiveMatch())   return 60_000;       // 60s khi có trận đang đấu
-  if (hasTodayMatch())  return 5 * 60_000;   // 5 phút khi hôm nay có trận
-  return 30 * 60_000;                         // 30 phút các ngày khác
+  if (hasLiveMatch())   return 30_000;       // 30s khi có trận đang đấu (knockout căng hơn)
+  if (hasTodayMatch())  return 3 * 60_000;   // 3 phút khi hôm nay có trận
+  return 30 * 60_000;                        // 30 phút các ngày khác
 }
 
 function schedulePoll() {
@@ -3837,11 +4531,17 @@ function evDate(ev) {
 function koGroup(stageName) {
   if (!stageName) return null;
   const s = stageName.toLowerCase();
-  if (s.includes('round of 32') || s.includes('1/16') || s.includes('32'))  return 'R32';
-  if (s.includes('round of 16') || s.includes('1/8')  || s.includes('16'))  return 'R16';
-  if (s.includes('quarter'))   return 'QF';
-  if (s.includes('semi'))      return 'SF';
+  // Order matters: check 'semi' before 'final', 'quarter' before '16'
+  if (s.includes('semi'))                                              return 'SF';
   if (s.includes('third') || s.includes('bronze') || s.includes('3rd')) return 'TP';
+  if (s.includes('quarter') || s.includes('quarter-final'))           return 'QF';
+  if (s.includes('round of 32') || s.includes('r32'))                 return 'R32';
+  if (s.includes('round of 16') || s.includes('r16'))                 return 'R16';
+  // FotMob sometimes uses "1/8" or "1/16" as round names
+  if (/\b1\/16\b/.test(s))  return 'R32';
+  if (/\b1\/8\b/.test(s))   return 'R16';
+  if (/\b1\/4\b/.test(s))   return 'QF';
+  // "final" must come after semi-final check
   if (s.includes('final'))     return 'FIN';
   return null;
 }
@@ -3853,6 +4553,8 @@ function parseEvents(data) {
     () => data?.matches?.data?.events,
     () => data?.data?.events,
     () => data?.events,
+    () => data?.rounds?.flatMap(r => r.matches ?? r.events ?? []),
+    () => data?.playoff?.rounds?.flatMap(r => r.matches ?? r.events ?? []),
     () => Array.isArray(data) ? data : null,
   ];
   for (const fn of paths) {
@@ -3865,8 +4567,19 @@ function parseEvents(data) {
 function isTBD(name) {
   if (!name) return true;
   const n = name.toLowerCase();
-  return n === 'tbd' || n.includes('winner') || n.includes('loser')
-      || n.includes('match') || n.includes('placeholder');
+  return n === 'tbd'
+    || n.includes('winner')
+    || n.includes('loser')
+    || n.includes('match')
+    || n.includes('placeholder')
+    || n.includes('pending')
+    || n.includes('qualified')
+    || n.includes('runner')
+    || n === '-'
+    || n === '?'
+    || /^nhất\s[a-l]$/i.test(name.trim())   // our own placeholders
+    || /^nhì\s[a-l]$/i.test(name.trim())
+    || /^hạng 3/.test(name.trim());
 }
 
 function applyFotmobData(data) {
