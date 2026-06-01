@@ -338,26 +338,72 @@ a { text-decoration: none; color: inherit; }
 
 /* Refresh button (liquid glass) */
 .refresh-btn {
-  display: flex; align-items: center; justify-content: center;
-  width: 34px; height: 34px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   cursor: pointer;
   flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1);
+  outline: none;
+
+  /* Core glass: backdrop blur */
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  background: rgba(255,255,255,0.02);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 2px 8px rgba(0,0,0,0.25);
-  transition: transform 0.15s, background 0.15s;
-  position: relative;
-  outline: none;
+
+  /* Glass fill: semi-transparent white */
+  background: rgba(255,255,255,0.12);
+
+  /* Gradient border via border-image trick using outline+pseudo */
+  border: none;
+  box-shadow:
+
+    /* inner top highlight */
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    /* inner bottom shadow */
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+ 
 }
 
-.refresh-btn:hover   { background: rgba(255,255,255,0.18); transform: scale(1.06); }
-.refresh-btn:active  { transform: scale(0.92); }
-.refresh-btn:disabled { opacity: 0.35; cursor: wait; transform: none; }
-.refresh-btn svg { width: 16px; height: 16px; display: block; position: relative; z-index: 1; }
-.refresh-btn.spinning svg { animation: spin360 0.6s cubic-bezier(.4,0,.2,1); }
-@keyframes spin360 { to { transform: rotate(360deg); } }
+
+.refresh-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: scale(1.06);
+}
+
+.refresh-btn:active {
+  transform: scale(0.91);
+  background: rgba(255,255,255,0.08);
+  transition: transform 0.1s ease;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.35;
+  cursor: wait;
+  transform: none;
+}
+
+.refresh-btn svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+  position: relative;
+  z-index: 3;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+  flex-shrink: 0;
+}
+
+.refresh-btn.spinning svg {
+  animation: spinOnce 0.65s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes spinOnce {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
 /* Responsive */
 @media (max-width: 640px) {
