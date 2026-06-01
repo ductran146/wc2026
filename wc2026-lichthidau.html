@@ -1006,6 +1006,73 @@ a { text-decoration: none; color: inherit; }
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
+
+/* ─── VIEW SWITCHER (Theo ngày / Theo bảng) ─────────────────── */
+.view-bar {
+  display: none; /* shown only when filter=all */
+  padding: 12px 16px 0;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.view-bar.show { display: flex; }
+
+.view-tabs {
+  display: flex;
+  background: #222222;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.view-tab {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: all 0.15s;
+  font-family: var(--inter);
+  white-space: nowrap;
+}
+.view-tab:hover { color: var(--text1); }
+.view-tab.active {
+  background: #333333;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Group select box */
+.group-select-wrap {
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+.group-select-wrap.show { display: flex; }
+
+.group-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #222222;
+  color: #ffffff;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 32px 6px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: var(--inter);
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s;
+}
+.group-select:hover { border-color: rgba(255,255,255,0.2); }
+.group-select option { background: #1e1e1e; color: #fff; }
 </style>
 </head>
 <body>
@@ -1081,6 +1148,31 @@ a { text-decoration: none; color: inherit; }
       <span class="demo-label">Demo hiển thị kết quả</span>
     </div>
     <div id="demoRows"></div>
+  </div>
+
+  <!-- VIEW SWITCHER -->
+  <div class="view-bar" id="viewBar">
+    <div class="view-tabs">
+      <button class="view-tab active" id="viewTabDate" onclick="switchView('date', this)">Theo ngày</button>
+      <button class="view-tab" id="viewTabGroup" onclick="switchView('group', this)">Theo bảng</button>
+    </div>
+    <div class="group-select-wrap" id="groupSelectWrap">
+      <select class="group-select" id="groupSelect" onchange="onGroupSelectChange(this.value)">
+        <option value="all">Tất cả bảng</option>
+        <option value="A">Bảng A</option>
+        <option value="B">Bảng B</option>
+        <option value="C">Bảng C</option>
+        <option value="D">Bảng D</option>
+        <option value="E">Bảng E</option>
+        <option value="F">Bảng F</option>
+        <option value="G">Bảng G</option>
+        <option value="H">Bảng H</option>
+        <option value="I">Bảng I</option>
+        <option value="J">Bảng J</option>
+        <option value="K">Bảng K</option>
+        <option value="L">Bảng L</option>
+      </select>
+    </div>
   </div>
 
   <div id="matchContainer"></div>
@@ -2823,6 +2915,8 @@ const GROUP_META = {
 
 let currentFilter = 'all';
 let currentRoundFilter = 'all';
+let currentView = 'date';   // 'date' | 'group'
+let currentGroupFilter = 'all'; // group key when view='group'
 
 // ─────────────────────────────────────────────────────────────
 // HELPERS
@@ -3084,32 +3178,60 @@ function renderAll() {
       currentRoundFilter === 'all' ||
       m.round === currentRoundFilter;
 
-    return teamOk && roundOk;
+    // Group filter (only when view=group and filter=all)
+    const groupOk = !(currentFilter === 'all' && currentView === 'group' && currentGroupFilter !== 'all') ||
+      m.g === currentGroupFilter;
+
+    return teamOk && roundOk && groupOk;
   });
 
-  // Group
-  const groups = {};
-  list.forEach(m => { (groups[m.g] = groups[m.g] || []).push(m); });
-
-  const keys = Object.keys(groups).sort();
   let html = '';
 
-  // section-head hidden per Figma spec
+  if (currentFilter === 'all' && currentView === 'date') {
+    // ── Theo ngày: sort by date+time, group by date ──────────
+    const sorted = [...list].sort((a, b) => {
+      const da = a.date + 'T' + a.time;
+      const db = b.date + 'T' + b.time;
+      return da < db ? -1 : da > db ? 1 : 0;
+    });
 
-  keys.forEach(g => {
-    const meta = GROUP_META[g] || { label:'BẢNG '+g, teams:'', em:'⚽' };
-    html += `
-    <div class="group-block">
-      <div class="group-label-row">
-        <span class="group-pill">${meta.label}</span>
-        <span class="group-teams-text">${meta.teams}</span>
+    const byDate = {};
+    sorted.forEach(m => { (byDate[m.date] = byDate[m.date] || []).push(m); });
 
-      </div>
-      ${groups[g].map(renderMatchRow).join('')}
-    </div>`;
-  });
+    const DAYS = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+    Object.keys(byDate).sort().forEach(dateStr => {
+      const d = new Date(dateStr + 'T12:00:00+07:00');
+      const label = DAYS[d.getDay()] + ' · ' + d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0');
+      html += `
+      <div class="group-block">
+        <div class="group-label-row">
+          <span class="group-pill">${label}</span>
+          <span class="group-teams-text">${byDate[dateStr].length} trận</span>
+        </div>
+        ${byDate[dateStr].map(renderMatchRow).join('')}
+      </div>`;
+    });
 
-  // Append standings block when a specific team is selected
+  } else {
+    // ── Theo bảng (hoặc tab đội) ─────────────────────────────
+    const groups = {};
+    list.forEach(m => { (groups[m.g] = groups[m.g] || []).push(m); });
+    const keys = Object.keys(groups).sort();
+
+    keys.forEach(g => {
+      const meta = GROUP_META[g] || { label:'BẢNG '+g, teams:'' };
+      html += `
+      <div class="group-block">
+        <div class="group-label-row">
+          <span class="group-pill">${meta.label}</span>
+          <span class="group-teams-text">${meta.teams}</span>
+        </div>
+        ${groups[g].map(renderMatchRow).join('')}
+      </div>`;
+    });
+  }
+
+  // Standings when team tab selected
   if (currentFilter !== 'all' && TEAM_GROUP[currentFilter]) {
     const group = TEAM_GROUP[currentFilter];
     html += `<div class="standings-section-label">Bảng xếp hạng</div>`;
@@ -3118,6 +3240,20 @@ function renderAll() {
 
   document.getElementById('matchContainer').innerHTML = html;
   document.getElementById('emptyState').classList.toggle('show', list.length === 0);
+}
+
+function switchView(view, btn) {
+  currentView = view;
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const wrap = document.getElementById('groupSelectWrap');
+  if (wrap) wrap.classList.toggle('show', view === 'group');
+  renderAll();
+}
+
+function onGroupSelectChange(val) {
+  currentGroupFilter = val;
+  renderAll();
 }
 
 function filterTeam(team, btn) {
@@ -3476,6 +3612,9 @@ function renderDemoBox() {
 
   renderAll();
   renderDemoBox();
+  // Show view switcher by default (tab 'all' is active)
+  const viewBar = document.getElementById('viewBar');
+  if (viewBar) viewBar.classList.add('show');
 
   // Không tự fetch khi load để trang tĩnh mở nhanh và không phụ thuộc proxy CORS.
   // Người dùng có thể bấm “Làm mới” để thử cập nhật live từ FotMob khi API/proxy khả dụng.
