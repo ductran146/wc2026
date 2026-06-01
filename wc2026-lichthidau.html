@@ -1023,12 +1023,17 @@ a { text-decoration: none; color: inherit; }
   border-radius: 10px;
   padding: 3px;
   gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+  max-width: 100%;
 }
+.view-tabs::-webkit-scrollbar { display: none; }
 
 .view-tab {
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 8px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text2);
   cursor: pointer;
@@ -1037,6 +1042,7 @@ a { text-decoration: none; color: inherit; }
   transition: all 0.15s;
   font-family: var(--inter);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .view-tab:hover { color: var(--text1); }
 .view-tab.active {
@@ -1154,7 +1160,13 @@ a { text-decoration: none; color: inherit; }
   <div class="view-bar" id="viewBar">
     <div class="view-tabs">
       <button class="view-tab active" id="viewTabDate" onclick="switchView('date', this)">Theo ngày</button>
-      <button class="view-tab" id="viewTabGroup" onclick="switchView('group', this)">Theo bảng</button>
+      <button class="view-tab" onclick="switchView('group', this)">Theo bảng</button>
+      <button class="view-tab" onclick="switchView('R32', this)">1/32</button>
+      <button class="view-tab" onclick="switchView('R16', this)">1/16</button>
+      <button class="view-tab" onclick="switchView('QF', this)">Tứ kết</button>
+      <button class="view-tab" onclick="switchView('SF', this)">Bán kết</button>
+      <button class="view-tab" onclick="switchView('TP', this)">3/4</button>
+      <button class="view-tab" onclick="switchView('FIN', this)">Chung kết</button>
     </div>
     <div class="group-select-wrap" id="groupSelectWrap">
       <select class="group-select" id="groupSelect" onchange="onGroupSelectChange(this.value)">
@@ -1172,9 +1184,9 @@ a { text-decoration: none; color: inherit; }
         <option value="K">Bảng K</option>
         <option value="L">Bảng L</option>
         <optgroup label="─── Vòng loại trực tiếp ───────"></optgroup>
-        <option value="R32">Vòng 1/16</option>
-        <option value="R16">Vòng 1/8</option>
-        <option value="QF">Tứ kết</option>
+        <option value="R32">Vòng 32 đội</option>
+        <option value="R16">Vòng 1/16</option>
+        <option value="QF">Vòng 1/8 (Tứ kết)</option>
         <option value="SF">Bán kết</option>
         <option value="TP">Tranh hạng 3</option>
         <option value="FIN">🏆 Chung kết</option>
@@ -2872,98 +2884,98 @@ const MATCHES = [
   // ── ROUND OF 32 (Vòng 1/16) — 29/6 – 2/7 ────────────────────
   { "id":"r32_1",  "g":"R32", "round":"Vòng 1/16 · Trận 1",
     "date":"2026-06-29", "time":"02:00",
-    "home":{"name":"Nhất A", "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhì A", "code":"tbd","flag":"🏳️","color":"#555"},
     "away":{"name":"Nhì B",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"MetLife Stadium, New York · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_2",  "g":"R32", "round":"Vòng 1/16 · Trận 2",
     "date":"2026-06-29", "time":"05:00",
-    "home":{"name":"Nhất C", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì D",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất E", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Hạng 3 A/B/C/D/F",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"SoFi Stadium, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_3",  "g":"R32", "round":"Vòng 1/16 · Trận 3",
     "date":"2026-06-30", "time":"02:00",
-    "home":{"name":"Nhất E", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì F",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất F", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì C",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"AT&T Stadium, Dallas · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_4",  "g":"R32", "round":"Vòng 1/16 · Trận 4",
     "date":"2026-06-30", "time":"05:00",
-    "home":{"name":"Nhất G", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì H",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất C", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì F",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Hard Rock Stadium, Miami · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_5",  "g":"R32", "round":"Vòng 1/16 · Trận 5",
     "date":"2026-07-01", "time":"02:00",
     "home":{"name":"Nhất I", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì J",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Hạng 3 C/D/F/G/H",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Gillette Stadium, Boston · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_6",  "g":"R32", "round":"Vòng 1/16 · Trận 6",
     "date":"2026-07-01", "time":"05:00",
-    "home":{"name":"Nhất K", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì L",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhì E", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì I",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Arrowhead Stadium, Kansas City · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_7",  "g":"R32", "round":"Vòng 1/16 · Trận 7",
     "date":"2026-07-02", "time":"02:00",
-    "home":{"name":"Nhất B", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì A",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất A", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Hạng 3 C/E/F/H/I",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"NRG Stadium, Houston · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_8",  "g":"R32", "round":"Vòng 1/16 · Trận 8",
     "date":"2026-07-02", "time":"05:00",
-    "home":{"name":"Nhất D", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì C",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất L", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Hạng 3 E/H/I/J/K",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"BC Place, Vancouver · Canada", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_9",  "g":"R32", "round":"Vòng 1/16 · Trận 9",
     "date":"2026-07-03", "time":"02:00",
-    "home":{"name":"Nhất F", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì E",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất D", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Hạng 3 B/E/F/I/J",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Rose Bowl, Los Angeles · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_10", "g":"R32", "round":"Vòng 1/16 · Trận 10",
     "date":"2026-07-03", "time":"05:00",
-    "home":{"name":"Nhất H", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì G",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất G", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Hạng 3 A/E/H/I/J",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Levi\'s Stadium, San Francisco · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_11", "g":"R32", "round":"Vòng 1/16 · Trận 11",
     "date":"2026-07-04", "time":"02:00",
-    "home":{"name":"Nhất J", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì I",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhì K", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì L",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Estadio Azteca, Mexico City · Mexico", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_12", "g":"R32", "round":"Vòng 1/16 · Trận 12",
     "date":"2026-07-04", "time":"05:00",
-    "home":{"name":"Nhất L", "code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì K",  "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất H", "code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì J",  "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"BMO Field, Toronto · Canada", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_13", "g":"R32", "round":"Vòng 1/16 · Trận 13",
     "date":"2026-07-05", "time":"02:00",
-    "home":{"name":"Nhất A*","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì L*", "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất B","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Hạng 3 E/F/G/I/J", "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Estadio Guadalajara, Guadalajara · Mexico", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_14", "g":"R32", "round":"Vòng 1/16 · Trận 14",
     "date":"2026-07-05", "time":"05:00",
-    "home":{"name":"Nhất B*","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì K*", "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhì D","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì G", "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Estadio Monterrey, Monterrey · Mexico", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_15", "g":"R32", "round":"Vòng 1/16 · Trận 15",
     "date":"2026-07-06", "time":"02:00",
-    "home":{"name":"Nhất C*","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì J*", "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất J","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Nhì H", "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Lumen Field, Seattle · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   { "id":"r32_16", "g":"R32", "round":"Vòng 1/16 · Trận 16",
     "date":"2026-07-06", "time":"05:00",
-    "home":{"name":"Nhất D*","code":"tbd","flag":"🏳️","color":"#555"},
-    "away":{"name":"Nhì I*", "code":"tbd","flag":"🏳️","color":"#555"},
+    "home":{"name":"Nhất K","code":"tbd","flag":"🏳️","color":"#555"},
+    "away":{"name":"Hạng 3 D/E/I/J/L", "code":"tbd","flag":"🏳️","color":"#555"},
     "venue":"Lincoln Financial Field, Philadelphia · USA", "sh":null,"sa":null,"status":"upcoming" },
 
   // ── ROUND OF 16 (Vòng Tứ kết 1/8) — 4/7 – 7/7 ──────────────
@@ -3120,9 +3132,25 @@ const GROUP_META = {
     "label": "Grp. L",
     "teams": "Anh · Croatia · Ghana · Panama"
   },
-  "R32": { "label": "Vòng 1/16",   "teams": "32 trận · 29/06 – 06/07" },
-  "R16": { "label": "Vòng 1/8",    "teams": "16 trận · 09/07 – 12/07" },
-  "QF":  { "label": "Tứ kết",      "teams": "4 trận · 14/07 – 17/07" },
+  "R32":   { "label": "Vòng 32 đội",  "teams": "16 trận · 29/06 – 06/07" },
+  "r32_1":  { "label": "M73 · Vòng 1/16", "teams": "Nhì A vs Nhì B" },
+  "r32_2":  { "label": "M74 · Vòng 1/16", "teams": "Nhất E vs Hạng 3 A/B/C/D/F" },
+  "r32_3":  { "label": "M75 · Vòng 1/16", "teams": "Nhất F vs Nhì C" },
+  "r32_4":  { "label": "M76 · Vòng 1/16", "teams": "Nhất C vs Nhì F" },
+  "r32_5":  { "label": "M77 · Vòng 1/16", "teams": "Nhất I vs Hạng 3 C/D/F/G/H" },
+  "r32_6":  { "label": "M78 · Vòng 1/16", "teams": "Nhì E vs Nhì I" },
+  "r32_7":  { "label": "M79 · Vòng 1/16", "teams": "Nhất A vs Hạng 3 C/E/F/H/I" },
+  "r32_8":  { "label": "M80 · Vòng 1/16", "teams": "Nhất L vs Hạng 3 E/H/I/J/K" },
+  "r32_9":  { "label": "M81 · Vòng 1/16", "teams": "Nhất D vs Hạng 3 B/E/F/I/J" },
+  "r32_10": { "label": "M82 · Vòng 1/16", "teams": "Nhất G vs Hạng 3 A/E/H/I/J" },
+  "r32_11": { "label": "M83 · Vòng 1/16", "teams": "Nhì K vs Nhì L" },
+  "r32_12": { "label": "M84 · Vòng 1/16", "teams": "Nhất H vs Nhì J" },
+  "r32_13": { "label": "M85 · Vòng 1/16", "teams": "Nhất B vs Hạng 3 E/F/G/I/J" },
+  "r32_14": { "label": "M86 · Vòng 1/16", "teams": "Nhì D vs Nhì G" },
+  "r32_15": { "label": "M87 · Vòng 1/16", "teams": "Nhất J vs Nhì H" },
+  "r32_16": { "label": "M88 · Vòng 1/16", "teams": "Nhất K vs Hạng 3 D/E/I/J/L" },
+  "R16": { "label": "Vòng 1/16",   "teams": "8 trận · 09/07 – 12/07" },
+  "QF":  { "label": "Vòng 1/8 · Tứ kết", "teams": "4 trận · 14/07 – 17/07" },
   "SF":  { "label": "Bán kết",     "teams": "2 trận · 19/07 – 20/07" },
   "TP":  { "label": "Tranh hạng 3","teams": "23/07/2026" },
   "FIN": { "label": "🏆 Chung kết","teams": "MetLife Stadium · 26/07/2026" }
@@ -3393,16 +3421,37 @@ function renderAll() {
       currentRoundFilter === 'all' ||
       m.round === currentRoundFilter;
 
-    // Group filter: áp dụng cho cả 2 view khi tab = 'all'
-    const groupOk = !(currentFilter === 'all' && currentGroupFilter !== 'all') ||
-      m.g === currentGroupFilter;
+    // Group filter: áp dụng khi tab = 'all' và không phải KO round view
+    const isKoView = currentFilter === 'all' && KO_ROUNDS.has(currentView);
+    const groupOk = isKoView ||
+      !(currentFilter === 'all' && currentGroupFilter !== 'all') ||
+      m.g === currentGroupFilter ||
+      m.id === currentGroupFilter;
 
     return teamOk && roundOk && groupOk;
   });
 
   let html = '';
 
-  if (currentFilter === 'all' && currentView === 'date') {
+  if (currentFilter === 'all' && KO_ROUNDS.has(currentView)) {
+    // ── Vòng knockout cụ thể ─────────────────────────────────
+    const groups = {};
+    list.filter(m => m.g === currentView)
+        .forEach(m => { (groups[m.g] = groups[m.g] || []).push(m); });
+    const keys = Object.keys(groups).sort();
+    keys.forEach(g => {
+      const meta = GROUP_META[g] || { label: g, teams: '' };
+      html += `
+      <div class="group-block">
+        <div class="group-label-row">
+          <span class="group-pill">${meta.label}</span>
+          <span class="group-teams-text">${meta.teams}</span>
+        </div>
+        ${groups[g].map(renderMatchRow).join('')}
+      </div>`;
+    });
+
+  } else if (currentFilter === 'all' && currentView === 'date') {
     // ── Theo ngày: sort by date+time, group by date ──────────
     const sorted = [...list].sort((a, b) => {
       const da = a.date + 'T' + a.time;
@@ -3457,15 +3506,19 @@ function renderAll() {
   document.getElementById('emptyState').classList.toggle('show', list.length === 0);
 }
 
+const KO_ROUNDS = new Set(['R32','R16','QF','SF','TP','FIN']);
+
 function switchView(view, btn) {
   currentView = view;
   document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-  // Select bảng hiển thị cho cả 2 view
+
+  // Select bảng: ẩn khi đang xem vòng knockout cụ thể
   const wrap = document.getElementById('groupSelectWrap');
-  if (wrap) wrap.classList.add('show');
+  if (wrap) wrap.classList.toggle('show', !KO_ROUNDS.has(view));
+
   renderAll();
-  // Auto-scroll to today when switching to date view
+
   if (view === 'date' && currentFilter === 'all') {
     requestAnimationFrame(() => requestAnimationFrame(() => scrollToToday(false)));
   }
@@ -3705,6 +3758,27 @@ async function fetchFotmobFallback() {
 }
 
 // ── Parse & apply FotMob data to MATCHES array ─────────────────
+
+// ── FIFA Round of 32 slot labels (for display and FotMob matching) ──
+const R32_SLOT_MAP = {
+  'r32_1':  {h:'2A',   a:'2B'},
+  'r32_2':  {h:'1E',   a:'3ABCDF'},
+  'r32_3':  {h:'1F',   a:'2C'},
+  'r32_4':  {h:'1C',   a:'2F'},
+  'r32_5':  {h:'1I',   a:'3CDFGH'},
+  'r32_6':  {h:'2E',   a:'2I'},
+  'r32_7':  {h:'1A',   a:'3CEFHI'},
+  'r32_8':  {h:'1L',   a:'3EHIJK'},
+  'r32_9':  {h:'1D',   a:'3BEFIJ'},
+  'r32_10': {h:'1G',   a:'3AEHIJ'},
+  'r32_11': {h:'2K',   a:'2L'},
+  'r32_12': {h:'1H',   a:'2J'},
+  'r32_13': {h:'1B',   a:'3EFGIJ'},
+  'r32_14': {h:'2D',   a:'2G'},
+  'r32_15': {h:'1J',   a:'2H'},
+  'r32_16': {h:'1K',   a:'3DEIJL'},
+};
+
 // ── Flag emoji lookup from country code ──────────────────────
 const FLAG_MAP = {
   'england': String.fromCodePoint(0x1F3F4,0xE0067,0xE0062,0xE0065,0xE006E,0xE0067,0xE007F),
