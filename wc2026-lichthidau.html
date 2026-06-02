@@ -43,8 +43,6 @@ body {
   color: var(--text1);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  position: relative;
-  z-index: 0;
 }
 
 button { font-family: var(--inter); cursor: pointer; border: none; background: none; }
@@ -55,9 +53,9 @@ a { text-decoration: none; color: inherit; }
 /* ─── LAYOUT ────────────────────────────────────────────────── */
 .content-area {
   background: var(--bg);
-  position: relative;
-  z-index: 1;
   min-height: 100vh;
+  position: relative; /* needed for bg to render above header gradient */
+  isolation: isolate;  /* creates new stacking context without breaking sticky */
 }
 
 .page-wrap {
@@ -67,141 +65,283 @@ a { text-decoration: none; color: inherit; }
   padding-top: 8px;
 }
 
-/* ─── HEADER ────────────────────────────────────────────────── */
-/* ─── HERO HEADER (FotMob style) ────────────────────────────── */
-/* ─── SITE HEADER (logo + tabs, 1 sticky block) ─── */
+/* ═══ HEADER (Figma spec rebuild) ════════════════════════════ */
+
+/* Unified sticky header: logo row (52px) + filter row (40px) = 92px */
 .site-header {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
-  z-index: 101;
-  overflow: hidden;
+  z-index: 103;
+  /* clip-path: inset(0) = Figma "Clip content" — clips blobs without breaking sticky */
+  clip-path: inset(0);
+  -webkit-clip-path: inset(0);
 }
 
-/* Fade gradient into page background at the bottom */
-.site-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 1px;
-  background: rgba(255,255,255,0.06);
-  z-index: 10;
-  pointer-events: none;
-}
-
-.topbar {
-  /* no sticky — child of site-header */
-  position: relative;
-}
-
-/* gradient mesh background – dark green left → deep blue right */
-.topbar-bg {
+/* Header background — FotMob style: pure CSS multi-layer radial-gradient
+   Không dùng filter:blur trên div riêng → không tạo stacking context
+   Tất cả layers nằm trong 1 property background duy nhất */
+.header-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg,
-    #1a3a2a 0%,
-    #1e3d35 12%,
-    #1a3060 38%,
-    #0f1a70 62%,
-    #0a0f8a 80%,
-    #0505a0 100%
-  );
-  z-index: 0;
+  background:
+    /* Layer 1: red/orange blob — top-left */
+    radial-gradient(ellipse 55% 120% at -10% -30%,
+      rgba(160, 50, 40, 0.75) 0%,
+      rgba(120, 30, 25, 0.4) 40%,
+      transparent 70%
+    ),
+    /* Layer 2: green blob — left center */
+    radial-gradient(ellipse 30% 80% at -5% 60%,
+      rgba(45, 110, 45, 0.65) 0%,
+      rgba(30, 80, 30, 0.3) 50%,
+      transparent 75%
+    ),
+    /* Layer 3: deep navy — right side */
+    radial-gradient(ellipse 60% 100% at 95% 50%,
+      rgba(4, 4, 28, 0.7) 0%,
+      rgba(4, 4, 28, 0.3) 50%,
+      transparent 75%
+    ),
+    /* Layer 4: base blue */
+    linear-gradient(105deg, #0e2060 0%, #0C3195 35%, #1040c0 70%, #0a1e8a 100%);
 }
 
-/* blurred colour blobs – red/orange top-right, green top-left */
-.topbar-blob1 {
-  position: absolute;
-  top: -40px; left: 30px;
-  width: 200px; height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(80,160,80,0.55) 0%, transparent 70%);
-  filter: blur(28px);
-  pointer-events: none;
-  will-change: transform;
-}
+/* Blobs divs no longer needed — kept empty for DOM compatibility */
+.header-blob1, .header-blob2, .header-blob3 { display: none; }
 
-.topbar-blob2 {
-  position: absolute;
-  top: -50px; left: 160px;
-  width: 200px; height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(190,60,40,0.45) 0%, transparent 70%);
-  filter: blur(36px);
-  pointer-events: none;
-}
-
-.topbar-blob3 {
-  position: absolute;
-  top: -20px; right: 80px;
-  width: 140px; height: 140px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(20,40,160,0.4) 0%, transparent 70%);
-  filter: blur(24px);
-  pointer-events: none;
-}
-
-.topbar-inner {
+/* Row 1: Logo + refresh (height 52px per Figma: top:16px, height:36px → row~52px) */
+.header-logo-row {
   position: relative;
   z-index: 1;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 20px;
-  height: 72px;
+  height: 52px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: space-between;
 }
 
-/* FIFA logo badge */
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .logo-icon {
-  width: 42px; height: 42px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
+  width: 24px; height: 36px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-
 .logo-icon img {
-  width: 42px; height: 42px;
-  object-fit: contain;
+  height: 36px; width: auto;
+  object-fit: contain; display: block;
+  filter: drop-shadow(0px 0px 2px rgba(0,0,0,0.3));
+}
+
+.logo-titles { display: flex; flex-direction: column; gap: 0; }
+.logo-text { font-size: 12px; font-weight: 700; color: #fff; line-height: 15px; }
+.logo-sub  { font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.55); line-height: 15px; }
+
+.header-actions { flex-shrink: 0; }
+
+/* Refresh button — Figma: 32×32px, border:1px solid rgba(255,255,255,0.05), radius:30px */
+.refresh-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1);
+  outline: none;
+
+  /* Core glass: backdrop blur */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+  /* Glass fill: semi-transparent white */
+  background: rgba(255,255,255,0.12);
+
+  /* Gradient border via border-image trick using outline+pseudo */
+  border: none;
+  box-shadow:
+
+    /* inner top highlight */
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    /* inner bottom shadow */
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+ 
+}
+.refresh-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: scale(1.06);
+}
+
+.refresh-btn:active {
+  transform: scale(0.91);
+  background: rgba(255,255,255,0.08);
+  transition: transform 0.1s ease;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.35;
+  cursor: wait;
+  transform: none;
+}
+
+.refresh-btn svg {
+  width: 17px;
+  height: 17px;
   display: block;
-}
-
-.topbar-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-}
-
-.logo-titles { display: flex; flex-direction: column; gap: 1px; }
-
-.logo-text {
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.4px;
-  line-height: 1.2;
-}
-
-.logo-sub {
-  font-size: 12px;
-  font-weight: 400;
-  color: rgba(255,255,255,0.55);
-  letter-spacing: 0;
-}
-
-/* Right-side action pills */
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  position: relative;
+  z-index: 3;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
   flex-shrink: 0;
 }
 
-/* Refresh icon button — Figma spec */
-/* ── Liquid Glass refresh button (iOS 26 style) ── */
+.refresh-btn.spinning svg {
+  animation: spinOnce 0.65s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes spinOnce {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Row 2: Filter chips (height 40px per Figma: bottom:40px, height:40px) */
+.header-filter-row {
+  position: relative;
+  z-index: 1;
+  height: 40px;
+}
+
+
+.filter-scroll {
+  padding: 0 16px;
+  gap: 16px;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  height: 40px;
+  align-items: center;
+}
+.filter-scroll::-webkit-scrollbar { display: none; }
+
+/* Filter chip */
+.filter-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  flex-shrink: 0;
+  opacity: 1;
+  transition: opacity 0.15s;
+  padding: 0;
+}
+.filter-chip:hover   { opacity: 0.75; }
+.filter-chip.active  { opacity: 1; }
+
+/* Trophy icon for "Tất cả" */
+.chip-trophy {
+  width: 22px; height: 22px;
+  display: block;
+  object-fit: contain;
+  mix-blend-mode: screen;
+}
+
+/* Flag chips */
+.filter-chip.flag-only .chip-flag { font-size: 26px; line-height: 1; display: block; }
+.chip-flag { font-size: 14px; line-height: 1; }
+
+
+/* ─── VIEW BAR — inside site-header, Figma spec ─────────────── */
+/* view-bar is positioned inside .site-header, uses parent's background */
+.view-bar {
+  display: none;
+  height: 40px;
+  padding: 0 16px;
+  gap: 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: relative;
+  z-index: 1;
+  align-items: center;
+}
+.view-bar::-webkit-scrollbar { display: none; }
+.view-bar.show { display: flex; }
+
+.view-tabs {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Figma: active weight:700 opacity:1 | inactive weight:400 opacity:0.45 */
+.view-tab {
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 16px;
+  color: #ffffff;
+  opacity: 0.45;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  white-space: nowrap;
+  transition: opacity 0.12s;
+  font-family: var(--inter);
+  flex-shrink: 0;
+}
+.view-tab:hover  { opacity: 0.75; }
+.view-tab.active { opacity: 1; font-weight: 700; }
+
+
+
+
+
+/* Group select */
+.group-select-wrap { display: none; align-items: center; gap: 8px; }
+.group-select-wrap.show { display: flex; }
+/* Select bảng — sticky dưới site-header (52+40+40=132px) */
+.group-select-wrap.page-select {
+  display: none;
+  position: sticky;
+  top: 132px;           /* logo(52) + filter-chips(40) + view-bar(40) */
+  z-index: 101;
+  padding: 8px 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.group-select-wrap.page-select.show { display: block; }
+.group-select-wrap.page-select { align-items: unset; gap: unset; }
+
+
+.group-select {
+  appearance: none; -webkit-appearance: none;
+  background: #222;
+  color: #fff;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 28px 6px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: var(--inter);
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+.group-select:hover { border-color: rgba(255,255,255,0.2); }
+.group-select option { background: #1e1e1e; color: #fff; }
+
+/* Refresh button (liquid glass) */
 .refresh-btn {
   position: relative;
   display: flex;
@@ -270,172 +410,12 @@ a { text-decoration: none; color: inherit; }
   to   { transform: rotate(360deg); }
 }
 
-/* "Follow" – white outline pill */
-.pill-btn.outline {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 15px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--inter);
-  background: transparent;
-  color: #fff;
-  border: 1.5px solid rgba(255,255,255,0.75);
-  transition: all 0.15s;
-}
-.pill-btn.outline:hover { background: rgba(255,255,255,0.1); }
-
-/* ─── TEAM FILTER TABS ──────────────────────────────────────── */
-.filter-bar {
-  position: relative;
-  z-index: 1;
-  background: transparent;
-  border-bottom: none;
-}
-
-/* thin separator line at bottom of tab row */
-.filter-bar::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 1px;
-  background: rgba(255,255,255,0.08);
-  pointer-events: none;
-}
-
-.filter-scroll {
-  position: relative;
-  z-index: 2;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  height: 44px;
-  align-items: stretch;
-}
-.filter-scroll::-webkit-scrollbar { display: none; }
-
-.round-filter-bar {
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 116px;
-  z-index: 98;
-  display: none;
-}
-.round-filter-bar.show { display: block; }
-.round-filter-scroll {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  height: 42px;
-  align-items: center;
-}
-.round-filter-scroll::-webkit-scrollbar { display: none; }
-.round-chip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 13px;
-  border-radius: 999px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text2);
-  white-space: nowrap;
-  border: 1px solid transparent;
-  transition: all 0.15s;
-}
-.round-chip:hover { color: var(--text1); background: #252525; }
-.round-chip.active {
-  background: var(--primary-dim);
-  color: var(--primary);
-  border-color: rgba(0,152,95,0.3);
-}
-
-.filter-chip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 0px;
-  border-radius: 0;
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.5);
-  white-space: nowrap;
-  transition: color 0.15s;
-  flex-shrink: 0;
-  border: none;
-  background: transparent;
-  position: relative;
-  cursor: pointer;
-  height: 44px;
-}
-
-/* underline indicator */
-.filter-chip::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 2.5px;
-  background: #fff;
-  border-radius: 2px 2px 0 0;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-
-.filter-chip:hover { color: rgba(255,255,255,0.8); }
-.filter-chip:hover::after { opacity: 0.3; }
-
-.filter-chip.active {
-  color: #ffffff;
-  font-weight: 600;
-  background: transparent;
-  border: none;
-}
-.filter-chip.active::after { opacity: 1; }
-
-.chip-flag { font-size: 15px; }
-
-/* Flag-only chips */
-.filter-chip.flag-only {
-  padding: 0px;
-}
-.filter-chip.flag-only .chip-flag {
-  font-size: 22px;
-}
-
-
-/* ─── SECTION HEADER ────────────────────────────────────────── */
-.section-head {
-  display: none;
-}
-
-.section-icon { font-size: 16px; }
-
-.section-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text1);
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-}
-
-.section-sub {
-  font-size: 11.5px;
-  color: var(--text3);
-  margin-left: auto;
-  font-weight: 400;
+/* Responsive */
+@media (max-width: 640px) {
+  .header-logo-row { height: 56px; padding: 0 14px; }
+  .group-select-wrap.page-select { top: 136px; } /* logo(56)+chips(40)+viewbar(40) */
+  .logo-text { font-size: 15px; }
+   /* 56+44 */
 }
 
 /* ─── GROUP BLOCK ────────────────────────────────────────────── */
@@ -817,7 +797,8 @@ a { text-decoration: none; color: inherit; }
   .logo-icon { width: 34px; height: 34px; }
   .logo-icon img { width: 34px; height: 34px; }
   /* filter-bar is in flow inside site-header */
-  .round-filter-bar { top: 116px; }
+  
+  .round-filter-bar { top: 136px; }
 }
 @media (max-width: 480px) {
   .t-name { max-width: 72px; font-size: 12px; }
@@ -835,58 +816,7 @@ a { text-decoration: none; color: inherit; }
 }
 .score-flash { animation: scoreFlash 1.2s ease-out; }
 
-/* ─── DEMO BOX ──────────────────────────────────────────────── */
-.demo-box {
-  margin: 16px 16px 16px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
-.demo-label-row {
-  padding: 10px 0;
-  border-bottom: none;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  background: transparent;
-  border-radius: 0;
-  height: 40px;
-}
-
-.demo-label {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 18px;
-  color: #ffffff;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.demo-close {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.06);
-  border: none;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text3);
-  font-size: 11px;
-  line-height: 1;
-  transition: background 0.15s;
-  font-family: var(--inter);
-}
-.demo-close:hover { background: rgba(255,255,255,0.12); color: var(--text1); }
-
-#demoRows {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
 /* ─── STANDINGS TABLE ───────────────────────────────────────── */
 .standings-block {
@@ -1028,48 +958,8 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ─── VIEW SWITCHER (Theo ngày / Theo bảng) ─────────────────── */
-.view-bar {
-  display: none; /* shown only when filter=all */
-  padding: 12px 16px 0;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.view-bar.show { display: flex; }
+/* view-bar old block 2 removed */
 
-.view-tabs {
-  display: flex;
-  background: #222222;
-  border-radius: 10px;
-  padding: 3px;
-  gap: 2px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  flex-shrink: 0;
-  max-width: 100%;
-}
-.view-tabs::-webkit-scrollbar { display: none; }
-
-.view-tab {
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text2);
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  transition: all 0.15s;
-  font-family: var(--inter);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.view-tab:hover { color: var(--text1); }
-.view-tab.active {
-  background: #333333;
-  color: #ffffff;
-  font-weight: 600;
-}
 
 /* Group select box */
 .group-select-wrap {
@@ -1117,115 +1007,87 @@ a { text-decoration: none; color: inherit; }
 </head>
 <body>
 
-<!-- SITE HEADER: logo + tabs in 1 sticky block -->
+<!-- ═══ SITE HEADER (Figma rebuild) ═══ -->
 <div class="site-header">
-  <div class="topbar-bg"></div>
-  <div class="topbar-blob1"></div>
-  <div class="topbar-blob2"></div>
-  <div class="topbar-blob3"></div>
+  <div class="header-bg"></div>
+  <div class="header-blob1"></div>
+  <div class="header-blob2"></div>
+  <div class="header-blob3"></div>
 
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="topbar-logo">
-        <div class="logo-icon"><img src="https://images.fotmob.com/image_resources/logo/leaguelogo/dark/77.png" alt="World Cup" width="28" height="28"></div>
-        <div class="logo-titles">
-          <div class="logo-text">FIFA World Cup</div>
-          <div class="logo-sub">International</div>
-        </div>
+  <!-- Row 1: Logo + refresh (52px) -->
+  <div class="header-logo-row">
+    <div class="header-logo">
+      <div class="logo-icon">
+        <img src="https://images.fotmob.com/image_resources/logo/leaguelogo/dark/77.png" alt="World Cup">
       </div>
-      <div class="topbar-actions">
-        <button class="refresh-btn" id="updateBtn" onclick="handleRefreshClick()" title="Làm mới">
-          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C12.4853 2.5 14.7353 3.61167 16.25 5.375" stroke="#FFFFFF" stroke-width="1.25" stroke-linecap="round"/>
-            <path d="M16.25 2.5V5.625H13.125" stroke="#FFFFFF" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
+      <div class="logo-titles">
+        <div class="logo-text">FIFA World Cup</div>
+        <div class="logo-sub">International</div>
       </div>
+    </div>
+    <div class="header-actions">
+      <button class="refresh-btn" id="updateBtn" onclick="handleRefreshClick()" title="Làm mới">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.858 17.5 2.5 14.142 2.5 10C2.5 5.858 5.858 2.5 10 2.5C12.485 2.5 14.735 3.612 16.25 5.375" stroke="#FFFFFF" stroke-width="1.25" stroke-linecap="round"/>
+          <path d="M16.25 2.5V5.625H13.125" stroke="#FFFFFF" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
   </div>
 
-  <div class="filter-bar">
-  <div class="filter-scroll">
-    <button class="filter-chip active" onclick="filterTeam('all',this)">
-    Tất cả
-    </button>
-    <button class="filter-chip flag-only" onclick="filterTeam('england',this)">
-      <span class="te chip-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
-    </button>
-    <button class="filter-chip flag-only" onclick="filterTeam('germany',this)">
-      <span class="te chip-flag">🇩🇪</span>
-    </button>
-    <button class="filter-chip flag-only" onclick="filterTeam('france',this)">
-      <span class="te chip-flag">🇫🇷</span>
-    </button>
-    <button class="filter-chip flag-only" onclick="filterTeam('brazil',this)">
-      <span class="te chip-flag">🇧🇷</span>
-    </button>
-    <button class="filter-chip flag-only" onclick="filterTeam('argentina',this)">
-      <span class="te chip-flag">🇦🇷</span>
-    </button>
-    <button class="filter-chip flag-only" onclick="filterTeam('spain',this)">
-      <span class="te chip-flag">🇪🇸</span>
-    </button>
-    <button class="filter-chip flag-only" onclick="filterTeam('portugal',this)">
-      <span class="te chip-flag">🇵🇹</span>
-    </button>
-  </div><!-- /filter-bar -->
+  <!-- Row 2: Filter chips (40px) -->
+  <div class="header-filter-row">
+    <div class="filter-scroll">
+      <button class="filter-chip active" onclick="filterTeam('all',this)"><img src="trophy.png" class="chip-trophy" alt="Tất cả"></button>
+      <button class="filter-chip flag-only" onclick="filterTeam('england',this)"><span class="te chip-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span></button>
+      <button class="filter-chip flag-only" onclick="filterTeam('germany',this)"><span class="te chip-flag">🇩🇪</span></button>
+      <button class="filter-chip flag-only" onclick="filterTeam('france',this)"><span class="te chip-flag">🇫🇷</span></button>
+      <button class="filter-chip flag-only" onclick="filterTeam('brazil',this)"><span class="te chip-flag">🇧🇷</span></button>
+      <button class="filter-chip flag-only" onclick="filterTeam('argentina',this)"><span class="te chip-flag">🇦🇷</span></button>
+      <button class="filter-chip flag-only" onclick="filterTeam('spain',this)"><span class="te chip-flag">🇪🇸</span></button>
+      <button class="filter-chip flag-only" onclick="filterTeam('portugal',this)"><span class="te chip-flag">🇵🇹</span></button>
+    </div>
+  </div>
+  <!-- Row 3: View tabs (inside header, cùng nền) -->
+  <div class="view-bar" id="viewBar">
+    <div class="view-tabs">
+      <button class="view-tab active" id="viewTabDate" onclick="switchView('date',this)">Theo ngày</button>
+      <button class="view-tab" onclick="switchView('group',this)">Theo bảng</button>
+      <button class="view-tab" onclick="switchView('R32',this)">Vòng 32</button>
+      <button class="view-tab" onclick="switchView('R16',this)">Vòng 16</button>
+      <button class="view-tab" onclick="switchView('QF',this)">Tứ kết</button>
+      <button class="view-tab" onclick="switchView('SF',this)">Bán kết</button>
+      <button class="view-tab" onclick="switchView('TP',this)">3/4</button>
+      <button class="view-tab" onclick="switchView('FIN',this)">Chung kết</button>
+    </div>
+  </div>
 </div><!-- /site-header -->
+
 
 <!-- MAIN CONTENT -->
 <div class="content-area">
+  <!-- Select bảng — sticky dưới header -->
+  <div class="group-select-wrap page-select" id="groupSelectWrap">
+    <select class="group-select" id="groupSelect" onchange="onGroupSelectChange(this.value)">
+      <option value="all">Tất cả bảng</option>
+      <option value="A">Bảng A</option>
+      <option value="B">Bảng B</option>
+      <option value="C">Bảng C</option>
+      <option value="D">Bảng D</option>
+      <option value="E">Bảng E</option>
+      <option value="F">Bảng F</option>
+      <option value="G">Bảng G</option>
+      <option value="H">Bảng H</option>
+      <option value="I">Bảng I</option>
+      <option value="J">Bảng J</option>
+      <option value="K">Bảng K</option>
+      <option value="L">Bảng L</option>
+    </select>
+  </div>
 <div class="page-wrap">
   <div class="ai-box" id="aiBox">
     <span class="te ai-em">⚽</span>
     <div id="aiBoxText"></div>
-  </div>
-
-
-  <!-- DEMO BOX: trạng thái tỷ số -->
-  <div class="demo-box" id="demoBox">
-    <div class="demo-label-row">
-      <span class="demo-label">Demo hiển thị kết quả</span>
-    </div>
-    <div id="demoRows"></div>
-  </div>
-
-  <!-- VIEW SWITCHER -->
-  <div class="view-bar" id="viewBar">
-    <div class="view-tabs">
-      <button class="view-tab active" id="viewTabDate" onclick="switchView('date', this)">Theo ngày</button>
-      <button class="view-tab" onclick="switchView('group', this)">Theo bảng</button>
-      <button class="view-tab" onclick="switchView('R32', this)">Vòng 32</button>
-      <button class="view-tab" onclick="switchView('R16', this)">Vòng 16</button>
-      <button class="view-tab" onclick="switchView('QF', this)">Tứ kết</button>
-      <button class="view-tab" onclick="switchView('SF', this)">Bán kết</button>
-      <button class="view-tab" onclick="switchView('TP', this)">3/4</button>
-      <button class="view-tab" onclick="switchView('FIN', this)">Chung kết</button>
-    </div>
-    <div class="group-select-wrap" id="groupSelectWrap">
-      <select class="group-select" id="groupSelect" onchange="onGroupSelectChange(this.value)">
-        <option value="all">Tất cả bảng</option>
-        <option value="A">Bảng A</option>
-        <option value="B">Bảng B</option>
-        <option value="C">Bảng C</option>
-        <option value="D">Bảng D</option>
-        <option value="E">Bảng E</option>
-        <option value="F">Bảng F</option>
-        <option value="G">Bảng G</option>
-        <option value="H">Bảng H</option>
-        <option value="I">Bảng I</option>
-        <option value="J">Bảng J</option>
-        <option value="K">Bảng K</option>
-        <option value="L">Bảng L</option>
-        <optgroup label="─── Vòng loại trực tiếp ───────"></optgroup>
-        <option value="R32">Vòng 32 đội</option>
-        <option value="R16">Vòng 16 đội</option>
-        <option value="QF">Tứ kết</option>
-        <option value="SF">Bán kết</option>
-        <option value="TP">Tranh hạng 3</option>
-        <option value="FIN">🏆 Chung kết</option>
-      </select>
-    </div>
   </div>
 
   <div id="matchContainer"></div>
@@ -1242,7 +1104,7 @@ a { text-decoration: none; color: inherit; }
 <div class="bottombar">
   <span class="te bar-em" id="barEm">📅</span>
   <div class="bar-text" id="barText">
-    Lịch World Cup 2026 · Giờ hiển thị theo <span>Việt Nam (UTC+7)</span>
+    Lịch World Cup 2026
   </div>
   <div class="bar-spinner" id="barSpinner"></div>
 </div>
@@ -4103,6 +3965,9 @@ function renderAll() {
 
     // Group filter: áp dụng khi tab = 'all' và không phải KO round view
     const isKoView = currentFilter === 'all' && KO_ROUNDS.has(currentView);
+    // Khi view='group', loại KO rounds ra khỏi list
+    const isGroupView = currentFilter === 'all' && currentView === 'group';
+    if (isGroupView && KO_ROUNDS.has(m.g)) return false;
     const groupOk = isKoView ||
       !(currentFilter === 'all' && currentGroupFilter !== 'all') ||
       m.g === currentGroupFilter ||
@@ -4156,8 +4021,35 @@ function renderAll() {
       </div>`;
     });
 
+  } else if (currentFilter === 'all' && currentView === 'group') {
+    // ── Theo bảng: hiện bảng A-L (theo filter dropdown) + phần vòng KO ──
+
+    // Phần vòng bảng
+    const groupMatches = list.filter(m => !KO_ROUNDS.has(m.g));
+    const filteredGroupMatches = currentGroupFilter === 'all'
+      ? groupMatches
+      : groupMatches.filter(m => m.g === currentGroupFilter);
+
+    const groups = {};
+    filteredGroupMatches.forEach(m => { (groups[m.g] = groups[m.g] || []).push(m); });
+    const groupKeys = Object.keys(groups).sort();
+
+    groupKeys.forEach(g => {
+      const meta = GROUP_META[g] || { label:'Bảng '+g, teams:'' };
+      html += `
+      <div class="group-block">
+        <div class="group-label-row">
+          <span class="group-pill">${meta.label}</span>
+          <span class="group-teams-text">${meta.teams}</span>
+        </div>
+        ${groups[g].map(renderMatchRow).join('')}
+      </div>`;
+    });
+
+    // Chỉ hiện vòng bảng A-L, không hiện KO (KO xem qua các tab riêng)
+
   } else {
-    // ── Theo bảng (hoặc tab đội) ─────────────────────────────
+    // ── Tab đội tuyển ─────────────────────────────────────────
     const groups = {};
     list.forEach(m => { (groups[m.g] = groups[m.g] || []).push(m); });
     const keys = Object.keys(groups).sort();
@@ -4216,10 +4108,6 @@ function filterTeam(team, btn) {
 
   const roundBar = document.getElementById('roundFilterBar');
   if (roundBar) roundBar.classList.toggle('show', team === 'all');
-
-  // Ẩn/hiện demo box và view switcher — chỉ hiện trong tab "Tất cả"
-  const demoBox = document.getElementById('demoBox');
-  if (demoBox) demoBox.style.display = team === 'all' ? '' : 'none';
   const viewBar = document.getElementById('viewBar');
   if (viewBar) viewBar.classList.toggle('show', team === 'all');
 
@@ -4286,7 +4174,7 @@ function schedulePoll() {
   const label = interval < 60000 ? `${interval/1000}s`
               : interval < 3600000 ? `${interval/60000} phút`
               : `${interval/3600000} giờ`;
-  setBarText(`⏱ Tự động cập nhật mỗi <span>${label}</span> · Nguồn: FotMob`);
+  setBarText(`⏱ Tự động cập nhật mỗi <span>${label}</span> · `);
   _pollTimer = setTimeout(() => fetchFotmob(true), interval);
 }
 
@@ -4392,7 +4280,7 @@ async function fetchFotmob(auto = false) {
   btn.disabled = true;
   spinner.classList.add('on');
   setBarEm('📡');
-  if (!auto) setBarText('<span>Đang lấy dữ liệu từ FotMob...</span>');
+  if (!auto) setBarText('<span>Đang lấy dữ liệu...</span>');
 
   // FotMob league endpoint – proxied qua allorigins để bypass CORS
   const fotmobUrl = 'https://www.fotmob.com/api/leagues?id=77&tab=matches&type=league&timeZone=Asia%2FHo_Chi_Minh';
@@ -4739,23 +4627,6 @@ function fetchLiveScores() {
 // ─────────────────────────────────────────────────────────────
 // DEMO BOX – preview 3 trạng thái
 // ─────────────────────────────────────────────────────────────
-function renderDemoBox() {
-  const demos = [
-    // Trận đang diễn ra
-    { id:'demo2', g:'C', date:'2026-06-18', time:'03:00',
-      home:{name:'Anh',   code:'england',   flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', color:'#009c3b'},
-      away:{name:'Croatia',  code:'croatia',  flag:'🇭🇷', color:'#c1272d'},
-      venue:'AT&T Stadium, Dallas · USA', sh:3, sa:0, status:'live', minute:67 },
-    // Trận đã kết thúc
-    { id:'demo3', g:'J', date:'2026-06-15', time:'00:00',
-      home:{name:'Đức',code:'germany',flag:'🇩🇪', color:'#74acdf'},
-      away:{name:'Curaçao',       code:'curaçao',  flag:'🇨🇼', color:'#ed2939'},
-      venue:'NRG Stadium, Houston · USA', sh:7, sa:1, status:'finished' },
-  ];
-  const el = document.getElementById('demoRows');
-  if (el) el.innerHTML = demos.map(renderMatchRow).join('');
-}
-
 // ── Init ───────────────────────────────────────────────────────
 
 // ── Auto-scroll to today (or nearest future date) ─────────────
@@ -4793,8 +4664,10 @@ function scrollToToday(isInit = false) {
 
   if (!target) return;
 
-  // Offset: height of sticky headers (site-header ~116px + some breathing room)
-  const stickyH = 116 + 12;
+  // Offset: site-header(132px) + select-box sticky(45px) + buffer
+  const selectWrap = document.getElementById('groupSelectWrap');
+  const selectH = (selectWrap && selectWrap.classList.contains('show')) ? selectWrap.offsetHeight : 0;
+  const stickyH = 132 + selectH + 6;
 
   if (isInit) {
     // On initial load: instant scroll (no animation) so user sees correct position
@@ -4820,7 +4693,6 @@ function scrollToToday(isInit = false) {
   });
 
   renderAll();
-  renderDemoBox();
   // Show view switcher by default (tab 'all' is active)
   const viewBar = document.getElementById('viewBar');
   if (viewBar) viewBar.classList.add('show');
