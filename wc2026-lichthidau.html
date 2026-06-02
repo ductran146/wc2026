@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>FIFA World Cup 2026 – Lịch Thi Đấu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,6 +42,7 @@ body {
   background: var(--bg);
   color: var(--text1);
   min-height: 100vh;
+  min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -54,14 +55,15 @@ a { text-decoration: none; color: inherit; }
 .content-area {
   background: var(--bg);
   min-height: 100vh;
-  position: relative; /* needed for bg to render above header gradient */
-  isolation: isolate;  /* creates new stacking context without breaking sticky */
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
 }
 
 .page-wrap {
   max-width: 960px;
   margin: 0 auto;
-  padding-bottom: 80px;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
   padding-top: 8px;
 }
 
@@ -73,9 +75,10 @@ a { text-decoration: none; color: inherit; }
   position: sticky;
   top: 0;
   z-index: 103;
-  /* clip-path: inset(0) = Figma "Clip content" — clips blobs without breaking sticky */
   clip-path: inset(0);
   -webkit-clip-path: inset(0);
+  /* Safe area: đẩy content xuống dưới notch/status bar trên iOS/Android */
+  padding-top: env(safe-area-inset-top);
 }
 
 /* Header background — FotMob style: pure CSS multi-layer radial-gradient
@@ -782,6 +785,10 @@ a { text-decoration: none; color: inherit; }
   background: rgba(15,18,23,0.97);
   border-top: 1px solid var(--border);
   padding: 10px 16px;
+  /* Safe area: tránh bị home indicator / gesture bar che */
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
   display: flex;
   align-items: center;
   gap: 8px;
