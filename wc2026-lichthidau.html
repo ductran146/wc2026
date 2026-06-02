@@ -84,31 +84,50 @@ a { text-decoration: none; color: inherit; }
 .header-bg {
   position: absolute;
   inset: 0;
+  /* Blur layer riêng — tạo chiều sâu mà không phá sticky context */
+  backdrop-filter: blur(32px) saturate(140%);
+  -webkit-backdrop-filter: blur(32px) saturate(140%);
   background:
-    /* Layer 1: red/orange blob — top-left */
-    radial-gradient(ellipse 55% 120% at -10% -30%,
-      rgba(160, 50, 40, 0.75) 0%,
-      rgba(120, 30, 25, 0.4) 40%,
+    /* Layer 1: red blob — top-left, mờ hơn nhiều */
+    radial-gradient(ellipse 60% 130% at -15% -40%,
+      rgba(120, 30, 25, 0.38) 0%,
+      rgba(90, 20, 18, 0.18) 45%,
       transparent 70%
     ),
-    /* Layer 2: green blob — left center */
-    radial-gradient(ellipse 30% 80% at -5% 60%,
-      rgba(45, 110, 45, 0.65) 0%,
-      rgba(30, 80, 30, 0.3) 50%,
+    /* Layer 2: green blob — left center, rất nhẹ */
+    radial-gradient(ellipse 35% 90% at -8% 65%,
+      rgba(20, 70, 28, 0.28) 0%,
+      rgba(15, 50, 20, 0.12) 55%,
+      transparent 78%
+    ),
+    /* Layer 3: accent tím/indigo — top-right */
+    radial-gradient(ellipse 45% 70% at 110% 10%,
+      rgba(40, 20, 80, 0.30) 0%,
+      rgba(20, 10, 50, 0.12) 55%,
       transparent 75%
     ),
-    /* Layer 3: deep navy — right side */
-    radial-gradient(ellipse 60% 100% at 95% 50%,
-      rgba(4, 4, 28, 0.7) 0%,
-      rgba(4, 4, 28, 0.3) 50%,
-      transparent 75%
-    ),
-    /* Layer 4: base blue */
-    linear-gradient(105deg, #0e2060 0%, #0C3195 35%, #1040c0 70%, #0a1e8a 100%);
+    /* Layer 4: deep dark navy base */
+    linear-gradient(115deg, #060c1e 0%, #0a1232 40%, #0c1840 70%, #08102e 100%);
 }
 
 /* Blobs divs no longer needed — kept empty for DOM compatibility */
 .header-blob1, .header-blob2, .header-blob3 { display: none; }
+
+/* Bottom edge — phân tách header với content */
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.06) 20%,
+    rgba(255,255,255,0.10) 50%,
+    rgba(255,255,255,0.06) 80%,
+    transparent 100%
+  );
+  z-index: 2;
+}
 
 /* Row 1: Logo + refresh (height 52px per Figma: top:16px, height:36px → row~52px) */
 .header-logo-row {
@@ -215,7 +234,7 @@ a { text-decoration: none; color: inherit; }
 .header-filter-row {
   position: relative;
   z-index: 1;
-  height: 40px;
+  height: 44px;
 }
 
 
@@ -225,7 +244,7 @@ a { text-decoration: none; color: inherit; }
   display: flex;
   overflow-x: auto;
   scrollbar-width: none;
-  height: 40px;
+  height: 44px;
   align-items: center;
 }
 .filter-scroll::-webkit-scrollbar { display: none; }
@@ -233,18 +252,33 @@ a { text-decoration: none; color: inherit; }
 /* Filter chip */
 .filter-chip {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   cursor: pointer;
   border: none;
   background: transparent;
   flex-shrink: 0;
-  opacity: 1;
-  transition: opacity 0.15s;
+  opacity: 0.7;
+  transition: opacity 0.18s ease;
   padding: 0;
 }
-.filter-chip:hover   { opacity: 0.75; }
-.filter-chip.active  { opacity: 1; }
+.filter-chip:hover  { opacity: 0.85; }
+.filter-chip.active { opacity: 1; }
+
+/* Dot indicator */
+.filter-chip::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.18s ease;
+  flex-shrink: 0;
+}
+.filter-chip.active::after { background: #ffffff; }
 
 /* Trophy icon for "Tất cả" */
 .chip-trophy {
@@ -312,7 +346,7 @@ a { text-decoration: none; color: inherit; }
 .group-select-wrap.page-select {
   display: none;
   position: sticky;
-  top: 132px;           /* logo(52) + filter-chips(40) + view-bar(40) */
+  top: 136px;           /* logo(52) + filter-chips(44) + view-bar(40) */
   z-index: 101;
   padding: 8px 16px;
   background: var(--bg);
@@ -413,7 +447,7 @@ a { text-decoration: none; color: inherit; }
 /* Responsive */
 @media (max-width: 640px) {
   .header-logo-row { height: 56px; padding: 0 14px; }
-  .group-select-wrap.page-select { top: 136px; } /* logo(56)+chips(40)+viewbar(40) */
+  .group-select-wrap.page-select { top: 140px; } /* logo(56)+chips(44)+viewbar(40) */
   .logo-text { font-size: 15px; }
    /* 56+44 */
 }
@@ -4111,6 +4145,10 @@ function filterTeam(team, btn) {
   const viewBar = document.getElementById('viewBar');
   if (viewBar) viewBar.classList.toggle('show', team === 'all');
 
+  // Select bảng: chỉ hiện khi tab 'all' và không phải KO view
+  const groupWrap = document.getElementById('groupSelectWrap');
+  if (groupWrap) groupWrap.classList.toggle('show', team === 'all' && !KO_ROUNDS.has(currentView));
+
   // Khi chuyển sang tab đội tuyển, bỏ lọc vòng để tránh màn hình rỗng khó hiểu.
   if (team !== 'all') {
     currentRoundFilter = 'all';
@@ -4667,7 +4705,7 @@ function scrollToToday(isInit = false) {
   // Offset: site-header(132px) + select-box sticky(45px) + buffer
   const selectWrap = document.getElementById('groupSelectWrap');
   const selectH = (selectWrap && selectWrap.classList.contains('show')) ? selectWrap.offsetHeight : 0;
-  const stickyH = 132 + selectH + 6;
+  const stickyH = 136 + selectH + 6;
 
   if (isInit) {
     // On initial load: instant scroll (no animation) so user sees correct position
@@ -4696,8 +4734,9 @@ function scrollToToday(isInit = false) {
   // Show view switcher by default (tab 'all' is active)
   const viewBar = document.getElementById('viewBar');
   if (viewBar) viewBar.classList.add('show');
+  // Select bảng: chỉ show khi filter=all và view không phải KO (mặc định view='date')
   const groupWrap = document.getElementById('groupSelectWrap');
-  if (groupWrap) groupWrap.classList.add('show');
+  if (groupWrap) groupWrap.classList.toggle('show', !KO_ROUNDS.has(currentView));
 
   // Scroll to today after DOM is painted
   requestAnimationFrame(() => {
