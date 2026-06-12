@@ -4429,7 +4429,7 @@ async function fetchFotmob(auto = false) {
         break;
       }
       console.log('[FotMob] success via:', proxy.url.slice(0,50), '| events:', events.length);
-      applyFotmobData(data);
+      try { applyFotmobData(data); } catch(applyErr) { console.error('[FotMob] applyFotmobData error:', applyErr.message); }
       success = true;
       break;
     } catch (err) {
@@ -4527,7 +4527,7 @@ function evDate(ev) {
 
 // ── Map FotMob stage string → our group key ────────────────────
 function koGroup(stageName) {
-  if (!stageName) return null;
+  if (!stageName || typeof stageName !== 'string') return null;
   const s = stageName.toLowerCase();
   // Order matters: check 'semi' before 'final', 'quarter' before '16'
   if (s.includes('semi'))                                              return 'SF';
