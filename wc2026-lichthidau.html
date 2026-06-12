@@ -4878,8 +4878,8 @@ function scrollToToday(isInit = false) {
     requestAnimationFrame(() => scrollToToday(true));
   });
 
-  // Không tự fetch khi load để trang tĩnh mở nhanh và không phụ thuộc proxy CORS.
-  // Người dùng có thể bấm “Làm mới” để thử cập nhật live từ FotMob khi API/proxy khả dụng.
+  // Auto-fetch khi load — Worker ổn định
+  setTimeout(() => fetchFotmob(false), 800);
 })();
 </script>
 </body>
