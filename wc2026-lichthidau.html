@@ -4226,9 +4226,14 @@ const NAME_MAP = {
   "Mexico": "mexico",
   "South Africa": "southafrica",
   "South Korea": "southkorea",
+  "Korea Republic": "southkorea",
+  "Republic of Korea": "southkorea",
   "Czechia": "czechia",
+  "Czech Republic": "czechia",
   "Canada": "canada",
   "Bosnia and Herzegovina": "bosnia",
+  "Bosnia & Herzegovina": "bosnia",
+  "Bosnia-Herzegovina": "bosnia",
   "Qatar": "qatar",
   "Switzerland": "switzerland",
   "Brazil": "brazil",
@@ -4236,12 +4241,20 @@ const NAME_MAP = {
   "Haiti": "haiti",
   "Scotland": "scotland",
   "USA": "usa",
+  "United States": "usa",
+  "United States of America": "usa",
   "Paraguay": "paraguay",
   "Australia": "australia",
   "Turkiye": "turkiye",
+  "Turkey": "turkiye",
+  "Türkiye": "turkiye",
   "Germany": "germany",
   "Curacao": "curacao",
+  "Curaçao": "curacao",
   "Ivory Coast": "ivorycoast",
+  "Côte d'Ivoire": "ivorycoast",
+  "Cote d'Ivoire": "ivorycoast",
+  "Cote dIvoire": "ivorycoast",
   "Ecuador": "ecuador",
   "Netherlands": "netherlands",
   "Japan": "japan",
@@ -4250,10 +4263,13 @@ const NAME_MAP = {
   "Belgium": "belgium",
   "Egypt": "egypt",
   "Iran": "iran",
+  "Islamic Republic of Iran": "iran",
   "New Zealand": "newzealand",
   "Spain": "spain",
   "Cape Verde": "capeverde",
+  "Cabo Verde": "capeverde",
   "Saudi Arabia": "saudiarabia",
+  "KSA": "saudiarabia",
   "Uruguay": "uruguay",
   "France": "france",
   "Senegal": "senegal",
@@ -4265,20 +4281,49 @@ const NAME_MAP = {
   "Jordan": "jordan",
   "Portugal": "portugal",
   "DR Congo": "drcongo",
+  "Congo DR": "drcongo",
+  "Congo, DR": "drcongo",
+  "Democratic Republic of Congo": "drcongo",
   "Uzbekistan": "uzbekistan",
   "Colombia": "colombia",
   "England": "england",
   "Croatia": "croatia",
   "Ghana": "ghana",
   "Panama": "panama",
-  "Korea Republic": "southkorea",
-  "Czech Republic": "czechia",
-  "Côte d'Ivoire": "ivorycoast",
-  "Curaçao": "curacao",
-  "Türkiye": "turkiye",
-  "Turkey": "turkiye",
-  "Bosnia & Herzegovina": "bosnia",
-  "Congo DR": "drcongo"
+  "Mali": "mali",
+  "Angola": "angola",
+  "Nigeria": "nigeria",
+  "Cameroon": "cameroon",
+  "Greece": "greece",
+  "Romania": "romania",
+  "Hungary": "hungary",
+  "Slovakia": "slovakia",
+  "Serbia": "serbia",
+  "Ukraine": "ukraine",
+  "Poland": "poland",
+  "Denmark": "denmark",
+  "Italy": "italy",
+  "North Macedonia": "northmacedonia",
+  "North Macedonia": "northmacedonia",
+  "Cuba": "cuba",
+  "Peru": "peru",
+  "Chile": "chile",
+  "Venezuela": "venezuela",
+  "Honduras": "honduras",
+  "Costa Rica": "costarica",
+  "Jamaica": "jamaica",
+  "Trinidad and Tobago": "trinidadandtobago",
+  "New Caledonia": "newcaledonia",
+  "Tahiti": "tahiti",
+  "Indonesia": "indonesia",
+  "Philippines": "philippines",
+  "Vietnam": "vietnam",
+  "Thailand": "thailand",
+  "China": "china",
+  "China PR": "china",
+  "Bahrain": "bahrain",
+  "Oman": "oman",
+  "Kuwait": "kuwait"
 };
 
 function normName(n) {
@@ -4325,47 +4370,82 @@ async function fetchFotmob(auto = false) {
   setBarEm('📡');
   if (!auto) setBarText('<span>Đang lấy dữ liệu...</span>');
 
-  // FotMob league endpoint – proxied qua allorigins để bypass CORS
   const fotmobUrl = 'https://www.fotmob.com/api/leagues?id=77&tab=matches&type=league&timeZone=Asia%2FHo_Chi_Minh';
-  const proxyUrl  = `https://api.allorigins.win/get?url=${encodeURIComponent(fotmobUrl)}`;
 
-  try {
-    const res = await fetch(proxyUrl, { cache: 'no-cache' });
-    if (!res.ok) throw new Error('Proxy HTTP ' + res.status);
+  // Cloudflare Worker — fotmob-proxy.ductrangdesign.workers.dev
+  const WORKER_URL = 'https://fotmob-proxy.ductrangdesign.workers.dev';
 
-    const wrapper = await res.json();
-    if (!wrapper.contents) throw new Error('No contents from proxy');
+  const PROXIES = [
+    {
+      // 1. Cloudflare Worker riêng — ổn định nhất, deploy 1 lần dùng mãi
+      name: 'CF Worker',
+      url: WORKER_URL,
+      parse: t => JSON.parse(t),
+      skip: false,
+    },
+    {
+      // 2. proxy.cors.sh
+      name: 'proxy.cors.sh',
+      url: `https://proxy.cors.sh/${fotmobUrl}`,
+      parse: t => JSON.parse(t),
+    },
+    {
+      // 3. allorigins /raw
+      name: 'allorigins raw',
+      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(fotmobUrl)}`,
+      parse: t => JSON.parse(t),
+    },
+    {
+      // 4. allorigins /get — JSON wrapper
+      name: 'allorigins get',
+      url: `https://api.allorigins.win/get?url=${encodeURIComponent(fotmobUrl)}`,
+      parse: t => { const w = JSON.parse(t); return JSON.parse(w.contents); },
+    },
+    {
+      // 5. corsproxy.io format mới
+      name: 'corsproxy.io',
+      url: `https://corsproxy.io/?url=${encodeURIComponent(fotmobUrl)}`,
+      parse: t => JSON.parse(t),
+    },
+  ];
 
-    const data = JSON.parse(wrapper.contents);
-    applyFotmobData(data);
-
-  } catch (err) {
-    console.warn('FotMob primary failed:', err.message);
-    // Fallback: thử proxy thứ 2
-    await fetchFotmobFallback();
-  } finally {
-    _isFetching = false;
-    btn.disabled = false;
-    spinner.classList.remove('on');
-    schedulePoll();
+  let success = false;
+  for (const proxy of PROXIES) {
+    if (proxy.skip) continue;
+    try {
+      const opts = { cache: 'no-cache' };
+      if (proxy.headers) opts.headers = proxy.headers;
+      const res = await fetch(proxy.url, opts);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const data = proxy.parse(text);
+      const events = parseEvents(data);
+      if (!events.length) {
+        console.warn('[FotMob] proxy ok but 0 events:', proxy.url.slice(0,40));
+        // vẫn thử applyFotmobData để cập nhật standings nếu có
+        applyFotmobData(data);
+        success = true;
+        break;
+      }
+      console.log('[FotMob] success via:', proxy.url.slice(0,50), '| events:', events.length);
+      applyFotmobData(data);
+      success = true;
+      break;
+    } catch (err) {
+      console.warn('[FotMob] proxy failed:', proxy.url.slice(0,50), err.message);
+    }
   }
-}
 
-// ── Fallback: corsproxy.io ─────────────────────────────────────
-async function fetchFotmobFallback() {
-  const fotmobUrl = 'https://www.fotmob.com/api/leagues?id=77&tab=matches&type=league&timeZone=Asia%2FHo_Chi_Minh';
-  const proxy2    = `https://corsproxy.io/?${encodeURIComponent(fotmobUrl)}`;
-  try {
-    const res  = await fetch(proxy2, { cache: 'no-cache' });
-    if (!res.ok) throw new Error('Fallback HTTP ' + res.status);
-    const data = await res.json();
-    applyFotmobData(data);
-  } catch (err2) {
-    console.error('Both proxies failed:', err2.message);
+  if (!success) {
     setBarEm('⚠️');
     setBarText('Không kết nối được FotMob. <span>Thử lại sau...</span>');
     setTs('Lỗi kết nối · ' + nowVN());
   }
+
+  _isFetching = false;
+  btn.disabled = false;
+  spinner.classList.remove('on');
+  schedulePoll();
 }
 
 // ── Parse & apply FotMob data to MATCHES array ─────────────────
@@ -4470,8 +4550,12 @@ function parseEvents(data) {
     () => data?.matches?.data?.events,
     () => data?.data?.events,
     () => data?.events,
+    () => data?.response,
+    () => data?.pageProps?.initialData?.allMatches,
     () => data?.rounds?.flatMap(r => r.matches ?? r.events ?? []),
     () => data?.playoff?.rounds?.flatMap(r => r.matches ?? r.events ?? []),
+    // FotMob tháng 6/2026: có thể nằm trong rounds array trực tiếp
+    () => data?.matches?.rounds?.flatMap(r => r.matches ?? []),
     () => Array.isArray(data) ? data : null,
   ];
   for (const fn of paths) {
@@ -4501,6 +4585,13 @@ function isTBD(name) {
 
 function applyFotmobData(data) {
   const events = parseEvents(data);
+
+  console.log('[FotMob] top keys:', Object.keys(data || {}));
+  console.log('[FotMob] events found:', events.length);
+  if (events.length > 0) {
+    console.log('[FotMob] first event keys:', Object.keys(events[0]));
+    console.log('[FotMob] first event sample:', JSON.stringify(events[0]).slice(0, 400));
+  }
 
   if (!events.length) {
     setBarEm('\u26A0\uFE0F');
@@ -4615,10 +4706,39 @@ function applyFotmobData(data) {
     const started  = ev?.status?.started  ?? false;
     const finished = ev?.status?.finished ?? false;
     const newSt    = finished ? 'finished' : started ? 'live' : 'upcoming';
-    const rawSH    = ev?.home?.score ?? ev?.homeTeam?.score ?? null;
-    const rawSA    = ev?.away?.score ?? ev?.awayTeam?.score ?? null;
-    const newSH    = rawSH !== null && rawSH !== undefined ? Number(rawSH) : null;
-    const newSA    = rawSA !== null && rawSA !== undefined ? Number(rawSA) : null;
+
+    // FotMob score: thử nhiều format khác nhau theo version API
+    let rawSH = ev?.home?.score        // format cũ
+             ?? ev?.homeTeam?.score
+             ?? ev?.homeScore?.current // format mới
+             ?? ev?.homeScore?.display
+             ?? null;
+    let rawSA = ev?.away?.score
+             ?? ev?.awayTeam?.score
+             ?? ev?.awayScore?.current
+             ?? ev?.awayScore?.display
+             ?? null;
+
+    // Fallback: parse từ scoreStr = "2 - 1" hoặc "2-1"
+    if ((rawSH === null || rawSA === null) && ev?.status?.scoreStr) {
+      const parts = ev.status.scoreStr.replace(/\s/g,'').split('-');
+      if (parts.length === 2) {
+        const ph = parseInt(parts[0]), pa = parseInt(parts[1]);
+        if (!isNaN(ph)) rawSH = ph;
+        if (!isNaN(pa)) rawSA = pa;
+      }
+    }
+    // Fallback 2: liveTime có scoreStr
+    if ((rawSH === null || rawSA === null) && ev?.liveTime?.short) {
+      const parts = String(ev.liveTime.short).replace(/\s/g,'').split('-');
+      if (parts.length === 2) {
+        const ph = parseInt(parts[0]), pa = parseInt(parts[1]);
+        if (!isNaN(ph) && !isNaN(pa)) { rawSH = ph; rawSA = pa; }
+      }
+    }
+
+    const newSH = rawSH !== null && rawSH !== undefined ? Number(rawSH) : null;
+    const newSA = rawSA !== null && rawSA !== undefined ? Number(rawSA) : null;
 
     const prevSH = m.sh, prevSA = m.sa, prevSt = m.status;
     m.status = newSt;
