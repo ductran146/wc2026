@@ -4373,6 +4373,7 @@ async function fetchFotmob(auto = false) {
   const fotmobUrl = 'https://www.fotmob.com/api/leagues?id=77&tab=matches&type=league&timeZone=Asia%2FHo_Chi_Minh';
 
   // Cloudflare Worker — fotmob-proxy.ductrangdesign.workers.dev
+  // Worker fetch: /api/data/leagues?id=77&ccode3=VNM (confirmed working 12/06/2026)
   const WORKER_URL = 'https://fotmob-proxy.ductrangdesign.workers.dev';
 
   const PROXIES = [
@@ -4546,6 +4547,8 @@ function koGroup(stageName) {
 // ── Try multiple FotMob response structures ────────────────────
 function parseEvents(data) {
   const paths = [
+    // ✅ /api/data/leagues format (confirmed 12/06/2026)
+    () => data?.fixtures?.allMatches,
     () => data?.matches?.allMatches,
     () => data?.matches?.data?.events,
     () => data?.data?.events,
@@ -4554,7 +4557,6 @@ function parseEvents(data) {
     () => data?.pageProps?.initialData?.allMatches,
     () => data?.rounds?.flatMap(r => r.matches ?? r.events ?? []),
     () => data?.playoff?.rounds?.flatMap(r => r.matches ?? r.events ?? []),
-    // FotMob tháng 6/2026: có thể nằm trong rounds array trực tiếp
     () => data?.matches?.rounds?.flatMap(r => r.matches ?? []),
     () => Array.isArray(data) ? data : null,
   ];
@@ -4621,9 +4623,17 @@ function applyFotmobData(data) {
   });
 
   // ── Build: byStageIdx map for knockout ────────────────────────
-  // Group FotMob events by their stage
   const byStage = {};
   sorted.forEach(ev => {
+    // New API format: ev.group = "A" / "R32" / "QF" etc.
+    const directGroup = ev?.group ?? '';
+    const KO_KEYS = ['R32','R16','QF','SF','TP','FIN'];
+    if (KO_KEYS.includes(directGroup)) {
+      if (!byStage[directGroup]) byStage[directGroup] = [];
+      byStage[directGroup].push(ev);
+      return;
+    }
+    // Fallback: parse from stage name string
     const stageName = ev?.stage?.name ?? ev?.tournament?.name
                    ?? ev?.leagueName ?? ev?.roundName ?? '';
     const kg = koGroup(stageName);
