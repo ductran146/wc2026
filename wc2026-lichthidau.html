@@ -4206,14 +4206,18 @@ function hasTodayMatch() {
 }
 
 function getPollInterval() {
-  if (hasLiveMatch())   return 30_000;       // 30s khi có trận đang đấu (knockout căng hơn)
-  if (hasTodayMatch())  return 3 * 60_000;   // 3 phút khi hôm nay có trận
-  return 30 * 60_000;                        // 30 phút các ngày khác
+  if (hasLiveMatch())   return 30_000;        // 30s khi có trận đang đấu
+  if (hasTodayMatch())  return 60 * 60_000;   // 60 phút khi hôm nay có trận chưa đấu
+  return null;                                 // Không có trận → không poll
 }
 
 function schedulePoll() {
   clearTimeout(_pollTimer);
   const interval = getPollInterval();
+  if (interval === null) {
+    setBarText('Không có trận hôm nay · ');
+    return; // Không schedule poll
+  }
   const label = interval < 60000 ? `${interval/1000}s`
               : interval < 3600000 ? `${interval/60000} phút`
               : `${interval/3600000} giờ`;
