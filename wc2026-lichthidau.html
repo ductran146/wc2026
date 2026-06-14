@@ -4727,19 +4727,22 @@ function applyFotmobData(data) {
     const newSt    = finished ? 'finished' : started ? 'live' : 'upcoming';
 
     // ── Live phase: phút thi đấu + hết hiệp 1 ────────────────
-    // FotMob: status.reason.short = "HT" khi nghỉ giữa hiệp
-    // liveTime.short = "45+2'" hoặc số phút khi đang đá
+    // FotMob: status.liveTime.short = "58'" khi đang đá
+    // status.halfs.secondHalfStarted = null khi đang nghỉ giữa hiệp
     let newMinute = null;
-    let newPhase  = null; // null | 'ht' | 'live'
+    let newPhase  = null;
 
     if (newSt === 'live') {
-      const reasonShort = ev?.status?.reason?.short ?? '';
-      if (reasonShort === 'HT' || reasonShort === 'HalfTime') {
+      const halfs = ev?.status?.halfs ?? {};
+      const isHT  = ev?.status?.ongoing === true
+                 && halfs.firstHalfStarted
+                 && !halfs.secondHalfStarted;
+
+      if (isHT) {
         newPhase = 'ht';
       } else {
         newPhase = 'live';
-        // liveTime.short = "23'" hoặc "45+2'"
-        const lt = ev?.liveTime?.short ?? ev?.status?.liveTime ?? '';
+        const lt = ev?.status?.liveTime?.short ?? '';
         const minMatch = String(lt).match(/(\d+)/);
         if (minMatch) newMinute = parseInt(minMatch[1]);
       }
