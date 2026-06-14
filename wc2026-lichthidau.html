@@ -858,7 +858,28 @@ a { text-decoration: none; color: inherit; }
 
 
 
-/* ─── STANDINGS TABLE ───────────────────────────────────────── */
+/* Third place standings */
+.third-place-block { margin-top: 8px; }
+.standings-table .th-grp { width: 36px; text-align: center; }
+.standings-table .td-grp { text-align: center; font-size: 10px; color: var(--text3); font-weight: 600; }
+.standings-table tr.q3-qualified { background: rgba(0,152,95,0.07); }
+.standings-table tr.q3-qualified td { color: #ccc; }
+.standings-table tr.q3-qualified .td-pts { color: #fff; }
+.standings-table tr.q3-qualified .td-rank { color: #00985f; font-weight: 700; }
+.standings-table tr.q3-bubble td.td-rank { color: #f0b429; }
+.q3-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--text3);
+  flex-wrap: wrap;
+}
+.q3-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.q3-dot-q { background: #00985f; }
+.q3-bubble-line td { height: 2px; background: rgba(240,180,41,0.4); padding: 0; border: none; }
 .standings-block {
   margin: 0 16px 16px;
   background: #1e1e1e;
@@ -3911,9 +3932,88 @@ const TEAM_GROUP = {
   spain: 'H', portugal: 'K'
 };
 
-function gdText(gf, ga) {
-  const d = gf - ga;
-  return d > 0 ? '+' + d : String(d);
+// ─────────────────────────────────────────────────────────────
+// BẢNG XẾP HẠNG ĐỘI ĐỨNG THỨ 3
+// Tự tính từ STANDINGS data, sort theo: pts → hs → bt
+// ─────────────────────────────────────────────────────────────
+function getThirdPlaceRows() {
+  return Object.entries(STANDINGS)
+    .map(([group, rows]) => {
+      // Đội hạng 3 = index 2 sau khi đã sort
+      const sorted = [...rows].sort((a,b) =>
+        (b.pts - a.pts) || ((b.gf-b.ga) - (a.gf-a.ga)) || (b.gf - a.gf)
+      );
+      const t = sorted[2];
+      if (!t) return null;
+      return { ...t, group };
+    })
+    .filter(Boolean)
+    .sort((a,b) =>
+      (b.pts - a.pts) ||
+      ((b.gf-b.ga) - (a.gf-a.ga)) ||
+      (b.gf - a.gf)
+    );
+}
+
+function renderThirdPlaceTable() {
+  const rows = getThirdPlaceRows();
+  const rowsHtml = rows.map((t, i) => {
+    const rank = i + 1;
+    const qualified = rank <= 8;
+    const gd = (t.gf ?? 0) - (t.ga ?? 0);
+    const gdClass = gd > 0 ? 'pos' : gd < 0 ? 'neg' : '';
+    const hsText = gd > 0 ? '+' + gd : String(gd);
+    const rowClass = qualified ? 'q3-qualified' : rank === 9 ? 'q3-bubble' : '';
+    const bubbleLine = rank === 9 ? `<tr class="q3-bubble-line"><td colspan="10"></td></tr>` : '';
+
+    return bubbleLine + `
+    <tr class="${rowClass}">
+      <td class="td-rank">${rank}</td>
+      <td class="td-team">
+        <div class="td-team-inner">
+          <span class="te td-flag">${t.flag}</span>
+          <span class="td-name">${t.name}</span>
+        </div>
+      </td>
+      <td class="td-grp">${t.group}</td>
+      <td>${t.pl ?? 0}</td>
+      <td>${t.w ?? 0}</td>
+      <td>${t.d ?? 0}</td>
+      <td>${t.l ?? 0}</td>
+      <td>${(t.gf ?? 0)}-${(t.ga ?? 0)}</td>
+      <td class="td-gd ${gdClass}">${hsText}</td>
+      <td class="td-pts">${t.pts ?? 0}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+<div class="standings-block third-place-block">
+  <div class="standings-header">
+    <span class="standings-title">Đội hạng 3 tốt nhất</span>
+    <span class="standings-subtitle">8 suất vào Vòng 32</span>
+  </div>
+  <table class="standings-table">
+    <thead>
+      <tr>
+        <th class="th-rank">#</th>
+        <th class="th-team">Đội</th>
+        <th class="th-grp">Bảng</th>
+        <th>TR</th>
+        <th>T</th>
+        <th>H</th>
+        <th>B</th>
+        <th>+/-</th>
+        <th>HS</th>
+        <th>ĐS</th>
+      </tr>
+    </thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+  <div class="q3-legend">
+    <span class="q3-dot q3-dot-q"></span><span>Vào Vòng 32</span>
+    <span class="q3-note">* Tiêu chí FP và bốc thăm do FIFA quyết định nếu bằng điểm</span>
+  </div>
+</div>`;
 }
 
 function renderStandingsTable(group, highlightCode) {
@@ -4120,6 +4220,11 @@ function renderAll() {
     });
 
     // Chỉ hiện vòng bảng A-L, không hiện KO (KO xem qua các tab riêng)
+    // Bảng hạng 3 tốt nhất — hiện khi xem tất cả bảng
+    if (currentGroupFilter === 'all') {
+      html += `<div class="standings-section-label" style="margin-top:8px">Đội hạng 3 tốt nhất</div>`;
+      html += renderThirdPlaceTable();
+    }
 
   } else {
     // ── Tab đội tuyển ─────────────────────────────────────────
