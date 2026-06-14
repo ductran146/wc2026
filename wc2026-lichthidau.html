@@ -3926,8 +3926,9 @@ function renderStandingsTable(group, highlightCode) {
     const rank = i + 1;
     const dotClass = rank === 1 ? 'q1' : rank === 2 ? 'q2' : 'out';
     const isTracked = t.code === highlightCode;
-    const gd = t.gf - t.ga;
+    const gd = (t.gf ?? 0) - (t.ga ?? 0);
     const gdClass = gd > 0 ? 'pos' : gd < 0 ? 'neg' : '';
+    const hsText = gd > 0 ? '+' + gd : String(gd);
 
     return `
     <tr class="${isTracked ? 'tracked-row' : ''}">
@@ -3942,7 +3943,8 @@ function renderStandingsTable(group, highlightCode) {
       <td>${t.w}</td>
       <td>${t.d}</td>
       <td>${t.l}</td>
-      <td class="td-gd ${gdClass}">${gdText(t.gf, t.ga)}</td>
+      <td>${(t.gf ?? 0)}:${(t.ga ?? 0)}</td>
+      <td class="td-gd ${gdClass}">${hsText}</td>
       <td class="td-pts">${t.pts}</td>
     </tr>`;
   }).join('');
@@ -3963,6 +3965,7 @@ function renderStandingsTable(group, highlightCode) {
         <th>H</th>
         <th>B</th>
         <th>+/-</th>
+        <th>HS</th>
         <th>ĐS</th>
       </tr>
     </thead>
