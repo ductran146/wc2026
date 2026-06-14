@@ -3974,27 +3974,53 @@ function renderStandingsTable(group, highlightCode) {
 // Update standings from FotMob data when available
 function applyStandingsFromFotmob(data) {
   try {
-    const table = data?.details?.table ?? data?.table ?? null;
-    if (!table) return;
-    const entries = table[0]?.all ?? table?.all ?? table ?? [];
-    entries.forEach(e => {
-      const code = normName(e?.name ?? '');
-      for (const g in STANDINGS) {
-        const idx = STANDINGS[g].findIndex(t => t.code === code);
-        if (idx < 0) continue;
-        STANDINGS[g][idx] = {
-          ...STANDINGS[g][idx],
+    // Structure: data.table[0].data.tables = [{leagueName:"Grp. A", table:{all:[...]}}]
+    const tableData = data?.table?.[0]?.data?.tables ?? [];
+    if (!tableData.length) return;
+
+    tableData.forEach(grpObj => {
+      // leagueName = "Grp. A" → group = "A"
+      const leagueName = grpObj?.leagueName ?? '';
+      const grpMatch = leagueName.match(/Grp\.\s*([A-L])/i);
+      if (!grpMatch) return;
+      const group = grpMatch[1].toUpperCase();
+      if (!STANDINGS[group]) return;
+
+      const rows = grpObj?.table?.all ?? [];
+      if (!rows.length) return;
+
+      // Update từng đội trong bảng
+      rows.forEach(e => {
+        const code = normName(e?.name ?? '');
+        const idx  = STANDINGS[group].findIndex(t => t.code === code);
+        if (idx < 0) return;
+
+        const scoresStr = e.scoresStr ?? '';
+        const [gfStr, gaStr] = scoresStr.split('-');
+        const gf  = parseInt(gfStr) || 0;
+        const ga  = parseInt(gaStr) || 0;
+        const gd  = typeof e.goalConDiff === 'number' ? e.goalConDiff : (gf - ga);
+
+        STANDINGS[group][idx] = {
+          ...STANDINGS[group][idx],
           pl:  e.played ?? 0,
           w:   e.wins   ?? 0,
           d:   e.draws  ?? 0,
           l:   e.losses ?? 0,
-          gf:  e.scoresStr ? parseInt(e.scoresStr.split('-')[0]) : 0,
-          ga:  e.scoresStr ? parseInt(e.scoresStr.split('-')[1]) : 0,
+          gf,
+          ga,
+          gd,
           pts: e.pts ?? 0,
+          rank: e.idx ?? (idx + 1),
         };
-      }
+      });
+
+      // Sort theo: pts desc → gd desc → gf desc
+      STANDINGS[group].sort((a, b) =>
+        (b.pts - a.pts) || ((b.gd ?? 0) - (a.gd ?? 0)) || ((b.gf ?? 0) - (a.gf ?? 0))
+      );
     });
-  } catch(e) { console.warn('standings parse error', e); }
+  } catch(e) { console.warn('standings parse error', e.message); }
 }
 
 function renderAll() {
