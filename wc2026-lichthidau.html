@@ -347,14 +347,38 @@ a { text-decoration: none; color: inherit; }
 .group-select-wrap.page-select {
   display: none;
   position: sticky;
-  top: 136px;           /* logo(52) + filter-chips(44) + view-bar(40) */
+  top: 136px;
   z-index: 101;
   padding: 8px 16px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
-.group-select-wrap.page-select.show { display: block; }
-.group-select-wrap.page-select { align-items: unset; gap: unset; }
+.group-select-wrap.page-select.show { display: flex; }
+
+.best3-btn {
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  font-family: var(--inter);
+}
+.best3-btn:hover { border-color: var(--text3); color: var(--text1); }
+.best3-btn.active {
+  background: rgba(0,152,95,0.15);
+  border-color: #00985f;
+  color: #00985f;
+}
 
 
 .group-select {
@@ -1144,6 +1168,7 @@ a { text-decoration: none; color: inherit; }
       <option value="K">Bảng K</option>
       <option value="L">Bảng L</option>
     </select>
+    <button class="best3-btn" id="best3Btn" onclick="toggleBest3()">Best 3rd</button>
   </div>
 <div class="page-wrap">
   <div class="ai-box" id="aiBox">
@@ -3753,7 +3778,27 @@ const GROUP_META = {
 let currentFilter = 'all';
 let currentRoundFilter = 'all';
 let currentView = 'date';   // 'date' | 'group'
-let currentGroupFilter = 'all'; // group key when view='group'
+let currentGroupFilter = 'all';
+let showBest3 = false;
+
+function toggleBest3() {
+  showBest3 = !showBest3;
+  document.getElementById('best3Btn')?.classList.toggle('active', showBest3);
+
+  if (showBest3) {
+    // Force sang view group
+    currentView = 'group';
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    // Tìm button "Theo bảng" và active nó
+    document.querySelectorAll('.view-tab').forEach(t => {
+      if (t.textContent.trim() === 'Theo bảng') t.classList.add('active');
+    });
+    // Đảm bảo groupSelectWrap hiện
+    const wrap = document.getElementById('groupSelectWrap');
+    if (wrap) wrap.classList.add('show');
+  }
+  renderAll();
+} // group key when view='group'
 
 // ─────────────────────────────────────────────────────────────
 // HELPERS
@@ -3875,6 +3920,20 @@ function renderMatchRow(m) {
 // STANDINGS DATA (static, update khi có kết quả thực)
 // ─────────────────────────────────────────────────────────────
 const STANDINGS = {
+  // Bảng A — MEXICO
+  A: [
+    { name:'Mexico',   code:'mexico',      flag:'🇲🇽', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Hàn Quốc', code:'southkorea',  flag:'🇰🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Czechia',  code:'czechia',     flag:'🇨🇿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Nam Phi',  code:'southafrica', flag:'🇿🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng B — CANADA
+  B: [
+    { name:'Canada',               code:'canada',      flag:'🇨🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Thụy Sĩ',              code:'switzerland', flag:'🇨🇭', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Bosnia & Herzegovina', code:'bosnia',      flag:'🇧🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Qatar',                code:'qatar',       flag:'🇶🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
   // Bảng C — BRAZIL
   C: [
     { name:'Brazil',   code:'brazil',   flag:'🇧🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
@@ -3882,12 +3941,40 @@ const STANDINGS = {
     { name:'Haiti',    code:'haiti',    flag:'🇭🇹', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Scotland', code:'scotland', flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
   ],
+  // Bảng D — MỸ
+  D: [
+    { name:'Mỹ',          code:'usa',       flag:'🇺🇸', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Thổ Nhĩ Kỳ',  code:'turkiye',   flag:'🇹🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Paraguay',    code:'paraguay',  flag:'🇵🇾', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Australia',   code:'australia', flag:'🇦🇺', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
   // Bảng E — GERMANY
   E: [
     { name:'Đức',         code:'germany',    flag:'🇩🇪', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Ecuador',     code:'ecuador',    flag:'🇪🇨', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Bờ Biển Ngà', code:'ivorycoast', flag:'🇨🇮', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Curaçao',     code:'curacao',    flag:'🇨🇼', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng F — HÀ LAN
+  F: [
+    { name:'Hà Lan',      code:'netherlands', flag:'🇳🇱', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Nhật Bản',    code:'japan',       flag:'🇯🇵', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Thụy Điển',   code:'sweden',      flag:'🇸🇪', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Tunisia',     code:'tunisia',     flag:'🇹🇳', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng G — BELGIUM
+  G: [
+    { name:'Belgium',     code:'belgium',    flag:'🇧🇪', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Iran',        code:'iran',       flag:'🇮🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'New Zealand', code:'newzealand', flag:'🇳🇿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Ai Cập',      code:'egypt',      flag:'🇪🇬', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+  ],
+  // Bảng H — SPAIN
+  H: [
+    { name:'Tây Ban Nha', code:'spain',       flag:'🇪🇸', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Uruguay',     code:'uruguay',     flag:'🇺🇾', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Ả Rập Xê Út', code:'saudiarabia', flag:'🇸🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Cabo Verde',  code:'capoverde',   flag:'🇨🇻', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
   ],
   // Bảng I — FRANCE
   I: [
@@ -3903,13 +3990,6 @@ const STANDINGS = {
     { name:'Áo',        code:'austria',   flag:'🇦🇹', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Jordan',    code:'jordan',    flag:'🇯🇴', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
   ],
-  // Bảng H — SPAIN
-  H: [
-    { name:'Tây Ban Nha', code:'spain',       flag:'🇪🇸', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-    { name:'Uruguay',     code:'uruguay',     flag:'🇺🇾', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-    { name:'Ả Rập Xê Út', code:'saudiarabia', flag:'🇸🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-    { name:'Cape Verde',  code:'capeverde',   flag:'🇨🇻', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-  ],
   // Bảng K — PORTUGAL
   K: [
     { name:'Bồ Đào Nha', code:'portugal',   flag:'🇵🇹', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
@@ -3919,7 +3999,7 @@ const STANDINGS = {
   ],
   // Bảng L — ENGLAND
   L: [
-    { name:'Anh',    code:'england', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Anh',     code:'england', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Croatia', code:'croatia', flag:'🇭🇷', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Ghana',   code:'ghana',   flag:'🇬🇭', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Panama',  code:'panama',  flag:'🇵🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
@@ -4197,33 +4277,36 @@ function renderAll() {
   } else if (currentFilter === 'all' && currentView === 'group') {
     // ── Theo bảng: hiện bảng A-L (theo filter dropdown) + phần vòng KO ──
 
-    // Phần vòng bảng
-    const groupMatches = list.filter(m => !KO_ROUNDS.has(m.g));
-    const filteredGroupMatches = currentGroupFilter === 'all'
-      ? groupMatches
-      : groupMatches.filter(m => m.g === currentGroupFilter);
+    // Phần vòng bảng — ẩn khi đang xem Best 3rd
+    if (!showBest3) {
+      const groupMatches = list.filter(m => !KO_ROUNDS.has(m.g));
+      const filteredGroupMatches = currentGroupFilter === 'all'
+        ? groupMatches
+        : groupMatches.filter(m => m.g === currentGroupFilter);
 
-    const groups = {};
-    filteredGroupMatches.forEach(m => { (groups[m.g] = groups[m.g] || []).push(m); });
-    const groupKeys = Object.keys(groups).sort();
+      const groups = {};
+      filteredGroupMatches.forEach(m => { (groups[m.g] = groups[m.g] || []).push(m); });
+      const groupKeys = Object.keys(groups).sort();
 
-    groupKeys.forEach(g => {
-      const meta = GROUP_META[g] || { label:'Bảng '+g, teams:'' };
-      html += `
-      <div class="group-block">
-        <div class="group-label-row">
-          <span class="group-pill">${meta.label}</span>
-          <span class="group-teams-text">${meta.teams}</span>
-        </div>
-        ${groups[g].map(renderMatchRow).join('')}
-      </div>`;
-    });
+      groupKeys.forEach(g => {
+        const meta = GROUP_META[g] || { label:'Bảng '+g, teams:'' };
+        html += `
+        <div class="group-block">
+          <div class="group-label-row">
+            <span class="group-pill">${meta.label}</span>
+            <span class="group-teams-text">${meta.teams}</span>
+          </div>
+          ${groups[g].map(renderMatchRow).join('')}
+        </div>`;
+      });
+    }
 
     // Chỉ hiện vòng bảng A-L, không hiện KO (KO xem qua các tab riêng)
-    // Bảng hạng 3 tốt nhất — hiện khi xem tất cả bảng
-    if (currentGroupFilter === 'all') {
-      html += `<div class="standings-section-label" style="margin-top:8px">Đội hạng 3 tốt nhất</div>`;
+    // Bảng hạng 3 tốt nhất
+    if (showBest3) {
       html += renderThirdPlaceTable();
+    } else if (currentGroupFilter === 'all') {
+      // Không tự hiện bảng hạng 3 nữa — dùng button
     }
 
   } else {
@@ -4260,6 +4343,8 @@ const KO_ROUNDS = new Set(['R32','R16','QF','SF','TP','FIN']);
 
 function switchView(view, btn) {
   currentView = view;
+  showBest3 = false;
+  document.getElementById('best3Btn')?.classList.remove('active');
   document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
 
