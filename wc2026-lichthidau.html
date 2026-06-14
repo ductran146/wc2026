@@ -4763,16 +4763,18 @@ function applyFotmobData(data) {
 
     if (newSt === 'live') {
       const halfs = ev?.status?.halfs ?? {};
-      const isHT  = ev?.status?.ongoing === true
-                 && halfs.firstHalfStarted
-                 && !halfs.secondHalfStarted;
+      const lt = ev?.status?.liveTime?.short ?? '';
+      const minMatch = String(lt).match(/(\d+)/);
+
+      // Nghỉ giữa hiệp: firstHalf đã bắt đầu, secondHalf chưa, VÀ không có liveTime
+      const isHT = halfs.firstHalfStarted
+                && !halfs.secondHalfStarted
+                && !minMatch;
 
       if (isHT) {
         newPhase = 'ht';
       } else {
         newPhase = 'live';
-        const lt = ev?.status?.liveTime?.short ?? '';
-        const minMatch = String(lt).match(/(\d+)/);
         if (minMatch) newMinute = parseInt(minMatch[1]);
       }
     }
