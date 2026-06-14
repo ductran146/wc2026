@@ -360,7 +360,7 @@ a { text-decoration: none; color: inherit; }
 
 .best3-btn {
   flex-shrink: 0;
-  height: 36px;
+  height: 30px;
   padding: 0 14px;
   border-radius: 8px;
   border: 1px solid var(--border2);
@@ -886,11 +886,21 @@ a { text-decoration: none; color: inherit; }
 .third-place-block { margin-top: 8px; }
 .standings-table .th-grp { width: 36px; text-align: center; }
 .standings-table .td-grp { text-align: center; font-size: 10px; color: var(--text3); font-weight: 600; }
-.standings-table tr.q3-qualified { background: rgba(0,152,95,0.07); }
-.standings-table tr.q3-qualified td { color: #ccc; }
-.standings-table tr.q3-qualified .td-pts { color: #fff; }
-.standings-table tr.q3-qualified .td-rank { color: #00985f; font-weight: 700; }
-.standings-table tr.q3-bubble td.td-rank { color: #f0b429; }
+
+/* Top 8 — màu bình thường, không highlight */
+.standings-table tr.q3-qualified td { color: var(--text2); }
+.standings-table tr.q3-qualified .td-pts { color: #fff; font-weight: 700; }
+.standings-table tr.q3-qualified .td-rank { color: var(--text3); }
+.standings-table tr.q3-qualified .td-name { color: #fff; }
+
+/* Hạng 9-12 — disabled */
+.standings-table tr.q3-out td { color: var(--text3) !important; opacity: 0.45; }
+.standings-table tr.q3-out .td-name { color: var(--text3) !important; }
+
+/* Bubble line — 4px gray */
+.q3-bubble-line { height: 2px !important; }
+.q3-bubble-line td { height: 2px !important; background: rgba(255,255,255,0.12); padding: 0 !important; border: none !important; line-height: 0; font-size: 0; }
+
 .q3-legend {
   display: flex;
   align-items: center;
@@ -903,13 +913,56 @@ a { text-decoration: none; color: inherit; }
 }
 .q3-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 .q3-dot-q { background: #00985f; }
-.q3-bubble-line td { height: 2px; background: rgba(240,180,41,0.4); padding: 0; border: none; }
+.q3-note { margin-left: auto; font-style: italic; }
+.q3-note-block {
+  margin: 0 16px 16px;
+  padding: 12px 16px;
+  background: #1e1e1e;
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.7;
+}
+.q3-note-block p { margin-bottom: 6px; color: var(--text2); }
+.q3-note-block ol { padding-left: 16px; }
+.q3-note-block li { margin-bottom: 3px; }
 .standings-block {
   margin: 0 16px 16px;
   background: #1e1e1e;
   border-radius: 16px;
   overflow: hidden;
 }
+.standings-block.third-place-block {
+  overflow: visible;
+}
+.third-place-block .standings-header {
+  border-radius: 16px 16px 0 0;
+}
+.third-place-block .standings-table-wrap {
+  border-radius: 0;
+}
+
+/* Wrap table để scroll ngang trên mobile */
+.standings-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.standings-table-wrap::-webkit-scrollbar { display: none; }
+
+.td-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* Tên dài hơn 12 ký tự → scale nhỏ hơn */
+.td-name.name-long { font-size: 11px; max-width: 100px; }
+.td-name.name-xlong { font-size: 10px; max-width: 88px; }
 
 .standings-header {
   padding: 10px 16px;
@@ -1014,13 +1067,6 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
 }
 
-.td-name {
-  font-size: 12px;
-  font-weight: 500;
-  color: #fff;
-  white-space: nowrap;
-}
-
 .td-pts {
   font-weight: 700;
   color: #fff !important;
@@ -1059,6 +1105,7 @@ a { text-decoration: none; color: inherit; }
   -webkit-appearance: none;
   background: #222222;
   color: #ffffff;
+  height: 30px;
   border: 1px solid var(--border2);
   border-radius: 8px;
   padding: 6px 32px 6px 12px;
@@ -3789,7 +3836,6 @@ function toggleBest3() {
     // Force sang view group
     currentView = 'group';
     document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-    // Tìm button "Theo bảng" và active nó
     document.querySelectorAll('.view-tab').forEach(t => {
       if (t.textContent.trim() === 'Theo bảng') t.classList.add('active');
     });
@@ -3798,6 +3844,12 @@ function toggleBest3() {
     if (wrap) wrap.classList.add('show');
   }
   renderAll();
+  // Scroll lên đầu trang khi bấm Best 3rd
+  if (showBest3) {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 } // group key when view='group'
 
 // ─────────────────────────────────────────────────────────────
@@ -4043,8 +4095,10 @@ function renderThirdPlaceTable() {
     const gd = (t.gf ?? 0) - (t.ga ?? 0);
     const gdClass = gd > 0 ? 'pos' : gd < 0 ? 'neg' : '';
     const hsText = gd > 0 ? '+' + gd : String(gd);
-    const rowClass = qualified ? 'q3-qualified' : rank === 9 ? 'q3-bubble' : '';
+    const rowClass = qualified ? 'q3-qualified' : 'q3-out';
     const bubbleLine = rank === 9 ? `<tr class="q3-bubble-line"><td colspan="10"></td></tr>` : '';
+    const nameLen2 = t.name?.length ?? 0;
+    const nameClass2 = nameLen2 > 16 ? 'name-xlong' : nameLen2 > 12 ? 'name-long' : '';
 
     return bubbleLine + `
     <tr class="${rowClass}">
@@ -4052,7 +4106,7 @@ function renderThirdPlaceTable() {
       <td class="td-team">
         <div class="td-team-inner">
           <span class="te td-flag">${t.flag}</span>
-          <span class="td-name">${t.name}</span>
+          <span class="td-name ${nameClass2}">${t.name}</span>
         </div>
       </td>
       <td class="td-grp">${t.group}</td>
@@ -4072,6 +4126,7 @@ function renderThirdPlaceTable() {
     <span class="standings-title">Đội hạng 3 tốt nhất</span>
     <span class="standings-subtitle">8 suất vào Vòng 32</span>
   </div>
+  <div class="standings-table-wrap">
   <table class="standings-table">
     <thead>
       <tr>
@@ -4089,10 +4144,17 @@ function renderThirdPlaceTable() {
     </thead>
     <tbody>${rowsHtml}</tbody>
   </table>
-  <div class="q3-legend">
-    <span class="q3-dot q3-dot-q"></span><span>Vào Vòng 32</span>
-    <span class="q3-note">* Tiêu chí FP và bốc thăm do FIFA quyết định nếu bằng điểm</span>
   </div>
+</div>
+<div class="q3-note-block">
+  <p>8 đội xếp thứ ba có thành tích tốt nhất trong số 12 đội sẽ đi tiếp. Tiêu chí lựa chọn:</p>
+  <ol>
+    <li>Điểm số</li>
+    <li>Hiệu số bàn thắng bại</li>
+    <li>Số bàn thắng ghi được</li>
+    <li>Điểm hành vi (thẻ vàng, thẻ đỏ)</li>
+    <li>Xếp hạng FIFA</li>
+  </ol>
 </div>`;
 }
 
@@ -4109,6 +4171,8 @@ function renderStandingsTable(group, highlightCode) {
     const gd = (t.gf ?? 0) - (t.ga ?? 0);
     const gdClass = gd > 0 ? 'pos' : gd < 0 ? 'neg' : '';
     const hsText = gd > 0 ? '+' + gd : String(gd);
+    const nameLen = t.name?.length ?? 0;
+    const nameClass = nameLen > 16 ? 'name-xlong' : nameLen > 12 ? 'name-long' : '';
 
     return `
     <tr class="${isTracked ? 'tracked-row' : ''}">
@@ -4116,7 +4180,7 @@ function renderStandingsTable(group, highlightCode) {
       <td class="td-team">
         <div class="td-team-inner">
           <span class="te td-flag">${t.flag}</span>
-          <span class="td-name">${t.name}</span>
+          <span class="td-name ${nameClass}">${t.name}</span>
         </div>
       </td>
       <td>${t.pl}</td>
@@ -4135,6 +4199,7 @@ function renderStandingsTable(group, highlightCode) {
     <span class="standings-title">${meta.label}</span>
     <span class="standings-subtitle">Vòng bảng</span>
   </div>
+  <div class="standings-table-wrap">
   <table class="standings-table">
     <thead>
       <tr>
@@ -4151,6 +4216,7 @@ function renderStandingsTable(group, highlightCode) {
     </thead>
     <tbody>${rowsHtml}</tbody>
   </table>
+  </div>
 </div>`;
 }
 
