@@ -540,6 +540,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .match-badge.live     { background: rgba(219,83,87,0.2); color: #DB5357; }
+.match-badge.halftime { background: rgba(255,180,0,0.15); color: #f0b429; }
 .match-badge.finished { background: rgba(255,255,255,0.1); color: #aeaeae; }
 
 @keyframes liveBlink { 0%,100%{opacity:1} 50%{opacity:0.5} }
@@ -3750,9 +3751,13 @@ function fmtDate(dateStr, timeStr) {
   };
 }
 
-function statusBadge(s, minute) {
+function statusBadge(m) {
+  const s = m.status;
   if (s === 'live') {
-    const label = minute ? `${minute}'` : 'Live';
+    if (m.livePhase === 'ht') {
+      return `<span class="match-badge halftime">H1</span>`;
+    }
+    const label = m.minute ? `${m.minute}'` : 'Live';
     return `<span class="match-badge live">${label}</span>`;
   }
   if (s === 'finished') {
@@ -3803,7 +3808,7 @@ function renderMatchRow(m) {
     </div>`;
   }
 
-  const badge = statusBadge(m.status, m.minute);
+  const badge = statusBadge(m);
   const venue = m.venue || '';
 
   return `
@@ -4721,6 +4726,25 @@ function applyFotmobData(data) {
     const finished = ev?.status?.finished ?? false;
     const newSt    = finished ? 'finished' : started ? 'live' : 'upcoming';
 
+    // ── Live phase: phút thi đấu + hết hiệp 1 ────────────────
+    // FotMob: status.reason.short = "HT" khi nghỉ giữa hiệp
+    // liveTime.short = "45+2'" hoặc số phút khi đang đá
+    let newMinute = null;
+    let newPhase  = null; // null | 'ht' | 'live'
+
+    if (newSt === 'live') {
+      const reasonShort = ev?.status?.reason?.short ?? '';
+      if (reasonShort === 'HT' || reasonShort === 'HalfTime') {
+        newPhase = 'ht';
+      } else {
+        newPhase = 'live';
+        // liveTime.short = "23'" hoặc "45+2'"
+        const lt = ev?.liveTime?.short ?? ev?.status?.liveTime ?? '';
+        const minMatch = String(lt).match(/(\d+)/);
+        if (minMatch) newMinute = parseInt(minMatch[1]);
+      }
+    }
+
     // FotMob score: thử nhiều format khác nhau theo version API
     let rawSH = ev?.home?.score        // format cũ
              ?? ev?.homeTeam?.score
@@ -4758,6 +4782,8 @@ function applyFotmobData(data) {
     m.status = newSt;
     m.sh = newSH;
     m.sa = newSA;
+    m.minute = newMinute;
+    m.livePhase = newPhase;
     if (prevSH !== newSH || prevSA !== newSA || prevSt !== newSt) changed++;
   });
 
