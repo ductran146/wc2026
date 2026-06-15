@@ -4039,63 +4039,63 @@ function renderMatchRow(m) {
 // ─────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────
 // MANUAL DISCIPLINE — nhập thủ công sau mỗi trận kết thúc
-// yellow: thẻ vàng | yellowRed: vàng→đỏ (2 vàng) | red: đỏ trực tiếp
-// FP FIFA: yellow=-1, yellowRed=-3, red=-4, yellow+red=-5
+// yellow: thẻ vàng | yellowRed: đỏ gián tiếp (2 vàng) | red: đỏ trực tiếp | yellowDirectRed: thẻ vàng + đỏ trực tiếp cùng cầu thủ
+// FP FIFA: yellow=-1, yellowRed=-3, red=-4, yellowDirectRed=-5
 // ─────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────
 // DISCIPLINE — cộng dồn thẻ toàn giải cho từng đội
-// Cập nhật sau mỗi trận: yellow=thẻ vàng, yellowRed=vàng→đỏ, red=đỏ trực tiếp
+// Cập nhật sau mỗi trận: yellow=thẻ vàng, yellowRed=đỏ gián tiếp (2 vàng), red=đỏ trực tiếp, yellowDirectRed=vàng + đỏ trực tiếp
 // Bảng Best 3rd tự động đọc đúng đội sau khi standings load từ FotMob
 // ─────────────────────────────────────────────────────────────
 const DISCIPLINE = {
-  algeria:     { yellow: 0, yellowRed: 0, red: 0 },
-  argentina:   { yellow: 0, yellowRed: 0, red: 0 },
-  australia:   { yellow: 0, yellowRed: 0, red: 0 },
-  austria:     { yellow: 0, yellowRed: 0, red: 0 },
-  belgium:     { yellow: 0, yellowRed: 0, red: 0 },
-  bosnia:      { yellow: 0, yellowRed: 0, red: 0 }, // M3: Canada vs Bosnia
-  brazil:      { yellow: 0, yellowRed: 0, red: 0 },
-  caboverde:   { yellow: 0, yellowRed: 0, red: 0 },
-  canada:      { yellow: 0, yellowRed: 0, red: 0 },
-  colombia:    { yellow: 0, yellowRed: 0, red: 0 },
-  croatia:     { yellow: 0, yellowRed: 0, red: 0 },
-  curacao:     { yellow: 0, yellowRed: 0, red: 0 },
-  czechia:     { yellow: 0, yellowRed: 0, red: 0 },
-  drcongo:     { yellow: 0, yellowRed: 0, red: 0 },
-  ecuador:     { yellow: 0, yellowRed: 0, red: 0 },
-  egypt:       { yellow: 0, yellowRed: 0, red: 0 },
-  england:     { yellow: 0, yellowRed: 0, red: 0 },
-  france:      { yellow: 0, yellowRed: 0, red: 0 },
-  germany:     { yellow: 0, yellowRed: 0, red: 0 },
-  ghana:       { yellow: 0, yellowRed: 0, red: 0 },
-  haiti:       { yellow: 0, yellowRed: 0, red: 0 },
-  iran:        { yellow: 0, yellowRed: 0, red: 0 },
-  iraq:        { yellow: 0, yellowRed: 0, red: 0 },
-  ivorycoast:  { yellow: 0, yellowRed: 0, red: 0 },
-  japan:       { yellow: 0, yellowRed: 0, red: 0 },
-  jordan:      { yellow: 0, yellowRed: 0, red: 0 },
-  mexico:      { yellow: 0, yellowRed: 0, red: 0 },
-  morocco:     { yellow: 0, yellowRed: 0, red: 0 },
-  netherlands: { yellow: 0, yellowRed: 0, red: 0 },
-  newzealand:  { yellow: 0, yellowRed: 0, red: 0 },
-  norway:      { yellow: 0, yellowRed: 0, red: 0 },
-  panama:      { yellow: 0, yellowRed: 0, red: 0 },
-  paraguay:    { yellow: 0, yellowRed: 0, red: 0 },
-  portugal:    { yellow: 0, yellowRed: 0, red: 0 },
-  qatar:       { yellow: 0, yellowRed: 0, red: 0 },
-  saudiarabia: { yellow: 0, yellowRed: 0, red: 0 },
-  scotland:    { yellow: 0, yellowRed: 0, red: 0 },
-  senegal:     { yellow: 0, yellowRed: 0, red: 0 },
-  southafrica: { yellow: 0, yellowRed: 0, red: 0 },
-  southkorea:  { yellow: 0, yellowRed: 0, red: 0 },
-  spain:       { yellow: 0, yellowRed: 0, red: 0 },
-  sweden:      { yellow: 0, yellowRed: 0, red: 0 },
-  switzerland: { yellow: 0, yellowRed: 0, red: 0 },
-  tunisia:     { yellow: 0, yellowRed: 0, red: 0 },
-  turkiye:     { yellow: 0, yellowRed: 0, red: 0 },
-  uruguay:     { yellow: 0, yellowRed: 0, red: 0 },
-  usa:         { yellow: 0, yellowRed: 0, red: 0 },
-  uzbekistan:  { yellow: 0, yellowRed: 0, red: 0 },
+  algeria:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  argentina:   { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  australia:   { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  austria:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  belgium:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  bosnia:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 }, // M3: Canada vs Bosnia
+  brazil:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  caboverde:   { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  canada:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  colombia:    { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  croatia:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  curacao:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  czechia:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  drcongo:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  ecuador:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  egypt:       { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  england:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  france:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  germany:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  ghana:       { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  haiti:       { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  iran:        { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  iraq:        { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  ivorycoast:  { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  japan:       { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  jordan:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  mexico:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  morocco:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  netherlands: { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  newzealand:  { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  norway:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  panama:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  paraguay:    { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  portugal:    { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  qatar:       { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  saudiarabia: { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  scotland:    { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  senegal:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  southafrica: { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  southkorea:  { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  spain:       { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  sweden:      { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  switzerland: { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  tunisia:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  turkiye:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  uruguay:     { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  usa:         { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
+  uzbekistan:  { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 },
 };
 
 const STANDINGS = {
@@ -4196,15 +4196,15 @@ const TEAM_GROUP = {
 // Ranking helpers
 // FIFA-style order used in group standings and Best 3rd:
 // points → goal difference → goals for → fair-play → stable name fallback.
-// Fair-play points: yellow=-1, yellowRed=-3, red=-4. Higher is better.
+// Fair-play points: yellow=-1, yellowRed=-3, red=-4, yellowDirectRed=-5. Higher is better.
 // ─────────────────────────────────────────────────────────────
 function getTeamDiscipline(code) {
-  return DISCIPLINE[code] ?? { yellow: 0, yellowRed: 0, red: 0 };
+  return DISCIPLINE[code] ?? { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 };
 }
 
 function getFairPlayScore(code) {
   const d = getTeamDiscipline(code);
-  return (d.yellow || 0) * (-1) + (d.yellowRed || 0) * (-3) + (d.red || 0) * (-4);
+  return (d.yellow || 0) * (-1) + (d.yellowRed || 0) * (-3) + (d.red || 0) * (-4) + (d.yellowDirectRed || 0) * (-5);
 }
 
 function compareStandingRows(a, b) {
@@ -4252,16 +4252,16 @@ function matchHasTeam(m, team) {
 // ─────────────────────────────────────────────────────────────
 function getThirdPlaceRows() {
   // Dùng DISCIPLINE object — nhập thủ công sau mỗi trận
-  // FP FIFA: yellow=-1, yellowRed=-3 (2 vàng→đỏ), red=-4
+  // FP FIFA: yellow=-1, yellowRed=-3 (đỏ gián tiếp/2 vàng), red=-4, yellowDirectRed=-5
   return Object.entries(STANDINGS)
     .map(([group, rows]) => {
       const sorted = [...rows].sort(compareStandingRows);
       const t = sorted[2];
       if (!t) return null;
-      const d = DISCIPLINE[t.code] ?? { yellow: 0, yellowRed: 0, red: 0 };
+      const d = DISCIPLINE[t.code] ?? { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 };
       const yc = d.yellow;
-      const rc = d.yellowRed + d.red;
-      const fp = d.yellow * (-1) + d.yellowRed * (-3) + d.red * (-4);
+      const rc = (d.yellowRed || 0) + (d.red || 0) + (d.yellowDirectRed || 0);
+      const fp = getFairPlayScore(t.code);
       return { ...t, group, yc, rc, fp };
     })
     .filter(Boolean)
@@ -4345,7 +4345,7 @@ function renderThirdPlaceTable() {
     <li>Điểm số</li>
     <li>Hiệu số bàn thắng bại</li>
     <li>Số bàn thắng ghi được</li>
-    <li>Điểm hành vi / fair-play: thẻ vàng, thẻ đỏ do 2 vàng, thẻ đỏ trực tiếp</li>
+    <li>Điểm hành vi / fair-play: thẻ vàng -1, đỏ gián tiếp -3, đỏ trực tiếp -4, vàng + đỏ trực tiếp -5</li>
     <li>Xếp hạng FIFA</li>
   </ol>
 </div>`;
@@ -5321,7 +5321,7 @@ function makeCardKey(m) {
 
 function ensureDisciplineTeam(code) {
   if (!code) return;
-  if (!DISCIPLINE[code]) DISCIPLINE[code] = { yellow: 0, yellowRed: 0, red: 0 };
+  if (!DISCIPLINE[code]) DISCIPLINE[code] = { yellow: 0, yellowRed: 0, red: 0, yellowDirectRed: 0 };
 }
 
 function resetDisciplineTotals() {
@@ -5329,6 +5329,7 @@ function resetDisciplineTotals() {
     DISCIPLINE[code].yellow = 0;
     DISCIPLINE[code].yellowRed = 0;
     DISCIPLINE[code].red = 0;
+    DISCIPLINE[code].yellowDirectRed = 0;
   });
 }
 
@@ -5340,9 +5341,11 @@ function recalcDisciplineFromMatchCards() {
     DISCIPLINE[c.homeCode].yellow    += c.homeYC || 0;
     DISCIPLINE[c.homeCode].yellowRed += c.homeYR || 0;
     DISCIPLINE[c.homeCode].red       += c.homeRC || 0;
+    DISCIPLINE[c.homeCode].yellowDirectRed += c.homeYDR || 0;
     DISCIPLINE[c.awayCode].yellow    += c.awayYC || 0;
     DISCIPLINE[c.awayCode].yellowRed += c.awayYR || 0;
     DISCIPLINE[c.awayCode].red       += c.awayRC || 0;
+    DISCIPLINE[c.awayCode].yellowDirectRed += c.awayYDR || 0;
   });
 }
 
@@ -5356,27 +5359,29 @@ function setMatchCards(m, c) {
     homeYC: Number(c.homeYC || 0),
     homeYR: Number(c.homeYR || 0),
     homeRC: Number(c.homeRC || 0),
+    homeYDR: Number(c.homeYDR || 0),
     awayYC: Number(c.awayYC || 0),
     awayYR: Number(c.awayYR || 0),
     awayRC: Number(c.awayRC || 0),
+    awayYDR: Number(c.awayYDR || 0),
   };
 
   MATCH_CARD_DATA[key] = normalized;
 
-  // Dữ liệu hiển thị trên card trận: RC hiển thị là tổng thẻ đỏ trực tiếp + đỏ do 2 vàng.
+  // Dữ liệu hiển thị trên card trận: RC hiển thị là tổng thẻ đỏ trực tiếp + đỏ gián tiếp.
   m.homeYC = normalized.homeYC;
   m.homeYR = normalized.homeYR;
-  m.homeRC = normalized.homeRC + normalized.homeYR;
+  m.homeRC = normalized.homeRC + normalized.homeYR + normalized.homeYDR;
   m.awayYC = normalized.awayYC;
   m.awayYR = normalized.awayYR;
-  m.awayRC = normalized.awayRC + normalized.awayYR;
+  m.awayRC = normalized.awayRC + normalized.awayYR + normalized.awayYDR;
   m.cardsLoaded = true;
 
   recalcDisciplineFromMatchCards();
 }
 
 function emptyCards() {
-  return { homeYC: 0, homeYR: 0, homeRC: 0, awayYC: 0, awayYR: 0, awayRC: 0 };
+  return { homeYC: 0, homeYR: 0, homeRC: 0, homeYDR: 0, awayYC: 0, awayYR: 0, awayRC: 0, awayYDR: 0 };
 }
 
 function addCard(result, isHome, kind) {
@@ -5384,6 +5389,7 @@ function addCard(result, isHome, kind) {
   if (kind === 'yellow') result[side + 'YC']++;
   if (kind === 'yellowRed') result[side + 'YR']++;
   if (kind === 'red') result[side + 'RC']++;
+  if (kind === 'yellowDirectRed') result[side + 'YDR']++;
 }
 
 function normalizeCardType(raw) {
@@ -5392,6 +5398,7 @@ function normalizeCardType(raw) {
 
   // FotMob thường trả type="Card" và loại thẻ nằm ở field card/cardType.
   // Vì vậy phải đọc nhiều field, không được chỉ đọc type trước.
+  if (t.includes('yellowdirectred') || t.includes('yellowanddirectred') || t.includes('yellowstraightred') || t.includes('yellowandredcard') || t.includes('yellowthenred') || t.includes('yellowredcarddirect')) return 'yellowDirectRed';
   if (t === '2' || t.includes('yellowred') || t.includes('secondyellow') || t.includes('secondbooking') || t.includes('redyellow')) return 'yellowRed';
   if (t === '3' || t.includes('redcard') || t === 'red' || t.includes('straightred') || t.includes('directred') || t.includes('sendingoff')) return 'red';
   if (t === '1' || t.includes('yellowcard') || t === 'yellow' || t.includes('booking')) return 'yellow';
@@ -5419,6 +5426,7 @@ function detectCardKind(obj) {
   if (typeText.includes('card')) {
     const text = [obj.text, obj.comment, obj.description, obj.displayText, obj.player?.name]
       .filter(Boolean).join(' ').toLowerCase();
+    if (text.includes('yellow') && (text.includes('direct red') || text.includes('straight red'))) return 'yellowDirectRed';
     if (text.includes('second yellow')) return 'yellowRed';
     if (text.includes('yellow')) return 'yellow';
     if (text.includes('red')) return 'red';
@@ -5539,7 +5547,7 @@ function parseCardsFromMatchDetail(detail, homeCode, awayCode) {
   const result = emptyCards();
   const seenEvents = new Set();
 
-  // 1) Ưu tiên timeline/events trong matchDetails vì phân biệt được đỏ trực tiếp và đỏ do 2 vàng.
+  // 1) Ưu tiên timeline/events trong matchDetails vì phân biệt được đỏ trực tiếp và đỏ gián tiếp.
   walkObjects(detail, obj => {
     const kind = detectCardKind(obj);
     if (!kind) return;
