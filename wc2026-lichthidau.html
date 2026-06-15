@@ -3919,13 +3919,36 @@ function fmtDate(dateStr, timeStr) {
   };
 }
 
+function estimateLiveMinute(m) {
+  if (!m || m.status !== 'live' || !m.date || !m.time) return null;
+  const start = new Date(m.date + 'T' + m.time + ':00+07:00').getTime();
+  if (!Number.isFinite(start)) return null;
+  const elapsed = Math.floor((Date.now() - start) / 60000);
+  if (elapsed < 0 || elapsed > 150) return null;
+  if (elapsed >= 45 && elapsed <= 60 && !m.minute) return '45+';
+  if (elapsed > 105) return '90+';
+  return Math.max(1, elapsed);
+}
+
+function ensureLiveDisplayData(m) {
+  if (!m || m.status !== 'live') return;
+  // Nếu trận đang live nhưng feed chưa trả score, vẫn hiển thị 0 - 0 thay vì giờ đá.
+  if (m.sh === null || m.sh === undefined) m.sh = 0;
+  if (m.sa === null || m.sa === undefined) m.sa = 0;
+  // Nếu feed chưa trả phút, dùng phút ước tính từ giờ kickoff để tránh chip "Live" trống thông tin.
+  if (!m.minute && m.livePhase !== 'ht') {
+    m.minute = estimateLiveMinute(m);
+  }
+}
+
 function statusBadge(m) {
   const s = m.status;
   if (s === 'live') {
     if (m.livePhase === 'ht') {
       return `<span class="match-badge halftime">Nghỉ</span>`;
     }
-    const label = m.minute ? `${m.minute}'` : 'Live';
+    const minute = m.minute || estimateLiveMinute(m);
+    const label = minute ? `${minute}'` : 'Live';
     return `<span class="match-badge live">${label}</span>`;
   }
   if (s === 'finished') {
@@ -3955,7 +3978,8 @@ function renderMatchRow(m) {
   const hFeat  = TARGET.has(m.home.code);
   const aFeat  = TARGET.has(m.away.code);
   const dt     = fmtDate(m.date, m.time);
-  const hasScore = m.sh !== null && m.sa !== null;
+  ensureLiveDisplayData(m);
+  const hasScore = (m.sh !== null && m.sh !== undefined && m.sa !== null && m.sa !== undefined);
 
   const homeDot = hFeat ? `<span class="t-dot" style="background:${m.home.color}"></span>` : '';
   const awayDot = aFeat ? `<span class="t-dot" style="background:${m.away.color}"></span>` : '';
@@ -3999,7 +4023,7 @@ function renderMatchRow(m) {
   <div class="match-info">
 
     <div class="match-time-row">
-      <span class="match-dt">${!hasScore ? dt.dateShort : dt.date}</span>
+      <span class="match-dt">${m.status === 'live' ? dt.dateShort : (!hasScore ? dt.dateShort : dt.date)}</span>
     </div>
 
     <div class="match-score-row">
@@ -5077,98 +5101,6 @@ function isTBD(name) {
     || /^hạng 3/.test(name.trim());
 }
 
-
-function boolish(v) {
-  if (v === true || v === 1) return true;
-  if (typeof v === 'string') return ['true','1','yes','finished','complete','started','live'].includes(v.toLowerCase());
-  return false;
-}
-
-function firstNumber(v) {
-  if (v === null || v === undefined || v === '') return null;
-  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
-  if (typeof v === 'string') {
-    const m = v.match(/-?\d+/);
-    return m ? Number(m[0]) : null;
-  }
-  if (typeof v === 'object') {
-    return firstNumber(v.current ?? v.display ?? v.score ?? v.value ?? v.total ?? v.name ?? v.title);
-  }
-  return null;
-}
-
-function parseScoreText(text) {
-  if (!text) return null;
-  const raw = String(text).trim();
-  const m = raw.match(/(\d+)\s*[-–—:]\s*(\d+)/);
-  if (!m) return null;
-  return [Number(m[1]), Number(m[2])];
-}
-
-function extractScore(ev) {
-  const candidates = [
-    [ev?.home?.score, ev?.away?.score],
-    [ev?.homeTeam?.score, ev?.awayTeam?.score],
-    [ev?.homeScore?.current, ev?.awayScore?.current],
-    [ev?.homeScore?.display, ev?.awayScore?.display],
-    [ev?.scores?.home, ev?.scores?.away],
-    [ev?.score?.home, ev?.score?.away],
-    [ev?.result?.home, ev?.result?.away],
-    [ev?.status?.homeScore, ev?.status?.awayScore],
-    [ev?.status?.home?.score, ev?.status?.away?.score],
-  ];
-
-  for (const pair of candidates) {
-    const h = firstNumber(pair[0]);
-    const a = firstNumber(pair[1]);
-    if (h !== null && a !== null) return [h, a];
-  }
-
-  const textCandidates = [
-    ev?.status?.scoreStr, ev?.scoreStr, ev?.displayScore, ev?.shortStatus,
-    ev?.status?.liveTime?.scoreStr, ev?.liveTime?.scoreStr, ev?.status?.reason?.short, ev?.status?.reason?.long
-  ];
-  for (const t of textCandidates) {
-    const parsed = parseScoreText(t);
-    if (parsed) return parsed;
-  }
-
-  return null;
-}
-
-function extractMinute(ev) {
-  const values = [
-    ev?.status?.liveTime?.short, ev?.status?.liveTime?.long, ev?.status?.liveTime?.display,
-    ev?.liveTime?.short, ev?.liveTime?.long, ev?.liveTime?.display,
-    ev?.status?.minute, ev?.minute, ev?.time, ev?.matchTime, ev?.status?.matchTime,
-    ev?.status?.reason?.short, ev?.status?.reason?.long, ev?.status?.statusStr
-  ];
-
-  for (const v of values) {
-    const str = String(v ?? '').trim();
-    if (!str) continue;
-    if (/half\s*time|halftime|ht|nghỉ/i.test(str)) return { minute: null, phase: 'ht' };
-    const m = str.match(/(\d{1,3})(?:\s*\+\s*(\d{1,2}))?/);
-    if (m) return { minute: m[2] ? `${m[1]}+${m[2]}` : Number(m[1]), phase: 'live' };
-  }
-
-  return { minute: null, phase: null };
-}
-
-function detectStatus(ev) {
-  const st = ev?.status || {};
-  const statusText = [st.reason?.short, st.reason?.long, st.statusStr, st.type, st.liveTime?.short, ev?.statusStr, ev?.status, ev?.state]
-    .filter(Boolean).join(' ').toLowerCase();
-
-  const finished = boolish(st.finished) || boolish(ev?.finished) || /finished|complete|full.?time|ft|after penalties/.test(statusText);
-  if (finished) return 'finished';
-
-  const started = boolish(st.started) || boolish(ev?.started) || !!st.liveTime || !!ev?.liveTime || /live|in.?play|ongoing|1st|2nd|half|ht|pause/.test(statusText);
-  if (started) return 'live';
-
-  return 'upcoming';
-}
-
 function applyFotmobData(data) {
   const events = parseEvents(data);
 
@@ -5297,31 +5229,66 @@ function applyFotmobData(data) {
     if (!ev) return;
 
     // ── Update score + status ─────────────────────────────────
-    const newSt = detectStatus(ev);
+    const started  = ev?.status?.started  ?? false;
+    const finished = ev?.status?.finished ?? false;
+    const newSt    = finished ? 'finished' : started ? 'live' : 'upcoming';
 
     // ── Live phase: phút thi đấu + hết hiệp 1 ────────────────
+    // FotMob: status.liveTime.short = "58'" khi đang đá
+    // status.halfs.secondHalfStarted = null khi đang nghỉ giữa hiệp
     let newMinute = null;
     let newPhase  = null;
-    if (newSt === 'live') {
-      const liveInfo = extractMinute(ev);
-      newMinute = liveInfo.minute;
-      newPhase  = liveInfo.phase || 'live';
 
-      // Fallback HT theo cấu trúc halfs nếu không có liveTime
+    if (newSt === 'live') {
       const halfs = ev?.status?.halfs ?? {};
-      if (!newMinute && halfs.firstHalfStarted && !halfs.secondHalfStarted) {
+      const lt = ev?.status?.liveTime?.short ?? '';
+      const minMatch = String(lt).match(/(\d+)/);
+
+      // Nghỉ giữa hiệp: firstHalf đã bắt đầu, secondHalf chưa, VÀ không có liveTime
+      const isHT = halfs.firstHalfStarted
+                && !halfs.secondHalfStarted
+                && !minMatch;
+
+      if (isHT) {
         newPhase = 'ht';
+      } else {
+        newPhase = 'live';
+        if (minMatch) newMinute = parseInt(minMatch[1]);
       }
     }
 
-    // FotMob score: đọc nhiều format. Nếu live mà chưa có score, hiển thị 0-0 thay vì giờ đá.
-    const scorePair = extractScore(ev);
-    let newSH = scorePair ? scorePair[0] : null;
-    let newSA = scorePair ? scorePair[1] : null;
-    if (newSt === 'live' && (newSH === null || newSA === null)) {
-      newSH = 0;
-      newSA = 0;
+    // FotMob score: thử nhiều format khác nhau theo version API
+    let rawSH = ev?.home?.score        // format cũ
+             ?? ev?.homeTeam?.score
+             ?? ev?.homeScore?.current // format mới
+             ?? ev?.homeScore?.display
+             ?? null;
+    let rawSA = ev?.away?.score
+             ?? ev?.awayTeam?.score
+             ?? ev?.awayScore?.current
+             ?? ev?.awayScore?.display
+             ?? null;
+
+    // Fallback: parse từ scoreStr = "2 - 1" hoặc "2-1"
+    if ((rawSH === null || rawSA === null) && ev?.status?.scoreStr) {
+      const parts = ev.status.scoreStr.replace(/\s/g,'').split('-');
+      if (parts.length === 2) {
+        const ph = parseInt(parts[0]), pa = parseInt(parts[1]);
+        if (!isNaN(ph)) rawSH = ph;
+        if (!isNaN(pa)) rawSA = pa;
+      }
     }
+    // Fallback 2: liveTime có scoreStr
+    if ((rawSH === null || rawSA === null) && ev?.liveTime?.short) {
+      const parts = String(ev.liveTime.short).replace(/\s/g,'').split('-');
+      if (parts.length === 2) {
+        const ph = parseInt(parts[0]), pa = parseInt(parts[1]);
+        if (!isNaN(ph) && !isNaN(pa)) { rawSH = ph; rawSA = pa; }
+      }
+    }
+
+    const newSH = rawSH !== null && rawSH !== undefined ? Number(rawSH) : null;
+    const newSA = rawSA !== null && rawSA !== undefined ? Number(rawSA) : null;
 
     const prevSH = m.sh, prevSA = m.sa, prevSt = m.status;
     m.status = newSt;
@@ -5329,6 +5296,7 @@ function applyFotmobData(data) {
     m.sa = newSA;
     m.minute = newMinute;
     m.livePhase = newPhase;
+    ensureLiveDisplayData(m);
     if (ev?.id) m.fotmobId = String(ev.id);
     if (prevSH !== newSH || prevSA !== newSA || prevSt !== newSt) changed++;
   });
@@ -5343,9 +5311,6 @@ function applyFotmobData(data) {
       if (m.sh !== null) { flashScore('sh-' + m.id); flashScore('sa-' + m.id); }
     });
   }
-
-  // ── Fetch live detail async nếu league feed chỉ báo Live nhưng thiếu score/phút ─
-  fetchLiveDetailsForLiveMatches();
 
   // ── Fetch cards async (re-render lại sau khi xong) ────────────
   fetchCardsForFinishedMatches();
@@ -5362,64 +5327,6 @@ function applyFotmobData(data) {
 
 function nowVN() {
   return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-}
-
-// ─────────────────────────────────────────────────────────────
-// LIVE MATCH DETAILS — fallback để lấy tỷ số/phút khi league feed chỉ báo Live
-// ─────────────────────────────────────────────────────────────
-function extractScoreFromDeepPayload(payload) {
-  let found = null;
-  walkObjects(payload, obj => {
-    if (found) return;
-    found = extractScore(obj);
-  });
-  return found;
-}
-
-function extractMinuteFromDeepPayload(payload) {
-  let found = { minute: null, phase: null };
-  walkObjects(payload, obj => {
-    if (found.minute || found.phase === 'ht') return;
-    const r = extractMinute(obj);
-    if (r.minute || r.phase === 'ht') found = r;
-  });
-  return found;
-}
-
-async function fetchLiveDetailsForLiveMatches() {
-  const liveMatches = MATCHES.filter(m => m.status === 'live' && m.fotmobId);
-  if (!liveMatches.length) return;
-
-  console.log(`[Live] fetching details for ${liveMatches.length} live match(es)...`);
-  let changed = false;
-
-  for (const m of liveMatches) {
-    try {
-      const details = await fetchMatchDetails(m.fotmobId);
-      if (!details.length) continue;
-
-      for (const d of details) {
-        const sc = extractScoreFromDeepPayload(d.data);
-        const mi = extractMinuteFromDeepPayload(d.data);
-
-        if (sc && (m.sh !== sc[0] || m.sa !== sc[1])) {
-          m.sh = sc[0];
-          m.sa = sc[1];
-          changed = true;
-        }
-        if ((mi.minute || mi.phase) && (m.minute !== mi.minute || m.livePhase !== mi.phase)) {
-          m.minute = mi.minute;
-          m.livePhase = mi.phase || 'live';
-          changed = true;
-        }
-      }
-      console.log(`[Live] M${m.matchNo || m.id} ${m.home.code} vs ${m.away.code} score=${m.sh}-${m.sa} minute=${m.minute || m.livePhase || ''}`);
-    } catch(e) {
-      console.warn(`[Live] err ${m.fotmobId}:`, e.message);
-    }
-  }
-
-  if (changed) renderAll();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -5911,7 +5818,10 @@ function scrollToToday(isInit = false) {
     if (m.status === 'finished') return;
     const start = new Date(m.date + 'T' + m.time + ':00+07:00').getTime();
     const end   = start + 2.5 * 3600000; // 2h30 buffer
-    if (now >= start && now <= end) m.status = 'live';
+    if (now >= start && now <= end) {
+      m.status = 'live';
+      ensureLiveDisplayData(m);
+    }
   });
 
   renderAll();
