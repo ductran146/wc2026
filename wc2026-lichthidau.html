@@ -927,7 +927,7 @@ a { text-decoration: none; color: inherit; }
 .q3-note-block p { margin-bottom: 6px; color: var(--text2); }
 .q3-note-block ol { padding-left: 16px; }
 .q3-note-block li { margin-bottom: 3px; }
-/* Card icons in match row */
+/* Card icons in match row + standings table */
 .match-cards-row {
   display: flex;
   justify-content: space-between;
@@ -939,15 +939,21 @@ a { text-decoration: none; color: inherit; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 20px;
-  border-radius: 2px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
+  width: 12px;
+  min-width: 12px;
+  height: 16px;
+  padding: 0;
+  border-radius: 1px;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 16px;
+  font-family: var(--inter);
+  vertical-align: middle;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.18);
 }
-.card-icon.yc { background: #f0b429; color: #000; }
-.card-icon.rc { background: #e8344e; color: #fff; }
+.card-icon.yc { background: #ffd21f; color: #111; }
+.card-icon.rc { background: #e62323; color: #fff; }
+.card-icon.card-head { font-size: 0; color: transparent; }
 .td-fp { font-size: 11px; color: var(--text3); }
 
 .standings-block {
@@ -4206,10 +4212,10 @@ function renderThirdPlaceTable() {
     const nameLen2 = t.name?.length ?? 0;
     const nameClass2 = nameLen2 > 16 ? 'name-xlong' : nameLen2 > 12 ? 'name-long' : '';
     const ycCell = t.yc > 0
-      ? `<span class="card-icon yc" style="font-size:10px;padding:2px 5px;border-radius:2px;">${t.yc}</span>`
+      ? `<span class="card-icon yc">${t.yc}</span>`
       : `<span style="color:var(--text3)">—</span>`;
     const rcCell = t.rc > 0
-      ? `<span class="card-icon rc" style="font-size:10px;padding:2px 5px;border-radius:2px;">${t.rc}</span>`
+      ? `<span class="card-icon rc">${t.rc}</span>`
       : `<span style="color:var(--text3)">—</span>`;
 
     return bubbleLine + `
@@ -4255,8 +4261,8 @@ function renderThirdPlaceTable() {
         <th>+/-</th>
         <th>HS</th>
         <th>ĐS</th>
-        <th title="Thẻ vàng" style="font-size:13px;">🟨</th>
-        <th title="Thẻ đỏ" style="font-size:13px;">🟥</th>
+        <th title="Thẻ vàng"><span class="card-icon yc card-head" aria-label="Thẻ vàng"></span></th>
+        <th title="Thẻ đỏ"><span class="card-icon rc card-head" aria-label="Thẻ đỏ"></span></th>
         <th>FP</th>
       </tr>
     </thead>
@@ -5225,8 +5231,8 @@ function nowVN() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// CARD DATA — fetch từ Worker → FotMob /api/matchDetails
-// Worker v3 hỗ trợ route: /api/matchDetails?matchId=XXX
+// CARD DATA — fetch từ Worker → FotMob match details / leagueDataForMatch
+// Worker v5: /match/:id dùng /api/data/matchDetails trước, fallback /api/matchDetails
 // ─────────────────────────────────────────────────────────────
 const WORKER_BASE = 'https://fotmob-proxy.ductrangdesign.workers.dev';
 
@@ -5309,110 +5315,256 @@ function addCard(result, isHome, kind) {
 function normalizeCardType(raw) {
   const t = String(raw || '').toLowerCase().replace(/[\s_\-]/g, '');
   if (!t) return null;
-  if (t.includes('yellowred') || t.includes('secondyellow') || t.includes('secondbooking')) return 'yellowRed';
-  if (t.includes('redcard') || t === 'red' || t.includes('straightred')) return 'red';
-  if (t.includes('yellowcard') || t === 'yellow' || t.includes('booking')) return 'yellow';
+
+  // FotMob thường trả type="Card" và loại thẻ nằm ở field card/cardType.
+  // Vì vậy phải đọc nhiều field, không được chỉ đọc type trước.
+  if (t === '2' || t.includes('yellowred') || t.includes('secondyellow') || t.includes('secondbooking') || t.includes('redyellow')) return 'yellowRed';
+  if (t === '3' || t.includes('redcard') || t === 'red' || t.includes('straightred') || t.includes('directred') || t.includes('sendingoff')) return 'red';
+  if (t === '1' || t.includes('yellowcard') || t === 'yellow' || t.includes('booking')) return 'yellow';
+  return null;
+}
+
+function detectCardKind(obj) {
+  if (!obj || typeof obj !== 'object') return null;
+
+  // Ưu tiên field mô tả loại thẻ thật.
+  const primaryFields = [
+    obj.card, obj.cardType, obj.cardDescription, obj.cardName, obj.cardClass,
+    obj.incidentClass, obj.eventType, obj.eventTypeName, obj.incidentType,
+    obj.incidentName, obj.name, obj.title, obj.type, obj.subType, obj.typeName,
+    obj.action, obj.kind, obj.reason, obj.comment, obj.text, obj.description, obj.displayText
+  ];
+
+  for (const v of primaryFields) {
+    const kind = normalizeCardType(v);
+    if (kind) return kind;
+  }
+
+  // Một số payload chỉ ghi type="Card" + text/comment có chữ Yellow/Red.
+  const typeText = String(obj.type ?? obj.eventType ?? obj.incidentType ?? '').toLowerCase();
+  if (typeText.includes('card')) {
+    const text = [obj.text, obj.comment, obj.description, obj.displayText, obj.player?.name]
+      .filter(Boolean).join(' ').toLowerCase();
+    if (text.includes('second yellow')) return 'yellowRed';
+    if (text.includes('yellow')) return 'yellow';
+    if (text.includes('red')) return 'red';
+  }
+
+  return null;
+}
+
+function detectIsHome(obj, detail) {
+  if (!obj || typeof obj !== 'object') return null;
+
+  if (typeof obj.isHome === 'boolean') return obj.isHome;
+  if (typeof obj.isHomeTeam === 'boolean') return obj.isHomeTeam;
+  if (typeof obj.home === 'boolean') return obj.home;
+
+  const general = detail?.general || detail?.header || detail?.content?.matchFacts?.info || {};
+  const homeId = general?.homeTeam?.id ?? general?.homeTeam?.teamId ?? detail?.homeTeam?.id ?? detail?.home?.id;
+  const awayId = general?.awayTeam?.id ?? general?.awayTeam?.teamId ?? detail?.awayTeam?.id ?? detail?.away?.id;
+
+  const teamId = obj.teamId ?? obj.team?.id ?? obj.team?.teamId ?? obj.participantId ?? obj.contestantId;
+  if (teamId && homeId && String(teamId) === String(homeId)) return true;
+  if (teamId && awayId && String(teamId) === String(awayId)) return false;
+
+  // Một số stats/events dùng side/team là home/away.
+  const side = String(obj.side ?? obj.teamSide ?? obj.teamType ?? obj.team ?? obj.homeAway ?? obj.ha ?? '').toLowerCase();
+  if (side === 'home' || side === 'h' || side.includes('hometeam')) return true;
+  if (side === 'away' || side === 'a' || side.includes('awayteam')) return false;
+
+  // Dò theo tên đội nếu event chỉ có teamName/team.name
+  const homeName = String(general?.homeTeam?.name ?? detail?.homeTeam?.name ?? detail?.home?.name ?? '').toLowerCase();
+  const awayName = String(general?.awayTeam?.name ?? detail?.awayTeam?.name ?? detail?.away?.name ?? '').toLowerCase();
+  const teamName = String(obj.teamName ?? obj.team?.name ?? obj.contestantName ?? obj.participantName ?? '').toLowerCase();
+  if (teamName && homeName && (teamName === homeName || homeName.includes(teamName) || teamName.includes(homeName))) return true;
+  if (teamName && awayName && (teamName === awayName || awayName.includes(teamName) || teamName.includes(awayName))) return false;
+
   return null;
 }
 
 function getStatNumber(v) {
   if (v === null || v === undefined) return 0;
-  if (typeof v === 'number') return v;
+  if (typeof v === 'number') return Number.isFinite(v) ? v : 0;
   if (typeof v === 'string') {
-    const m = v.match(/-?\d+/);
+    const m = v.replace(',', '.').match(/-?\d+(?:\.\d+)?/);
     return m ? Number(m[0]) : 0;
   }
-  if (Array.isArray(v)) return getStatNumber(v[0]);
   if (typeof v === 'object') {
-    return getStatNumber(v.value ?? v.val ?? v.displayValue ?? v.stat ?? v.total ?? 0);
+    const x = v.value ?? v.stat ?? v.count ?? v.total ?? v.displayValue ?? v.title ?? v.name;
+    return getStatNumber(x);
   }
   return 0;
 }
 
-function walkObjects(input, cb, seen = new Set()) {
-  if (!input || typeof input !== 'object' || seen.has(input)) return;
-  seen.add(input);
-  cb(input);
-  if (Array.isArray(input)) {
-    input.forEach(x => walkObjects(x, cb, seen));
-  } else {
-    Object.values(input).forEach(x => walkObjects(x, cb, seen));
+function statLabelOf(obj) {
+  if (!obj || typeof obj !== 'object') return '';
+  return [
+    obj.title, obj.name, obj.key, obj.type, obj.statName, obj.label,
+    obj.displayName, obj.localizedTitle, obj.question, obj.text
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+function getStatPair(obj) {
+  // Trả về [home, away] nếu object giống một dòng stats.
+  const candidates = [
+    obj.stats,
+    obj.values,
+    obj.statsData,
+    obj.value,
+    obj.stat,
+  ];
+
+  // Dạng {home: 2, away: 1} hoặc {homeValue, awayValue}
+  const homeVal = obj.home ?? obj.homeValue ?? obj.homeStat ?? obj.homeTeamValue ?? obj.h;
+  const awayVal = obj.away ?? obj.awayValue ?? obj.awayStat ?? obj.awayTeamValue ?? obj.a;
+  if (homeVal !== undefined || awayVal !== undefined) return [getStatNumber(homeVal), getStatNumber(awayVal)];
+
+  for (const c of candidates) {
+    if (!c) continue;
+    if (Array.isArray(c) && c.length >= 2) return [getStatNumber(c[0]), getStatNumber(c[1])];
+    if (typeof c === 'object') {
+      const h = c.home ?? c.homeValue ?? c.homeStat ?? c[0];
+      const a = c.away ?? c.awayValue ?? c.awayStat ?? c[1];
+      if (h !== undefined || a !== undefined) return [getStatNumber(h), getStatNumber(a)];
+    }
   }
+
+  return null;
+}
+
+
+function walkObjects(root, callback) {
+  // Duyệt sâu toàn bộ object/array FotMob, chống vòng lặp.
+  // Lỗi hiện tại “walkObjects is not defined” làm parser thẻ dừng ngay sau khi fetch OK.
+  const seen = new WeakSet();
+
+  function visit(node) {
+    if (!node || typeof node !== 'object') return;
+    if (seen.has(node)) return;
+    seen.add(node);
+
+    if (!Array.isArray(node)) callback(node);
+
+    if (Array.isArray(node)) {
+      for (const item of node) visit(item);
+      return;
+    }
+
+    for (const key in node) {
+      if (Object.prototype.hasOwnProperty.call(node, key)) {
+        visit(node[key]);
+      }
+    }
+  }
+
+  visit(root);
 }
 
 function parseCardsFromMatchDetail(detail, homeCode, awayCode) {
   const result = emptyCards();
+  const seenEvents = new Set();
 
   // 1) Ưu tiên timeline/events trong matchDetails vì phân biệt được đỏ trực tiếp và đỏ do 2 vàng.
   walkObjects(detail, obj => {
-    const kind = normalizeCardType(obj.type ?? obj.eventType ?? obj.incidentType ?? obj.card ?? obj.cardType ?? obj.name ?? obj.title);
+    const kind = detectCardKind(obj);
     if (!kind) return;
 
-    let isHome = null;
-    if (typeof obj.isHome === 'boolean') isHome = obj.isHome;
-    else if (typeof obj.isHomeTeam === 'boolean') isHome = obj.isHomeTeam;
-    else if (obj.teamId && detail?.general) {
-      const homeId = detail.general.homeTeam?.id ?? detail.general.homeTeam?.teamId;
-      const awayId = detail.general.awayTeam?.id ?? detail.general.awayTeam?.teamId;
-      if (String(obj.teamId) === String(homeId)) isHome = true;
-      if (String(obj.teamId) === String(awayId)) isHome = false;
-    }
+    const isHome = detectIsHome(obj, detail);
     if (isHome === null) return;
+
+    // Chống đếm trùng khi cùng một event xuất hiện ở nhiều nhánh dữ liệu.
+    const eventKey = [
+      obj.id ?? obj.eventId ?? obj.incidentId ?? obj.time ?? obj.minute ?? '',
+      obj.playerId ?? obj.player?.id ?? obj.player?.name ?? obj.name ?? '',
+      isHome ? 'H' : 'A',
+      kind,
+    ].join('|');
+    if (seenEvents.has(eventKey)) return;
+    seenEvents.add(eventKey);
+
     addCard(result, isHome, kind);
   });
 
   const eventTotal = result.homeYC + result.homeYR + result.homeRC + result.awayYC + result.awayYR + result.awayRC;
   if (eventTotal > 0) return result;
 
-  // 2) Fallback: leagueDataForMatch / stats chỉ thường có tổng Yellow cards, Red cards.
-  // Không phân biệt được vàng→đỏ, nên đưa vào RC trực tiếp để bảng vẫn có số thẻ đỏ.
+  // 2) Fallback: stats chỉ có tổng Yellow cards / Red cards.
+  // Không phân biệt được vàng→đỏ, nên đưa Red cards vào RC trực tiếp.
   walkObjects(detail, obj => {
-    const label = String(obj.title ?? obj.name ?? obj.key ?? obj.type ?? '').toLowerCase();
-    if (!label.includes('card')) return;
+    const label = statLabelOf(obj);
+    if (!(label.includes('card') || label.includes('booking') || label.includes('discipline'))) return;
 
-    const homeVal = obj.home ?? obj.homeValue ?? obj.homeStat ?? obj.stats?.[0] ?? obj.values?.[0];
-    const awayVal = obj.away ?? obj.awayValue ?? obj.awayStat ?? obj.stats?.[1] ?? obj.values?.[1];
-    if (homeVal === undefined && awayVal === undefined) return;
+    const pair = getStatPair(obj);
+    if (!pair) return;
+    const [homeN, awayN] = pair;
 
     if (label.includes('yellow')) {
-      result.homeYC = Math.max(result.homeYC, getStatNumber(homeVal));
-      result.awayYC = Math.max(result.awayYC, getStatNumber(awayVal));
+      result.homeYC = Math.max(result.homeYC, homeN);
+      result.awayYC = Math.max(result.awayYC, awayN);
     } else if (label.includes('red')) {
-      result.homeRC = Math.max(result.homeRC, getStatNumber(homeVal));
-      result.awayRC = Math.max(result.awayRC, getStatNumber(awayVal));
+      result.homeRC = Math.max(result.homeRC, homeN);
+      result.awayRC = Math.max(result.awayRC, awayN);
     }
   });
 
   return result;
 }
 
-async function fetchMatchDetail(matchId) {
-  // Thử leagueDataForMatch trước (ít bị FotMob block hơn matchDetails)
-  // Fallback sang matchDetails nếu không được
+async function fetchMatchDetails(matchId) {
+  // Lấy cả 2 route vì /match/data có thể OK nhưng không chứa event thẻ.
+  // Nếu route đầu trả 0 thẻ, vẫn phải thử /match/:id.
   const attempts = [
     { url: `${WORKER_BASE}/match/data/${matchId}`, label: 'leagueData' },
     { url: `${WORKER_BASE}/match/${matchId}`,      label: 'matchDetails' },
   ];
+  const out = [];
+
   for (const a of attempts) {
     try {
-      const res = await fetch(a.url, { cache: 'no-cache', signal: AbortSignal.timeout(10000) });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 12000);
+      const res = await fetch(a.url, { cache: 'no-cache', signal: controller.signal });
+      clearTimeout(timer);
+
       const text = await res.text();
-      if (!res.ok || text.length < 200) continue;
-      const data = JSON.parse(text);
-      if (data?.error) {
-        console.warn(`[Cards] ${a.label} error:`, data.fotmobStatus, data.fotmobPreview?.slice(0,100));
+      if (!res.ok || !text || text.length < 20) {
+        console.warn(`[Cards] ${a.label} bad response:`, res.status, text?.slice(0,120));
         continue;
       }
-      // Validate có data hữu ích
-      const hasMatchFacts = data?.content?.matchFacts || data?.matchFacts;
-      const hasStats      = data?.content?.stats      || data?.stats;
-      if (hasMatchFacts || hasStats) {
-        console.log(`[Cards] ${a.label} OK for matchId=${matchId}`);
-        return data;
+
+      const data = JSON.parse(text);
+      if (data?.error) {
+        console.warn(`[Cards] ${a.label} error:`, data.fotmobStatus, data.fotmobPreview?.slice(0,120));
+        continue;
       }
-    } catch(e) { console.warn(`[Cards] ${a.label} exception:`, e.message); }
+
+      console.log(`[Cards] ${a.label} OK for matchId=${matchId}`);
+      out.push({ label: a.label, data });
+    } catch(e) {
+      console.warn(`[Cards] ${a.label} exception:`, e.message);
+    }
   }
-  return null;
+  return out;
+}
+
+function totalCards(c) {
+  return (c.homeYC||0)+(c.homeYR||0)+(c.homeRC||0)+(c.awayYC||0)+(c.awayYR||0)+(c.awayRC||0);
+}
+
+function chooseBestCardResult(results) {
+  // Ưu tiên result có tổng thẻ lớn hơn. Nếu bằng nhau, ưu tiên matchDetails vì có event chi tiết hơn stats.
+  let best = emptyCards();
+  let bestLabel = 'empty';
+  for (const r of results) {
+    const t = totalCards(r.cards);
+    const bt = totalCards(best);
+    if (t > bt || (t === bt && r.label === 'matchDetails' && bestLabel !== 'matchDetails')) {
+      best = r.cards;
+      bestLabel = r.label;
+    }
+  }
+  return { cards: best, label: bestLabel };
 }
 
 async function fetchCardsForFinishedMatches() {
@@ -5429,15 +5581,24 @@ async function fetchCardsForFinishedMatches() {
 
   for (const m of pending) {
     try {
-      const detail = await fetchMatchDetail(m.fotmobId);
-      if (!detail) {
-        m.cardsLoaded = true;
+      const details = await fetchMatchDetails(m.fotmobId);
+      if (!details.length) {
+        // Không set cardsLoaded=true khi lỗi mạng/Worker để lần refresh sau còn thử lại.
+        m.cardsError = true;
         continue;
       }
 
-      const c = parseCardsFromMatchDetail(detail, m.home.code, m.away.code);
+      const parsed = details.map(d => ({
+        label: d.label,
+        cards: parseCardsFromMatchDetail(d.data, m.home.code, m.away.code)
+      }));
+      const picked = chooseBestCardResult(parsed);
+      const c = picked.cards;
       setMatchCards(m, c);
-      console.log(`[Cards] ✅ M${m.matchNo || m.id} ${m.home.code} vs ${m.away.code} YC:${c.homeYC}-${c.awayYC} YR:${c.homeYR}-${c.awayYR} RC:${c.homeRC}-${c.awayRC}`);
+      console.log(`[Cards] ✅ M${m.matchNo || m.id} ${m.home.code} vs ${m.away.code} via ${picked.label} YC:${c.homeYC}-${c.awayYC} YR:${c.homeYR}-${c.awayYR} RC:${c.homeRC}-${c.awayRC}`);
+      if (totalCards(c) === 0) {
+        console.warn(`[Cards] M${m.matchNo || m.id} fetched OK but no card fields found. Run debugCards(${m.matchNo || ''}) to inspect payload.`);
+      }
       anyLoaded = true;
     } catch(e) {
       console.warn(`[Cards] err ${m.fotmobId}:`, e.message);
@@ -5448,33 +5609,25 @@ async function fetchCardsForFinishedMatches() {
 }
 
 // Debug tool — gọi từ console: debugCards()
-window.debugCards = async function() {
-  const m = MATCHES.find(x => x.status === 'finished' && x.fotmobId);
-  if (!m) { console.log('Chưa có trận finished. Bấm Refresh trước.'); return; }
-  console.log(`Test matchId=${m.fotmobId} (${m.home.code} vs ${m.away.code})`);
-  const target = `https://www.fotmob.com/api/matchDetails?matchId=${m.fotmobId}`;
-  const proxies = [
-    `${WORKER_BASE}/match/${m.fotmobId}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(target)}`,
-    `https://proxy.cors.sh/${target}`,
-  ];
-  for (const url of proxies) {
-    try {
-      console.log('Thử:', url.slice(0, 70));
-      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      console.log('  HTTP:', res.status, '| size:', (await res.clone().text()).length);
-      if (!res.ok) continue;
-      const data = JSON.parse(await res.text());
-      const d = data?.contents ? JSON.parse(data.contents) : data;
-      console.log('  Top keys:', Object.keys(d));
-      const evs = d?.content?.matchFacts?.events?.events ?? d?.matchFacts?.events?.events ?? [];
-      console.log('  Events count:', evs.length);
-      if (evs.length) console.log('  Event[0]:', JSON.stringify(evs[0]).slice(0, 200));
-      const c = parseCardsFromMatchDetail(d, m.home.code, m.away.code);
-      console.log('  Cards:', c);
-      break;
-    } catch(e) { console.log('  Error:', e.message); }
+window.debugCards = async function(matchNo) {
+  const m = MATCHES.find(x => (matchNo ? x.matchNo === Number(matchNo) : x.status === 'finished') && x.fotmobId);
+  if (!m) { console.log('Không tìm thấy trận. Ví dụ: debugCards(1)'); return; }
+  console.log(`Test matchId=${m.fotmobId} M${m.matchNo} (${m.home.code} vs ${m.away.code})`);
+  const details = await fetchMatchDetails(m.fotmobId);
+  for (const d of details) {
+    console.log('---', d.label, '---');
+    const cards = parseCardsFromMatchDetail(d.data, m.home.code, m.away.code);
+    console.log('parsed:', cards);
+    let found = 0;
+    walkObjects(d.data, obj => {
+      const label = statLabelOf(obj);
+      const kind = detectCardKind(obj);
+      if (kind || label.includes('card') || label.includes('booking') || label.includes('discipline')) {
+        if (found < 25) console.log('card-like', { kind, label, obj });
+        found++;
+      }
+    });
+    console.log('card-like objects:', found);
   }
 };
 
