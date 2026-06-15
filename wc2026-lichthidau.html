@@ -387,6 +387,7 @@ a { text-decoration: none; color: inherit; }
   color: #fff;
   border: 1px solid var(--border2);
   border-radius: 8px;
+  height: 30px;
   padding: 6px 28px 6px 12px;
   font-size: 12.5px;
   font-weight: 500;
@@ -926,6 +927,29 @@ a { text-decoration: none; color: inherit; }
 .q3-note-block p { margin-bottom: 6px; color: var(--text2); }
 .q3-note-block ol { padding-left: 16px; }
 .q3-note-block li { margin-bottom: 3px; }
+/* Card icons in match row */
+.match-cards-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0 2px;
+}
+.cards-home { display: flex; gap: 4px; align-items: center; }
+.cards-away { display: flex; gap: 4px; align-items: center; flex-direction: row-reverse; }
+.card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 20px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+.card-icon.yc { background: #f0b429; color: #000; }
+.card-icon.rc { background: #e8344e; color: #fff; }
+.td-fp { font-size: 11px; color: var(--text3); }
+
 .standings-block {
   margin: 0 16px 16px;
   background: #1e1e1e;
@@ -1105,7 +1129,6 @@ a { text-decoration: none; color: inherit; }
   -webkit-appearance: none;
   background: #222222;
   color: #ffffff;
-  height: 30px;
   border: 1px solid var(--border2);
   border-radius: 8px;
   padding: 6px 32px 6px 12px;
@@ -3929,6 +3952,20 @@ function renderMatchRow(m) {
   const badge = statusBadge(m);
   const venue = m.venue || '';
 
+  // Thẻ phạt — chỉ hiện khi trận finished và có data
+  const hasCards = m.status === 'finished' && (m.homeYC || m.homeRC || m.awayYC || m.awayRC);
+  const cardRow = hasCards ? `
+    <div class="match-cards-row">
+      <div class="cards-home">
+        ${m.homeYC ? `<span class="card-icon yc">${m.homeYC}</span>` : ''}
+        ${m.homeRC ? `<span class="card-icon rc">${m.homeRC}</span>` : ''}
+      </div>
+      <div class="cards-away">
+        ${m.awayYC ? `<span class="card-icon yc">${m.awayYC}</span>` : ''}
+        ${m.awayRC ? `<span class="card-icon rc">${m.awayRC}</span>` : ''}
+      </div>
+    </div>` : '';
+
   return `
 <div class="match-row${isFeat?' featured':''}">
   ${badge}
@@ -3963,6 +4000,8 @@ function renderMatchRow(m) {
       <span class="venue-text">${venue}</span>
     </div>` : ''}
 
+    ${cardRow}
+
   </div>
 </div>`;
 }
@@ -3971,6 +4010,67 @@ function renderMatchRow(m) {
 // ─────────────────────────────────────────────────────────────
 // STANDINGS DATA (static, update khi có kết quả thực)
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// MANUAL DISCIPLINE — nhập thủ công sau mỗi trận kết thúc
+// yellow: thẻ vàng | yellowRed: vàng→đỏ (2 vàng) | red: đỏ trực tiếp
+// FP FIFA: yellow=-1, yellowRed=-3, red=-4, yellow+red=-5
+// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// DISCIPLINE — cộng dồn thẻ toàn giải cho từng đội
+// Cập nhật sau mỗi trận: yellow=thẻ vàng, yellowRed=vàng→đỏ, red=đỏ trực tiếp
+// Bảng Best 3rd tự động đọc đúng đội sau khi standings load từ FotMob
+// ─────────────────────────────────────────────────────────────
+const DISCIPLINE = {
+  algeria:     { yellow: 0, yellowRed: 0, red: 0 },
+  argentina:   { yellow: 0, yellowRed: 0, red: 0 },
+  australia:   { yellow: 0, yellowRed: 0, red: 0 },
+  austria:     { yellow: 0, yellowRed: 0, red: 0 },
+  belgium:     { yellow: 0, yellowRed: 0, red: 0 },
+  bosnia:      { yellow: 0, yellowRed: 0, red: 0 }, // M3: Canada vs Bosnia
+  brazil:      { yellow: 0, yellowRed: 0, red: 0 },
+  caboverde:   { yellow: 0, yellowRed: 0, red: 0 },
+  canada:      { yellow: 0, yellowRed: 0, red: 0 },
+  colombia:    { yellow: 0, yellowRed: 0, red: 0 },
+  croatia:     { yellow: 0, yellowRed: 0, red: 0 },
+  curacao:     { yellow: 0, yellowRed: 0, red: 0 },
+  czechia:     { yellow: 0, yellowRed: 0, red: 0 },
+  drcongo:     { yellow: 0, yellowRed: 0, red: 0 },
+  ecuador:     { yellow: 0, yellowRed: 0, red: 0 },
+  egypt:       { yellow: 0, yellowRed: 0, red: 0 },
+  england:     { yellow: 0, yellowRed: 0, red: 0 },
+  france:      { yellow: 0, yellowRed: 0, red: 0 },
+  germany:     { yellow: 0, yellowRed: 0, red: 0 },
+  ghana:       { yellow: 0, yellowRed: 0, red: 0 },
+  haiti:       { yellow: 0, yellowRed: 0, red: 0 },
+  iran:        { yellow: 0, yellowRed: 0, red: 0 },
+  iraq:        { yellow: 0, yellowRed: 0, red: 0 },
+  ivorycoast:  { yellow: 0, yellowRed: 0, red: 0 },
+  japan:       { yellow: 0, yellowRed: 0, red: 0 },
+  jordan:      { yellow: 0, yellowRed: 0, red: 0 },
+  mexico:      { yellow: 0, yellowRed: 0, red: 0 },
+  morocco:     { yellow: 0, yellowRed: 0, red: 0 },
+  netherlands: { yellow: 0, yellowRed: 0, red: 0 },
+  newzealand:  { yellow: 0, yellowRed: 0, red: 0 },
+  norway:      { yellow: 0, yellowRed: 0, red: 0 },
+  panama:      { yellow: 0, yellowRed: 0, red: 0 },
+  paraguay:    { yellow: 0, yellowRed: 0, red: 0 },
+  portugal:    { yellow: 0, yellowRed: 0, red: 0 },
+  qatar:       { yellow: 0, yellowRed: 0, red: 0 },
+  saudiarabia: { yellow: 0, yellowRed: 0, red: 0 },
+  scotland:    { yellow: 0, yellowRed: 0, red: 0 },
+  senegal:     { yellow: 0, yellowRed: 0, red: 0 },
+  southafrica: { yellow: 0, yellowRed: 0, red: 0 },
+  southkorea:  { yellow: 0, yellowRed: 0, red: 0 },
+  spain:       { yellow: 0, yellowRed: 0, red: 0 },
+  sweden:      { yellow: 0, yellowRed: 0, red: 0 },
+  switzerland: { yellow: 0, yellowRed: 0, red: 0 },
+  tunisia:     { yellow: 0, yellowRed: 0, red: 0 },
+  turkiye:     { yellow: 0, yellowRed: 0, red: 0 },
+  uruguay:     { yellow: 0, yellowRed: 0, red: 0 },
+  usa:         { yellow: 0, yellowRed: 0, red: 0 },
+  uzbekistan:  { yellow: 0, yellowRed: 0, red: 0 },
+};
+
 const STANDINGS = {
   // Bảng A — MEXICO
   A: [
@@ -4069,21 +4169,27 @@ const TEAM_GROUP = {
 // Tự tính từ STANDINGS data, sort theo: pts → hs → bt
 // ─────────────────────────────────────────────────────────────
 function getThirdPlaceRows() {
+  // Dùng DISCIPLINE object — nhập thủ công sau mỗi trận
+  // FP FIFA: yellow=-1, yellowRed=-3 (2 vàng→đỏ), red=-4
   return Object.entries(STANDINGS)
     .map(([group, rows]) => {
-      // Đội hạng 3 = index 2 sau khi đã sort
       const sorted = [...rows].sort((a,b) =>
         (b.pts - a.pts) || ((b.gf-b.ga) - (a.gf-a.ga)) || (b.gf - a.gf)
       );
       const t = sorted[2];
       if (!t) return null;
-      return { ...t, group };
+      const d = DISCIPLINE[t.code] ?? { yellow: 0, yellowRed: 0, red: 0 };
+      const yc = d.yellow;
+      const rc = d.yellowRed + d.red;
+      const fp = d.yellow * (-1) + d.yellowRed * (-3) + d.red * (-4);
+      return { ...t, group, yc, rc, fp };
     })
     .filter(Boolean)
     .sort((a,b) =>
       (b.pts - a.pts) ||
       ((b.gf-b.ga) - (a.gf-a.ga)) ||
-      (b.gf - a.gf)
+      (b.gf - a.gf) ||
+      (b.fp - a.fp)
     );
 }
 
@@ -4096,9 +4202,15 @@ function renderThirdPlaceTable() {
     const gdClass = gd > 0 ? 'pos' : gd < 0 ? 'neg' : '';
     const hsText = gd > 0 ? '+' + gd : String(gd);
     const rowClass = qualified ? 'q3-qualified' : 'q3-out';
-    const bubbleLine = rank === 9 ? `<tr class="q3-bubble-line"><td colspan="10"></td></tr>` : '';
+    const bubbleLine = rank === 9 ? `<tr class="q3-bubble-line"><td colspan="13"></td></tr>` : '';
     const nameLen2 = t.name?.length ?? 0;
     const nameClass2 = nameLen2 > 16 ? 'name-xlong' : nameLen2 > 12 ? 'name-long' : '';
+    const ycCell = t.yc > 0
+      ? `<span class="card-icon yc" style="font-size:10px;padding:2px 5px;border-radius:2px;">${t.yc}</span>`
+      : `<span style="color:var(--text3)">—</span>`;
+    const rcCell = t.rc > 0
+      ? `<span class="card-icon rc" style="font-size:10px;padding:2px 5px;border-radius:2px;">${t.rc}</span>`
+      : `<span style="color:var(--text3)">—</span>`;
 
     return bubbleLine + `
     <tr class="${rowClass}">
@@ -4117,6 +4229,9 @@ function renderThirdPlaceTable() {
       <td>${(t.gf ?? 0)}-${(t.ga ?? 0)}</td>
       <td class="td-gd ${gdClass}">${hsText}</td>
       <td class="td-pts">${t.pts ?? 0}</td>
+      <td style="text-align:center;">${ycCell}</td>
+      <td style="text-align:center;">${rcCell}</td>
+      <td class="td-fp">${t.fp ?? 0}</td>
     </tr>`;
   }).join('');
 
@@ -4140,6 +4255,9 @@ function renderThirdPlaceTable() {
         <th>+/-</th>
         <th>HS</th>
         <th>ĐS</th>
+        <th title="Thẻ vàng" style="font-size:13px;">🟨</th>
+        <th title="Thẻ đỏ" style="font-size:13px;">🟥</th>
+        <th>FP</th>
       </tr>
     </thead>
     <tbody>${rowsHtml}</tbody>
@@ -4152,7 +4270,7 @@ function renderThirdPlaceTable() {
     <li>Điểm số</li>
     <li>Hiệu số bàn thắng bại</li>
     <li>Số bàn thắng ghi được</li>
-    <li>Điểm hành vi (thẻ vàng, thẻ đỏ)</li>
+    <li>Điểm hành vi / fair-play: thẻ vàng, thẻ đỏ do 2 vàng, thẻ đỏ trực tiếp</li>
     <li>Xếp hạng FIFA</li>
   </ol>
 </div>`;
@@ -5074,19 +5192,23 @@ function applyFotmobData(data) {
     m.sa = newSA;
     m.minute = newMinute;
     m.livePhase = newPhase;
+    if (ev?.id) m.fotmobId = String(ev.id);
     if (prevSH !== newSH || prevSA !== newSA || prevSt !== newSt) changed++;
   });
 
   // ── Update standings ──────────────────────────────────────────
   try { applyStandingsFromFotmob(data); } catch {}
 
-  // ── Re-render ─────────────────────────────────────────────────
+  // ── Re-render trước ───────────────────────────────────────────
   renderAll();
   if (changed > 0) {
     MATCHES.forEach(m => {
       if (m.sh !== null) { flashScore('sh-' + m.id); flashScore('sa-' + m.id); }
     });
   }
+
+  // ── Fetch cards async (re-render lại sau khi xong) ────────────
+  fetchCardsForFinishedMatches();
 
   const interval = getPollInterval();
   const nextLabel = interval < 60000   ? interval/1000 + 's'
@@ -5101,6 +5223,260 @@ function applyFotmobData(data) {
 function nowVN() {
   return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
 }
+
+// ─────────────────────────────────────────────────────────────
+// CARD DATA — fetch từ Worker → FotMob /api/matchDetails
+// Worker v3 hỗ trợ route: /api/matchDetails?matchId=XXX
+// ─────────────────────────────────────────────────────────────
+const WORKER_BASE = 'https://fotmob-proxy.ductrangdesign.workers.dev';
+
+
+// Cache thẻ theo từng trận để không cộng trùng sau mỗi lần refresh.
+// Key ưu tiên là fotmobId, fallback là matchNo/id nội bộ.
+const MATCH_CARD_DATA = {};
+
+function makeCardKey(m) {
+  return String(m?.fotmobId || m?.matchNo || m?.id || '');
+}
+
+function ensureDisciplineTeam(code) {
+  if (!code) return;
+  if (!DISCIPLINE[code]) DISCIPLINE[code] = { yellow: 0, yellowRed: 0, red: 0 };
+}
+
+function resetDisciplineTotals() {
+  Object.keys(DISCIPLINE).forEach(code => {
+    DISCIPLINE[code].yellow = 0;
+    DISCIPLINE[code].yellowRed = 0;
+    DISCIPLINE[code].red = 0;
+  });
+}
+
+function recalcDisciplineFromMatchCards() {
+  resetDisciplineTotals();
+  Object.values(MATCH_CARD_DATA).forEach(c => {
+    ensureDisciplineTeam(c.homeCode);
+    ensureDisciplineTeam(c.awayCode);
+    DISCIPLINE[c.homeCode].yellow    += c.homeYC || 0;
+    DISCIPLINE[c.homeCode].yellowRed += c.homeYR || 0;
+    DISCIPLINE[c.homeCode].red       += c.homeRC || 0;
+    DISCIPLINE[c.awayCode].yellow    += c.awayYC || 0;
+    DISCIPLINE[c.awayCode].yellowRed += c.awayYR || 0;
+    DISCIPLINE[c.awayCode].red       += c.awayRC || 0;
+  });
+}
+
+function setMatchCards(m, c) {
+  const key = makeCardKey(m);
+  if (!key) return;
+
+  const normalized = {
+    homeCode: m.home.code,
+    awayCode: m.away.code,
+    homeYC: Number(c.homeYC || 0),
+    homeYR: Number(c.homeYR || 0),
+    homeRC: Number(c.homeRC || 0),
+    awayYC: Number(c.awayYC || 0),
+    awayYR: Number(c.awayYR || 0),
+    awayRC: Number(c.awayRC || 0),
+  };
+
+  MATCH_CARD_DATA[key] = normalized;
+
+  // Dữ liệu hiển thị trên card trận: RC hiển thị là tổng thẻ đỏ trực tiếp + đỏ do 2 vàng.
+  m.homeYC = normalized.homeYC;
+  m.homeYR = normalized.homeYR;
+  m.homeRC = normalized.homeRC + normalized.homeYR;
+  m.awayYC = normalized.awayYC;
+  m.awayYR = normalized.awayYR;
+  m.awayRC = normalized.awayRC + normalized.awayYR;
+  m.cardsLoaded = true;
+
+  recalcDisciplineFromMatchCards();
+}
+
+function emptyCards() {
+  return { homeYC: 0, homeYR: 0, homeRC: 0, awayYC: 0, awayYR: 0, awayRC: 0 };
+}
+
+function addCard(result, isHome, kind) {
+  const side = isHome ? 'home' : 'away';
+  if (kind === 'yellow') result[side + 'YC']++;
+  if (kind === 'yellowRed') result[side + 'YR']++;
+  if (kind === 'red') result[side + 'RC']++;
+}
+
+function normalizeCardType(raw) {
+  const t = String(raw || '').toLowerCase().replace(/[\s_\-]/g, '');
+  if (!t) return null;
+  if (t.includes('yellowred') || t.includes('secondyellow') || t.includes('secondbooking')) return 'yellowRed';
+  if (t.includes('redcard') || t === 'red' || t.includes('straightred')) return 'red';
+  if (t.includes('yellowcard') || t === 'yellow' || t.includes('booking')) return 'yellow';
+  return null;
+}
+
+function getStatNumber(v) {
+  if (v === null || v === undefined) return 0;
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') {
+    const m = v.match(/-?\d+/);
+    return m ? Number(m[0]) : 0;
+  }
+  if (Array.isArray(v)) return getStatNumber(v[0]);
+  if (typeof v === 'object') {
+    return getStatNumber(v.value ?? v.val ?? v.displayValue ?? v.stat ?? v.total ?? 0);
+  }
+  return 0;
+}
+
+function walkObjects(input, cb, seen = new Set()) {
+  if (!input || typeof input !== 'object' || seen.has(input)) return;
+  seen.add(input);
+  cb(input);
+  if (Array.isArray(input)) {
+    input.forEach(x => walkObjects(x, cb, seen));
+  } else {
+    Object.values(input).forEach(x => walkObjects(x, cb, seen));
+  }
+}
+
+function parseCardsFromMatchDetail(detail, homeCode, awayCode) {
+  const result = emptyCards();
+
+  // 1) Ưu tiên timeline/events trong matchDetails vì phân biệt được đỏ trực tiếp và đỏ do 2 vàng.
+  walkObjects(detail, obj => {
+    const kind = normalizeCardType(obj.type ?? obj.eventType ?? obj.incidentType ?? obj.card ?? obj.cardType ?? obj.name ?? obj.title);
+    if (!kind) return;
+
+    let isHome = null;
+    if (typeof obj.isHome === 'boolean') isHome = obj.isHome;
+    else if (typeof obj.isHomeTeam === 'boolean') isHome = obj.isHomeTeam;
+    else if (obj.teamId && detail?.general) {
+      const homeId = detail.general.homeTeam?.id ?? detail.general.homeTeam?.teamId;
+      const awayId = detail.general.awayTeam?.id ?? detail.general.awayTeam?.teamId;
+      if (String(obj.teamId) === String(homeId)) isHome = true;
+      if (String(obj.teamId) === String(awayId)) isHome = false;
+    }
+    if (isHome === null) return;
+    addCard(result, isHome, kind);
+  });
+
+  const eventTotal = result.homeYC + result.homeYR + result.homeRC + result.awayYC + result.awayYR + result.awayRC;
+  if (eventTotal > 0) return result;
+
+  // 2) Fallback: leagueDataForMatch / stats chỉ thường có tổng Yellow cards, Red cards.
+  // Không phân biệt được vàng→đỏ, nên đưa vào RC trực tiếp để bảng vẫn có số thẻ đỏ.
+  walkObjects(detail, obj => {
+    const label = String(obj.title ?? obj.name ?? obj.key ?? obj.type ?? '').toLowerCase();
+    if (!label.includes('card')) return;
+
+    const homeVal = obj.home ?? obj.homeValue ?? obj.homeStat ?? obj.stats?.[0] ?? obj.values?.[0];
+    const awayVal = obj.away ?? obj.awayValue ?? obj.awayStat ?? obj.stats?.[1] ?? obj.values?.[1];
+    if (homeVal === undefined && awayVal === undefined) return;
+
+    if (label.includes('yellow')) {
+      result.homeYC = Math.max(result.homeYC, getStatNumber(homeVal));
+      result.awayYC = Math.max(result.awayYC, getStatNumber(awayVal));
+    } else if (label.includes('red')) {
+      result.homeRC = Math.max(result.homeRC, getStatNumber(homeVal));
+      result.awayRC = Math.max(result.awayRC, getStatNumber(awayVal));
+    }
+  });
+
+  return result;
+}
+
+async function fetchMatchDetail(matchId) {
+  // Thử leagueDataForMatch trước (ít bị FotMob block hơn matchDetails)
+  // Fallback sang matchDetails nếu không được
+  const attempts = [
+    { url: `${WORKER_BASE}/match/data/${matchId}`, label: 'leagueData' },
+    { url: `${WORKER_BASE}/match/${matchId}`,      label: 'matchDetails' },
+  ];
+  for (const a of attempts) {
+    try {
+      const res = await fetch(a.url, { cache: 'no-cache', signal: AbortSignal.timeout(10000) });
+      const text = await res.text();
+      if (!res.ok || text.length < 200) continue;
+      const data = JSON.parse(text);
+      if (data?.error) {
+        console.warn(`[Cards] ${a.label} error:`, data.fotmobStatus, data.fotmobPreview?.slice(0,100));
+        continue;
+      }
+      // Validate có data hữu ích
+      const hasMatchFacts = data?.content?.matchFacts || data?.matchFacts;
+      const hasStats      = data?.content?.stats      || data?.stats;
+      if (hasMatchFacts || hasStats) {
+        console.log(`[Cards] ${a.label} OK for matchId=${matchId}`);
+        return data;
+      }
+    } catch(e) { console.warn(`[Cards] ${a.label} exception:`, e.message); }
+  }
+  return null;
+}
+
+async function fetchCardsForFinishedMatches() {
+  const pending = MATCHES.filter(m =>
+    m.status === 'finished' &&
+    m.fotmobId &&
+    !m.cardsLoaded &&
+    String(m.g || '').length === 1 // chỉ cần vòng bảng cho Best 3rd
+  );
+  if (!pending.length) return;
+
+  console.log(`[Cards] fetching ${pending.length} finished group matches...`);
+  let anyLoaded = false;
+
+  for (const m of pending) {
+    try {
+      const detail = await fetchMatchDetail(m.fotmobId);
+      if (!detail) {
+        m.cardsLoaded = true;
+        continue;
+      }
+
+      const c = parseCardsFromMatchDetail(detail, m.home.code, m.away.code);
+      setMatchCards(m, c);
+      console.log(`[Cards] ✅ M${m.matchNo || m.id} ${m.home.code} vs ${m.away.code} YC:${c.homeYC}-${c.awayYC} YR:${c.homeYR}-${c.awayYR} RC:${c.homeRC}-${c.awayRC}`);
+      anyLoaded = true;
+    } catch(e) {
+      console.warn(`[Cards] err ${m.fotmobId}:`, e.message);
+    }
+  }
+
+  if (anyLoaded) renderAll();
+}
+
+// Debug tool — gọi từ console: debugCards()
+window.debugCards = async function() {
+  const m = MATCHES.find(x => x.status === 'finished' && x.fotmobId);
+  if (!m) { console.log('Chưa có trận finished. Bấm Refresh trước.'); return; }
+  console.log(`Test matchId=${m.fotmobId} (${m.home.code} vs ${m.away.code})`);
+  const target = `https://www.fotmob.com/api/matchDetails?matchId=${m.fotmobId}`;
+  const proxies = [
+    `${WORKER_BASE}/match/${m.fotmobId}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(target)}`,
+    `https://proxy.cors.sh/${target}`,
+  ];
+  for (const url of proxies) {
+    try {
+      console.log('Thử:', url.slice(0, 70));
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      console.log('  HTTP:', res.status, '| size:', (await res.clone().text()).length);
+      if (!res.ok) continue;
+      const data = JSON.parse(await res.text());
+      const d = data?.contents ? JSON.parse(data.contents) : data;
+      console.log('  Top keys:', Object.keys(d));
+      const evs = d?.content?.matchFacts?.events?.events ?? d?.matchFacts?.events?.events ?? [];
+      console.log('  Events count:', evs.length);
+      if (evs.length) console.log('  Event[0]:', JSON.stringify(evs[0]).slice(0, 200));
+      const c = parseCardsFromMatchDetail(d, m.home.code, m.away.code);
+      console.log('  Cards:', c);
+      break;
+    } catch(e) { console.log('  Error:', e.message); }
+  }
+};
 
 // Public trigger (button)
 function handleRefreshClick() {
