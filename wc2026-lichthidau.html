@@ -4191,6 +4191,61 @@ const TEAM_GROUP = {
   spain: 'H', portugal: 'K'
 };
 
+
+// ─────────────────────────────────────────────────────────────
+// Ranking helpers
+// FIFA-style order used in group standings and Best 3rd:
+// points → goal difference → goals for → fair-play → stable name fallback.
+// Fair-play points: yellow=-1, yellowRed=-3, red=-4. Higher is better.
+// ─────────────────────────────────────────────────────────────
+function getTeamDiscipline(code) {
+  return DISCIPLINE[code] ?? { yellow: 0, yellowRed: 0, red: 0 };
+}
+
+function getFairPlayScore(code) {
+  const d = getTeamDiscipline(code);
+  return (d.yellow || 0) * (-1) + (d.yellowRed || 0) * (-3) + (d.red || 0) * (-4);
+}
+
+function compareStandingRows(a, b) {
+  const gdA = (a.gf ?? 0) - (a.ga ?? 0);
+  const gdB = (b.gf ?? 0) - (b.ga ?? 0);
+  const fpA = getFairPlayScore(a.code);
+  const fpB = getFairPlayScore(b.code);
+
+  return (b.pts ?? 0) - (a.pts ?? 0) ||
+         gdB - gdA ||
+         (b.gf ?? 0) - (a.gf ?? 0) ||
+         fpB - fpA ||
+         String(a.name || '').localeCompare(String(b.name || ''), 'vi');
+}
+
+function teamKey(v) {
+  return String(v || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+const TEAM_ALIASES = {
+  england: ['england', 'anh'],
+  germany: ['germany', 'duc', 'đức'],
+  france: ['france', 'phap', 'pháp'],
+  brazil: ['brazil', 'brasil'],
+  argentina: ['argentina'],
+  spain: ['spain', 'taybannha', 'tâybannha'],
+  portugal: ['portugal', 'bodaonha', 'bồđàonha']
+};
+
+function matchHasTeam(m, team) {
+  if (team === 'all') return true;
+  const aliases = (TEAM_ALIASES[team] || [team]).map(teamKey);
+  const homeKeys = [m.home?.code, m.home?.name, m.home?.shortName].map(teamKey);
+  const awayKeys = [m.away?.code, m.away?.name, m.away?.shortName].map(teamKey);
+  return aliases.some(a => homeKeys.includes(a) || awayKeys.includes(a));
+}
+
 // ─────────────────────────────────────────────────────────────
 // BẢNG XẾP HẠNG ĐỘI ĐỨNG THỨ 3
 // Tự tính từ STANDINGS data, sort theo: pts → hs → bt
@@ -4200,9 +4255,7 @@ function getThirdPlaceRows() {
   // FP FIFA: yellow=-1, yellowRed=-3 (2 vàng→đỏ), red=-4
   return Object.entries(STANDINGS)
     .map(([group, rows]) => {
-      const sorted = [...rows].sort((a,b) =>
-        (b.pts - a.pts) || ((b.gf-b.ga) - (a.gf-a.ga)) || (b.gf - a.gf)
-      );
+      const sorted = [...rows].sort(compareStandingRows);
       const t = sorted[2];
       if (!t) return null;
       const d = DISCIPLINE[t.code] ?? { yellow: 0, yellowRed: 0, red: 0 };
@@ -4212,12 +4265,7 @@ function getThirdPlaceRows() {
       return { ...t, group, yc, rc, fp };
     })
     .filter(Boolean)
-    .sort((a,b) =>
-      (b.pts - a.pts) ||
-      ((b.gf-b.ga) - (a.gf-a.ga)) ||
-      (b.gf - a.gf) ||
-      (b.fp - a.fp)
-    );
+    .sort(compareStandingRows);
 }
 
 function renderThirdPlaceTable() {
@@ -4309,7 +4357,8 @@ function renderStandingsTable(group, highlightCode) {
 
   const meta = GROUP_META[group] || { label: 'Grp. ' + group };
 
-  const rowsHtml = rows.map((t, i) => {
+  const sortedRows = [...rows].sort(compareStandingRows);
+  const rowsHtml = sortedRows.map((t, i) => {
     const rank = i + 1;
     const dotClass = rank === 1 ? 'q1' : rank === 2 ? 'q2' : 'out';
     const isTracked = t.code === highlightCode;
@@ -4409,19 +4458,15 @@ function applyStandingsFromFotmob(data) {
         };
       });
 
-      // Sort theo: pts desc → gd desc → gf desc
-      STANDINGS[group].sort((a, b) =>
-        (b.pts - a.pts) || ((b.gd ?? 0) - (a.gd ?? 0)) || ((b.gf ?? 0) - (a.gf ?? 0))
-      );
+      // Sort theo: pts → hiệu số → bàn thắng → fair-play
+      STANDINGS[group].sort(compareStandingRows);
     });
   } catch(e) { console.warn('standings parse error', e.message); }
 }
 
 function renderAll() {
   const list = MATCHES.filter(m => {
-    const teamOk = currentFilter === 'all' ||
-      m.home.code === currentFilter ||
-      m.away.code === currentFilter;
+    const teamOk = matchHasTeam(m, currentFilter);
 
     const roundOk = currentFilter !== 'all' ||
       currentRoundFilter === 'all' ||
@@ -4577,6 +4622,14 @@ function onGroupSelectChange(val) {
 
 function filterTeam(team, btn) {
   currentFilter = team;
+  // Khi chọn đội yêu thích, luôn bỏ Best 3rd và group dropdown để chỉ còn lịch của đội đó.
+  if (team !== 'all') {
+    showBest3 = false;
+    currentGroupFilter = 'all';
+    document.getElementById('best3Btn')?.classList.remove('active');
+    const groupSelect = document.getElementById('groupSelect');
+    if (groupSelect) groupSelect.value = 'all';
+  }
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
 
