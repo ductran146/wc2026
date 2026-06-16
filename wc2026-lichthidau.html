@@ -4177,7 +4177,7 @@ const STANDINGS = {
     { name:'Tây Ban Nha', code:'spain',       flag:'🇪🇸', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Uruguay',     code:'uruguay',     flag:'🇺🇾', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
     { name:'Ả Rập Xê Út', code:'saudiarabia', flag:'🇸🇦', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-    { name:'Cabo Verde',  code:'capoverde',   flag:'🇨🇻', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
+    { name:'Cabo Verde',  code:'caboverde',   flag:'🇨🇻', pl:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
   ],
   // Bảng I — FRANCE
   I: [
@@ -4695,11 +4695,14 @@ function filterRound(round, btn) {
 const FOTMOB_ID_MAP = {}; // key: "home_away" → fotmob matchId
 
 // Polling interval logic:
-// - Đang có trận LIVE  → 60 giây
-// - Hôm nay có trận    → 5 phút
-// - Không có trận hôm nay → 30 phút
+// - Đang có trận LIVE  → 30 giây
+// - Hôm nay có trận    → 60 phút
+// - Không có trận hôm nay → không poll
+const LIVE_POLL_MS = 30_000;
+const TODAY_POLL_MS = 60 * 60_000;
 let _pollTimer = null;
 let _isFetching = false;
+let _lastPollAt = null;
 
 function getMatchDay() {
   // Trả về ngày VN hiện tại dạng YYYYMMDD
@@ -4718,8 +4721,8 @@ function hasTodayMatch() {
 }
 
 function getPollInterval() {
-  if (hasLiveMatch())   return 30_000;        // 30s khi có trận đang đấu
-  if (hasTodayMatch())  return 60 * 60_000;   // 60 phút khi hôm nay có trận chưa đấu
+  if (hasLiveMatch())   return LIVE_POLL_MS;   // 30s khi có trận đang đấu
+  if (hasTodayMatch())  return TODAY_POLL_MS;  // 60 phút khi hôm nay có trận chưa đấu
   return null;                                 // Không có trận → không poll
 }
 
@@ -4782,8 +4785,8 @@ const NAME_MAP = {
   "Islamic Republic of Iran": "iran",
   "New Zealand": "newzealand",
   "Spain": "spain",
-  "Cape Verde": "capeverde",
-  "Cabo Verde": "capeverde",
+  "Cape Verde": "caboverde",
+  "Cabo Verde": "caboverde",
   "Saudi Arabia": "saudiarabia",
   "KSA": "saudiarabia",
   "Uruguay": "uruguay",
@@ -4876,8 +4879,16 @@ function flashScore(id) {
 
 // ── Main fetch: FotMob /api/leagues?id=77 ─────────────────────
 async function fetchFotmob(auto = false) {
-  if (_isFetching) return;
+  // Nếu lần fetch trước còn chạy quá lâu, không để polling bị chết.
+  // Hẹn thử lại sau 5s thay vì return im lặng.
+  if (_isFetching) {
+    console.log('[Poll] previous fetch still running; retry in 5s');
+    clearTimeout(_pollTimer);
+    _pollTimer = setTimeout(() => fetchFotmob(true), 5_000);
+    return;
+  }
   _isFetching = true;
+  _lastPollAt = Date.now();
 
   const btn = document.getElementById('updateBtn');
   const spinner = document.getElementById('barSpinner');
@@ -4887,6 +4898,8 @@ async function fetchFotmob(auto = false) {
   if (!auto) setBarText('<span>Đang lấy dữ liệu...</span>');
 
   const fotmobUrl = 'https://www.fotmob.com/api/leagues?id=77&tab=matches&type=league&timeZone=Asia%2FHo_Chi_Minh';
+  // Cache-buster để browser/CDN/Worker không trả dữ liệu cũ khi poll 30s/lần
+  const pollBust = Date.now();
 
   // Cloudflare Worker — fotmob-proxy.ductrangdesign.workers.dev
   // Worker fetch: /api/data/leagues?id=77&ccode3=VNM (confirmed working 12/06/2026)
@@ -4896,32 +4909,32 @@ async function fetchFotmob(auto = false) {
     {
       // 1. Cloudflare Worker riêng — ổn định nhất, deploy 1 lần dùng mãi
       name: 'CF Worker',
-      url: WORKER_URL,
+      url: `${WORKER_URL}?_=${pollBust}`,
       parse: t => JSON.parse(t),
       skip: false,
     },
     {
       // 2. proxy.cors.sh
       name: 'proxy.cors.sh',
-      url: `https://proxy.cors.sh/${fotmobUrl}`,
+      url: `https://proxy.cors.sh/${fotmobUrl}&_=${pollBust}`,
       parse: t => JSON.parse(t),
     },
     {
       // 3. allorigins /raw
       name: 'allorigins raw',
-      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(fotmobUrl)}`,
+      url: `https://api.allorigins.win/raw?url=${encodeURIComponent(fotmobUrl + '&_=' + pollBust)}`,
       parse: t => JSON.parse(t),
     },
     {
       // 4. allorigins /get — JSON wrapper
       name: 'allorigins get',
-      url: `https://api.allorigins.win/get?url=${encodeURIComponent(fotmobUrl)}`,
+      url: `https://api.allorigins.win/get?url=${encodeURIComponent(fotmobUrl + '&_=' + pollBust)}`,
       parse: t => { const w = JSON.parse(t); return JSON.parse(w.contents); },
     },
     {
       // 5. corsproxy.io format mới
       name: 'corsproxy.io',
-      url: `https://corsproxy.io/?url=${encodeURIComponent(fotmobUrl)}`,
+      url: `https://corsproxy.io/?url=${encodeURIComponent(fotmobUrl + '&_=' + pollBust)}`,
       parse: t => JSON.parse(t),
     },
   ];
@@ -4930,8 +4943,14 @@ async function fetchFotmob(auto = false) {
   for (const proxy of PROXIES) {
     if (proxy.skip) continue;
     try {
-      const opts = { cache: 'no-cache' };
-      if (proxy.headers) opts.headers = proxy.headers;
+      const opts = {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          ...(proxy.headers || {})
+        }
+      };
       const res = await fetch(proxy.url, opts);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const text = await res.text();
@@ -5011,7 +5030,7 @@ const FLAG_MAP = {
   'cameroon':'\u{1F1E8}\u{1F1F2}','ivorycoast':'\u{1F1E8}\u{1F1EE}',
   'egypt':'\u{1F1EA}\u{1F1EC}','algeria':'\u{1F1E9}\u{1F1FF}',
   'tunisia':'\u{1F1F9}\u{1F1F3}','southafrica':'\u{1F1FF}\u{1F1E6}',
-  'drcongo':'\u{1F1E8}\u{1F1E9}','capeverde':'\u{1F1E8}\u{1F1FB}',
+  'drcongo':'\u{1F1E8}\u{1F1E9}','caboverde':'\u{1F1E8}\u{1F1FB}',
   'mali':'\u{1F1F2}\u{1F1F1}','angola':'\u{1F1E6}\u{1F1F4}',
   'japan':'\u{1F1EF}\u{1F1F5}','southkorea':'\u{1F1F0}\u{1F1F7}',
   'australia':'\u{1F1E6}\u{1F1FA}','iran':'\u{1F1EE}\u{1F1F7}',
@@ -5811,6 +5830,21 @@ function scrollToToday(isInit = false) {
   }
 }
 
+
+// Khi tab/app quay lại foreground, kiểm tra ngay nếu đang có trận live.
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && hasLiveMatch()) {
+    clearTimeout(_pollTimer);
+    fetchFotmob(true);
+  }
+});
+window.addEventListener('focus', () => {
+  if (hasLiveMatch()) {
+    clearTimeout(_pollTimer);
+    fetchFotmob(true);
+  }
+});
+
 (function init() {
   // Auto-detect live từ đồng hồ client
   const now = Date.now();
@@ -5825,6 +5859,8 @@ function scrollToToday(isInit = false) {
   });
 
   renderAll();
+  // Nếu client tự phát hiện trận live, schedule poll 30s ngay cả trước khi fetch đầu tiên hoàn tất
+  schedulePoll();
   // Show view switcher by default (tab 'all' is active)
   const viewBar = document.getElementById('viewBar');
   if (viewBar) viewBar.classList.add('show');
