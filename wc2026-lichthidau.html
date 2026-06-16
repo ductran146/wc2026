@@ -3945,7 +3945,7 @@ function statusBadge(m) {
   const s = m.status;
   if (s === 'live') {
     if (m.livePhase === 'ht') {
-      return `<span class="match-badge halftime">Nghỉ</span>`;
+      return `<span class="match-badge halftime">Hết H1</span>`;
     }
     const minute = m.minute || estimateLiveMinute(m);
     const label = minute ? `${minute}'` : 'Live';
